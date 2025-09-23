@@ -120,13 +120,13 @@ https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/74/index.m
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",NINH BÌNH
 https://live.mediatech.vn/live/28597f8fd7ea5064d0f84ab00b3699dfd86/chunklist.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",NINH THUẬN
-https://xem.hoiquan.Click/CoBan/ninh-thuan/TuyetDoiKhongKinhDoanh.m3u8
+https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/76/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",PHÚ THỌ
-https://xem.hoiquan.Click/CoBan/phu-tho/TuyetDoiKhongKinhDoanh.m3u8
+https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/77/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",PHÚ YÊN
-https://xem.hoiquan.Click/CoBan/phu-yen/TuyetDoiKhongKinhDoanh.m3u8
+https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/51/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",QUẢNG BÌNH
-https://xem.hoiquan.Click/CoBan/quang-binh/TuyetDoiKhongKinhDoanh.m3u8
+https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/83/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SƠN LA
 https://cdn.sonlatv.vn/live/28595222e707a364251b8724717894baa46/chunklist.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TÂY NINH
@@ -136,19 +136,20 @@ https://xem.hoiquan.Click/CoBan/thai-binh/TuyetDoiKhongKinhDoanh.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",THÁI NGUYÊN
 https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/88/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TIỀN GIANG
-https://xem.hoiquan.Click/CoBan/tien-giang/TuyetDoiKhongKinhDoanh.m3u8
+https://live.fptplay53.net/epzsd1/dongthaphd_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TUYÊN QUANG
 https://xem.hoiquan.Click/CoBan/tuyen-quang/TuyetDoiKhongKinhDoanh.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VĨNH PHÚC
-https://xem.hoiquan.Click/CoBan/vinh-phuc/TuyetDoiKhongKinhDoanh.m3u8
+https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/77/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VŨNG TÀU
 https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/94/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",YÊN BÁI
-https://xem.hoiquan.Click/CoBan/yen-bai/TuyetDoiKhongKinhDoanh.m3u8
+https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/71/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐỒNG NAI
 https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/53/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BÌNH DƯƠNG
 https://live.fptplay53.net/epzhd2/btv2_hls.smil/chunklist_b2500000.m3u8
+
 
 
 
