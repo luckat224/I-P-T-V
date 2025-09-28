@@ -40,7 +40,7 @@ https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/42/index.m
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BÌNH THUẬN
 https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/45/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CÀ MAU
-https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/38/index.m3u8
+https://xem.hoiquan.Click/CoBan/ca-mau/TuyetDoiKhongKinhDoanh.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CẦN THƠ 1
 https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/47/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CẦN THƠ 2
@@ -151,6 +151,7 @@ https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/53/index.m
 https://live.fptplay53.net/epzhd2/btv2_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CARTOON NETWORK
 https://hls.mskycdn.online/tv/cartoonhd/index.m3u8
+
 
 
 
