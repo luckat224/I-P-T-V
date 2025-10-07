@@ -131,8 +131,8 @@ https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/83/index.m
 https://cdn.sonlatv.vn/live/28595222e707a364251b8724717894baa46/chunklist.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TÂY NINH
 https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/72/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",THÁI BÌNH
-https://xem.hoiquan.Click/CoBan/thai-binh/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",QPVN
+https://live.fptplay53.net/fnxhd2/quocphongvnhd_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",THÁI NGUYÊN
 https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/88/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TIỀN GIANG
@@ -151,6 +151,7 @@ https://cloud.sgchill.io.vn/v1/tools/getlink/television/source/coban1/53/index.m
 https://live.fptplay53.net/epzhd2/btv2_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",CARTOON NETWORK
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
+
 
 
 
