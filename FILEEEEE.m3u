@@ -10,17 +10,17 @@ https://live.fptplay53.net/epzhd2/vinhlong4hd_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 5
 https://freem3u.xyz/api/live/play.m3u8?vid=91
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 1
-https://xem.hoiquan.Click/CoBan/htv1/TuyetDoiKhongKinhDoanh.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=190
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 2
-https://xem.hoiquan.Click/CoBan/htv2/TuyetDoiKhongKinhDoanh.m3u8
+https://sgchill.io.vn/s97/vieon.php?id=htv2
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 3
-https://xem.hoiquan.Click/CoBan/htv3/TuyetDoiKhongKinhDoanh.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=192
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 4
-https://xem.hoiquan.Click/CoBan/htv4/TuyetDoiKhongKinhDoanh.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=9
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 7
-https://xem.hoiquan.Click/CoBan/htv7-hd/TuyetDoiKhongKinhDoanh.m3u8
+https://vc.101vn.com/htv/htvcmb.php?id=256
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 9
-https://xem.hoiquan.Click/CoBan/htv9-hd/TuyetDoiKhongKinhDoanh.m3u8
+https://live.fptplay53.net/epzhd1/htv9hd_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC GIA ĐÌNH
 https://live.fptplay53.net/epzhd1/htvcgiadinh_vhls.smil/chunklist.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC PHỤ NỮ
@@ -151,6 +151,7 @@ https://xem.hoiquan.Click/CoBan/dong-nai-2/TuyetDoiKhongKinhDoanh.m3u8
 https://live.fptplay53.net/epzhd2/btv2_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",CARTOON NETWORK
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
+
 
 
 
