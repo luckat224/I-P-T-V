@@ -1,5 +1,4 @@
-#EXTM3U url-tvg="https://vnepg.site/epg.xml.gz,http://lichphatsong.site/schedule/epg.xml,https://github.com/iptv-pro/iptv-pro.github.io/raw/refs/heads/main/epg/epg.xml.gz,https://live.fanmingming.com/e.xml,https://raw.githubusercontent.com/AqFad2811/epg/main/epg.xml,https://iptvx.one/epg/epg.xml.gz,https://epg.pw/xmltv/epg_ID.xml,https://epg.pw/xmltv/epg_HK.xml,https://epg.pw/xmltv/epg_MY.xml,https://epg.pw/xmltv/epg_FR.xml"
-#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh Long 1
+#EXTM3U 
 https://live.fptplay53.net/epzch2/vinhlong1_abr.smil/chunklist_b4200000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh Long 2
 https://live.fptplay53.net/epzhd2/vinhlong2_vhls.smil/chunklist_b5000000.m3u8
@@ -151,6 +150,7 @@ https://live.fptplay53.net/epzsd1/dongnai1_hls.smil/chunklist_b2500000.m3u8
 https://live.fptplay53.net/epzhd2/btv2_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",CARTOON NETWORK
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
+
 
 
 
