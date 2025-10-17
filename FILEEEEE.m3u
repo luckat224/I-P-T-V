@@ -93,14 +93,14 @@ https://freem3u.xyz/api/live/play.m3u8?vid=177
 https://live.fptplay53.net/epzsd1/danang2_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐẮC NÔNG
 https://freem3u.xyz/api/live/play.m3u8?vid=50
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",NAM ĐỊNH
-https://xem.hoiquan.Click/CoBan/nam-dinh/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BOX MOVIE 1
+https://sgchill.io.vn/s97/cb1?id=159
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐỒNG THÁP
 https://live.fptplay53.net/epzsd1/dongthap_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HÀ GIANG
 https://live.fptplay53.net/epzsd1/dongthap_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HOÀ BÌNH
-https://xem.hoiquan.Click/CoBan/hoa-binh/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="", HOLLYWOOD
+https://sgchill.io.vn/s97/cb1?id=160
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HẢI PHÒNG
 https://live.fptplay53.net/fnxsd1/haiphong_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HUẾ
@@ -119,14 +119,14 @@ https://freem3u.xyz/api/live/play.m3u8?vid=72
 https://live.fptplay53.net/fnxsd1/nghean_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",NINH BÌNH
 https://live.fptplay53.net/fnxsd1/ninhbinh_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",NINH THUẬN
-https://xem.hoiquan.Click/CoBan/ninh-thuan/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",IN THE BOX
+https://sgchill.io.vn/s97/cb1?id=235
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",PHÚ THỌ
 https://live.fptplay53.net/fnxsd1/phutho_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",PHÚ YÊN
-https://xem.hoiquan.Click/CoBan/phu-yen/TuyetDoiKhongKinhDoanh.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",QUẢNG BÌNH
-https://xem.hoiquan.Click/CoBan/quang-binh/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BOX HITS
+https://sgchill.io.vn/s97/cb1?id=239
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",MAN
+https://sgchill.io.vn/s97/cb1?id=237
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SƠN LA
 https://live.fptplay53.net/fnxsd1/sonla_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TÂY NINH
@@ -151,6 +151,7 @@ https://live.fptplay53.net/epzsd1/dongnai1_hls.smil/chunklist_b2500000.m3u8
 https://live.fptplay53.net/epzhd2/btv2_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",CARTOON NETWORK
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
+
 
 
 
