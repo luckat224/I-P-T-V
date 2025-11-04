@@ -1,11 +1,11 @@
 #EXTM3U 
-#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh Long 1
+#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 1
 https://live.fptplay53.net/epzch2/vinhlong1_abr.smil/chunklist_b4200000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh Long 2
+#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 2
 https://live.fptplay53.net/epzhd2/vinhlong2_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh Long 3
+#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 3
 https://live.fptplay53.net/epzhd2/vinhlong3_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh Long 4
+#EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 4
 https://live.fptplay53.net/epzhd2/vinhlong4hd_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 5
 https://freem3u.xyz/api/live/play.m3u8?vid=91
@@ -153,6 +153,7 @@ https://live.fptplay53.net/epzhd2/btv2_hls.smil/chunklist_b2500000.m3u8
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SCTV8
 https://liveh34.seenow.vn/hls/SCTV8/03.m3u8
+
 
 
 
