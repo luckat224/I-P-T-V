@@ -39,7 +39,7 @@ local targetPlayer = nil
 local currentArrow = nil
 local followConnection = nil
 local lastClickTime = 0
-local CLICK_DELAY = 0.3 -- Tránh double click
+local CLICK_DELAY = 0.3
 
 -- Hàm tính góc giữa 2 vector
 local function getAngleBetweenVectors(v1, v2)
@@ -49,7 +49,7 @@ end
 -- Tìm người chơi trong tầm nhìn
 local function getTarget()
     local bestTarget = nil
-    local smallestAngle = math.rad(30) -- Góc 30 độ
+    local smallestAngle = math.rad(30)
     
     if not player.Character then return nil end
     
@@ -80,7 +80,6 @@ end
 
 -- Tạo mũi tên trên đầu
 local function createArrow(target)
-    -- Xóa mũi tên cũ
     if currentArrow then
         currentArrow:Destroy()
         currentArrow = nil
@@ -91,7 +90,6 @@ local function createArrow(target)
     local head = target.Character:FindFirstChild("Head")
     if not head then return end
     
-    -- Tạo BillboardGui với mũi tên
     local arrowGui = Instance.new("BillboardGui")
     arrowGui.Name = "TargetArrow"
     arrowGui.Size = UDim2.new(0, 25, 0, 25)
@@ -116,8 +114,8 @@ local function createArrow(target)
     return arrowGui
 end
 
--- Teleport ra sau lưng mục tiêu
-local function teleportBehind(target)
+-- Teleport ra SÁT mục tiêu
+local function teleportClose(target)
     if not target or not target.Character then return false end
     
     local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
@@ -125,34 +123,50 @@ local function teleportBehind(target)
     
     if not targetRoot or not playerRoot then return false end
     
-    -- Tính vị trí PHÍA SAU lưng
+    -- Tính vị trí SÁT BÊN mục tiêu (cách 1-2 studs)
     local targetCFrame = targetRoot.CFrame
     local lookVector = targetCFrame.LookVector
-    local behindPosition = targetCFrame.Position - (lookVector * 3)
+    local rightVector = targetCFrame.RightVector
+    
+    -- Thử các vị trí khác nhau: phải, trái, phía sau
+    local possiblePositions = {
+        targetCFrame.Position + rightVector * 1.5,      -- Bên phải
+        targetCFrame.Position - rightVector * 1.5,      -- Bên trái  
+        targetCFrame.Position - lookVector * 1.2,       -- Phía sau gần
+        targetCFrame.Position + lookVector * 1.2,       -- Phía trước (đối diện)
+    }
     
     -- Kiểm tra vật cản
     local raycastParams = RaycastParams.new()
     raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
     raycastParams.FilterDescendantsInstances = {player.Character, target.Character}
     
-    local raycastResult = workspace:Raycast(
-        targetRoot.Position,
-        -lookVector * 5,
-        raycastParams
-    )
+    local finalPosition = targetCFrame.Position
+    local shortestDistance = math.huge
     
-    local finalPosition
-    if raycastResult then
-        finalPosition = raycastResult.Position + lookVector * 2
-    else
-        finalPosition = behindPosition
+    for _, position in pairs(possiblePositions) do
+        local direction = (position - targetRoot.Position)
+        local raycastResult = workspace:Raycast(
+            targetRoot.Position,
+            direction,
+            raycastParams
+        )
+        
+        if not raycastResult then
+            finalPosition = position
+            break
+        else
+            local distance = (raycastResult.Position - targetRoot.Position).Magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                finalPosition = raycastResult.Position - direction.Unit * 0.5
+            end
+        end
     end
     
-    -- Quay mặt về phía mục tiêu
-    local backCFrame = CFrame.new(finalPosition, targetRoot.Position)
-    
-    -- Thực hiện teleport
-    playerRoot.CFrame = backCFrame
+    -- Quay mặt về phía mục tiêu để dễ tấn công
+    local teleportCFrame = CFrame.new(finalPosition, targetRoot.Position)
+    playerRoot.CFrame = teleportCFrame
     
     return true
 end
@@ -174,13 +188,12 @@ local function startContinuousFollow()
             if targetRoot and playerRoot then
                 local distance = (targetRoot.Position - playerRoot.Position).Magnitude
                 
-                -- Teleport liên tục khi khoảng cách > 3 studs
+                -- Teleport liên tục khi khoảng cách > 3 studs (gần hơn)
                 if distance > 3 then
-                    teleportBehind(targetPlayer)
+                    teleportClose(targetPlayer)
                 end
             end
         else
-            -- Mục tiêu biến mất
             unlockTarget()
         end
     end)
@@ -203,8 +216,6 @@ local function unlockTarget()
     
     teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
     teleportButton.Text = "TELEPORT"
-    
-    print("🔓 Đã mở khóa")
 end
 
 -- Hàm lock target
@@ -212,7 +223,6 @@ local function lockTarget()
     local newTarget = getTarget()
     
     if not newTarget then
-        -- Không có mục tiêu
         teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
         teleportButton.Text = "NO TARGET"
         
@@ -225,30 +235,21 @@ local function lockTarget()
         return false
     end
     
-    -- Đặt mục tiêu và bật lock
     targetPlayer = newTarget
     isLocked = true
     
-    -- Cập nhật giao diện
     teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
     teleportButton.Text = "LOCKED"
     
-    -- Tạo mũi tên
     createArrow(targetPlayer)
-    
-    -- Bắt đầu follow liên tục
     startContinuousFollow()
+    teleportClose(targetPlayer)
     
-    -- Teleport ngay lập tức
-    teleportBehind(targetPlayer)
-    
-    print("🔒 Đã khóa: " .. targetPlayer.Name)
     return true
 end
 
--- Hàm xử lý click chính - BẤM 1 LẦN
+-- Hàm xử lý click chính
 local function handleButtonClick()
-    -- Chống double click
     local currentTime = tick()
     if currentTime - lastClickTime < CLICK_DELAY then
         return
@@ -256,15 +257,13 @@ local function handleButtonClick()
     lastClickTime = currentTime
     
     if isLocked then
-        -- Nếu đang lock thì unlock
         unlockTarget()
     else
-        -- Nếu chưa lock thì lock
         lockTarget()
     end
 end
 
--- Kết nối sự kiện nút - SỬ DỤNG MouseButton1Click (không phải MouseButton1Down)
+-- Kết nối sự kiện nút
 teleportButton.MouseButton1Click:Connect(handleButtonClick)
 teleportButton.TouchTap:Connect(handleButtonClick)
 
@@ -275,17 +274,14 @@ RunService.Heartbeat:Connect(function()
     local newTarget = getTarget()
     
     if isLocked then
-        -- Đang lock: chỉ cập nhật mũi tên nếu có mục tiêu
         if targetPlayer and targetPlayer.Character then
             if not currentArrow then
                 createArrow(targetPlayer)
             end
         else
-            -- Mục tiêu biến mất
             unlockTarget()
         end
     else
-        -- Chưa lock: cập nhật mục tiêu mới
         if newTarget then
             if not currentArrow or (currentArrow and newTarget ~= targetPlayer) then
                 createArrow(newTarget)
@@ -313,6 +309,3 @@ player.CharacterAdded:Connect(function(character)
 end)
 
 print("✅ Teleport Script Đã Sẵn Sàng!")
-print("🎯 Nhìn vào người chơi - mũi tên xuất hiện")
-print("🔒 Bấm 1 lần để KHÓA và THEO LIÊN TỤC")
-print("🔓 Bấm 1 lần nữa để MỞ KHÓA")
