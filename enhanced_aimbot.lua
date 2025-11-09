@@ -84,7 +84,7 @@ local espFolders = {}
 local AIM_PRIORITY = {
     ATTACKING = 10,      -- Đang tấn công
     AIMING_AT_ME = 8,    -- Đang nhìn vào mình
-    CLOSE_RANGE = 6,     Ở cự ly gần
+    CLOSE_RANGE = 6,     -- Ở cự ly gần
     LOW_HEALTH = 5,      -- Máu thấp
     NORMAL = 1           -- Bình thường
 }
@@ -494,7 +494,7 @@ local function lockTarget()
         teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
         teleportButton.Text = "NO TARGET"
         
-        delay(1, function()
+        task.delay(1, function()
             if not isLocked then
                 teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
                 teleportButton.Text = "TELEPORT"
@@ -665,11 +665,11 @@ Players.PlayerRemoving:Connect(function(leavingPlayer)
 end)
 
 player.CharacterAdded:Connect(function(character)
-    wait(1)
+    task.wait(1)
     unlockTarget()
 end)
 
-wait(2)
+task.wait(2)
 initializeWallhack()
 
 print("✅ Enhanced Teleport & Smart Aim Bot Script Đã Sẵn Sàng!")
