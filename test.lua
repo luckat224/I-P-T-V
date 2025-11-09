@@ -6,27 +6,17 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
--- Chờ playerGui load
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Giao diện nút Teleport
 local gui = Instance.new("ScreenGui")
 gui.Name = "TeleportGui"
 gui.ResetOnSpawn = false
 gui.Parent = playerGui
 
--- Container cho các nút
-local buttonContainer = Instance.new("Frame")
-buttonContainer.Size = UDim2.new(0, 80, 0, 160)
-buttonContainer.Position = UDim2.new(0, 20, 0.5, -80)
-buttonContainer.AnchorPoint = Vector2.new(0, 0.5)
-buttonContainer.BackgroundTransparency = 1
-buttonContainer.Parent = gui
-
--- Nút Teleport chính
 local teleportButton = Instance.new("TextButton")
-teleportButton.Size = UDim2.new(1, 0, 0.5, -5)
-teleportButton.Position = UDim2.new(0, 0, 0, 0)
+teleportButton.Size = UDim2.new(0, 80, 0, 80)
+teleportButton.Position = UDim2.new(0, 20, 0.5, -40)
+teleportButton.AnchorPoint = Vector2.new(0, 0.5)
 teleportButton.Text = "TELEPORT"
 teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
 teleportButton.TextColor3 = Color3.new(1, 1, 1)
@@ -34,50 +24,254 @@ teleportButton.TextSize = 14
 teleportButton.Font = Enum.Font.GothamBold
 teleportButton.BorderSizePixel = 0
 teleportButton.AutoButtonColor = false
-teleportButton.Parent = buttonContainer
+teleportButton.Parent = gui
 
--- Bo tròn nút teleport
-local teleportCorner = Instance.new("UICorner")
-teleportCorner.CornerRadius = UDim.new(1, 0)
-teleportCorner.Parent = teleportButton
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(1, 0)
+buttonCorner.Parent = teleportButton
 
--- Nút Tránh xa (nhỏ hơn, ở dưới)
-local avoidButton = Instance.new("TextButton")
-avoidButton.Size = UDim2.new(1, 0, 0.5, -5)
-avoidButton.Position = UDim2.new(0, 0, 0.5, 5)
-avoidButton.Text = "TRÁNH XA"
-avoidButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
-avoidButton.TextColor3 = Color3.new(1, 1, 1)
-avoidButton.TextSize = 12
-avoidButton.Font = Enum.Font.GothamBold
-avoidButton.BorderSizePixel = 0
-avoidButton.AutoButtonColor = false
-avoidButton.Parent = buttonContainer
+local aimButton = Instance.new("TextButton")
+aimButton.Size = UDim2.new(0, 60, 0, 30)
+aimButton.Position = UDim2.new(0, 30, 0.5, 50)
+aimButton.AnchorPoint = Vector2.new(0, 0.5)
+aimButton.Text = "AIM BOT"
+aimButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
+aimButton.TextColor3 = Color3.new(1, 1, 1)
+aimButton.TextSize = 12
+aimButton.Font = Enum.Font.GothamBold
+aimButton.BorderSizePixel = 0
+aimButton.AutoButtonColor = false
+aimButton.Parent = gui
 
--- Bo tròn nút tránh xa
-local avoidCorner = Instance.new("UICorner")
-avoidCorner.CornerRadius = UDim.new(1, 0)
-avoidCorner.Parent = avoidButton
+local aimButtonCorner = Instance.new("UICorner")
+aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
+aimButtonCorner.Parent = aimButton
 
--- Biến điều khiển
+local infoLabel = Instance.new("TextLabel")
+infoLabel.Size = UDim2.new(0, 120, 0, 40)
+infoLabel.Position = UDim2.new(0, 20, 0.5, 100)
+infoLabel.AnchorPoint = Vector2.new(0, 0.5)
+infoLabel.Text = "DISTANCE: -\nTARGET: NONE"
+infoLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+infoLabel.BackgroundTransparency = 0.5
+infoLabel.TextColor3 = Color3.new(1, 1, 1)
+infoLabel.TextSize = 12
+infoLabel.Font = Enum.Font.Gotham
+infoLabel.BorderSizePixel = 0
+infoLabel.TextXAlignment = Enum.TextXAlignment.Left
+infoLabel.TextYAlignment = Enum.TextYAlignment.Top
+infoLabel.Parent = gui
+
+local infoCorner = Instance.new("UICorner")
+infoCorner.CornerRadius = UDim.new(0.2, 0)
+infoCorner.Parent = infoLabel
+
 local isLocked = false
-local isAvoiding = false
 local targetPlayer = nil
 local currentArrow = nil
 local followConnection = nil
-local avoidConnection = nil
 local lastClickTime = 0
 local CLICK_DELAY = 0.3
-local AVOID_DISTANCE = 5 -- Khoảng cách tránh xa (studs)
 
--- Hàm tính góc giữa 2 vector
+local aimBotEnabled = false
+local aimBotConnection = nil
+local currentAimTarget = nil
+
+local wallhackEnabled = true
+local espFolders = {}
+
+-- Cấu hình aimbot thông minh
+local AIM_PRIORITY = {
+    ATTACKING = 10,      -- Đang tấn công
+    AIMING_AT_ME = 8,    -- Đang nhìn vào mình
+    CLOSE_RANGE = 6,     Ở cự ly gần
+    LOW_HEALTH = 5,      -- Máu thấp
+    NORMAL = 1           -- Bình thường
+}
+
+local function createEspFolder(targetPlayer)
+    if espFolders[targetPlayer] then
+        espFolders[targetPlayer]:Destroy()
+    end
+    
+    local folder = Instance.new("Folder")
+    folder.Name = targetPlayer.Name .. "_ESP"
+    folder.Parent = playerGui
+    espFolders[targetPlayer] = folder
+    return folder
+end
+
+local function createHighlight(character, targetPlayer)
+    if not character then return end
+    
+    local folder = createEspFolder(targetPlayer)
+    
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "WallhackHighlight"
+    highlight.FillColor = Color3.fromRGB(255, 50, 50)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.7
+    highlight.OutlineTransparency = 0
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Adornee = character
+    highlight.Parent = folder
+    
+    -- Thêm label hiển thị tên và khoảng cách
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ESPInfo"
+    billboard.Size = UDim2.new(0, 200, 0, 100)
+    billboard.AlwaysOnTop = true
+    billboard.Enabled = true
+    billboard.Adornee = character:FindFirstChild("Head") or character:FindFirstChild("HumanoidRootPart")
+    billboard.MaxDistance = 200
+    billboard.Parent = folder
+    
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    nameLabel.Position = UDim2.new(0, 0, 0, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = targetPlayer.Name
+    nameLabel.TextColor3 = Color3.new(1, 1, 1)
+    nameLabel.TextScaled = true
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.Parent = billboard
+    
+    local distanceLabel = Instance.new("TextLabel")
+    distanceLabel.Size = UDim2.new(1, 0, 0.5, 0)
+    distanceLabel.Position = UDim2.new(0, 0, 0.5, 0)
+    distanceLabel.BackgroundTransparency = 1
+    distanceLabel.Text = "DIST: -"
+    distanceLabel.TextColor3 = Color3.new(1, 1, 1)
+    distanceLabel.TextScaled = true
+    distanceLabel.Font = Enum.Font.Gotham
+    distanceLabel.Parent = billboard
+    
+    -- Cập nhật khoảng cách liên tục
+    local function updateDistance()
+        while billboard and billboard.Parent and character and character.Parent do
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local playerRoot = player.Character.HumanoidRootPart
+                local targetRoot = character:FindFirstChild("HumanoidRootPart")
+                if targetRoot then
+                    local distance = (playerRoot.Position - targetRoot.Position).Magnitude
+                    distanceLabel.Text = "DIST: " .. math.floor(distance) .. "m"
+                    
+                    -- Đổi màu theo khoảng cách
+                    if distance < 20 then
+                        distanceLabel.TextColor3 = Color3.fromRGB(255, 50, 50)  -- Đỏ: rất gần
+                    elseif distance < 50 then
+                        distanceLabel.TextColor3 = Color3.fromRGB(255, 150, 50) -- Cam: gần
+                    else
+                        distanceLabel.TextColor3 = Color3.fromRGB(50, 255, 50)  -- Xanh: xa
+                    end
+                end
+            end
+            wait(0.2)
+        end
+    end
+    
+    coroutine.wrap(updateDistance)()
+end
+
+local function toggleWallhack()
+    wallhackEnabled = not wallhackEnabled
+    
+    for targetPlayer, folder in pairs(espFolders) do
+        if folder then
+            folder.Enabled = wallhackEnabled
+        end
+    end
+    
+    if wallhackEnabled then
+        teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
+    else
+        teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end
+
+local function initializeWallhack()
+    for targetPlayer, folder in pairs(espFolders) do
+        folder:Destroy()
+    end
+    espFolders = {}
+    
+    for _, otherPlayer in pairs(Players:GetPlayers()) do
+        if otherPlayer ~= player then
+            if otherPlayer.Character then
+                createHighlight(otherPlayer.Character, otherPlayer)
+            end
+            
+            otherPlayer.CharacterAdded:Connect(function(character)
+                wait(1)
+                createHighlight(character, otherPlayer)
+            end)
+        end
+    end
+    
+    Players.PlayerAdded:Connect(function(newPlayer)
+        if newPlayer ~= player then
+            newPlayer.CharacterAdded:Connect(function(character)
+                wait(1)
+                createHighlight(character, newPlayer)
+            end)
+        end
+    end)
+end
+
 local function getAngleBetweenVectors(v1, v2)
     return math.acos(v1:Dot(v2) / (v1.Magnitude * v2.Magnitude))
 end
 
--- Tìm người chơi trong tầm nhìn
-local function getTarget()
+local function calculateTargetPriority(targetPlayer, targetCharacter)
+    if not targetPlayer or not targetCharacter then return 0 end
+    
+    local priority = AIM_PRIORITY.NORMAL
+    local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    local targetRoot = targetCharacter:FindFirstChild("HumanoidRootPart")
+    local targetHumanoid = targetCharacter:FindFirstChild("Humanoid")
+    
+    if not playerRoot or not targetRoot or not targetHumanoid then return priority end
+    
+    -- Tính khoảng cách
+    local distance = (playerRoot.Position - targetRoot.Position).Magnitude
+    
+    -- Ưu tiên mục tiêu ở cự ly gần
+    if distance < 15 then
+        priority = priority + AIM_PRIORITY.CLOSE_RANGE
+    end
+    
+    -- Kiểm tra nếu mục tiêu đang nhìn vào mình
+    local targetHead = targetCharacter:FindFirstChild("Head")
+    if targetHead then
+        local targetLook = targetHead.CFrame.LookVector
+        local toPlayer = (playerRoot.Position - targetHead.Position).Unit
+        local angleToPlayer = getAngleBetweenVectors(targetLook, toPlayer)
+        
+        if angleToPlayer < math.rad(30) then -- Nếu mục tiêu đang nhìn về phía mình
+            priority = priority + AIM_PRIORITY.AIMING_AT_ME
+        end
+    end
+    
+    -- Ưu tiên mục tiêu có máu thấp
+    if targetHumanoid.Health < targetHumanoid.MaxHealth * 0.3 then
+        priority = priority + AIM_PRIORITY.LOW_HEALTH
+    end
+    
+    -- Phát hiện nếu mục tiêu đang tấn công (di chuyển nhanh về phía mình)
+    local targetVelocity = targetRoot.Velocity
+    local toPlayerDirection = (playerRoot.Position - targetRoot.Position).Unit
+    local velocityTowardsPlayer = targetVelocity:Dot(toPlayerDirection)
+    
+    if velocityTowardsPlayer > 10 then -- Đang di chuyển nhanh về phía mình
+        priority = priority + AIM_PRIORITY.ATTACKING
+    end
+    
+    return priority
+end
+
+local function getBestTarget()
     local bestTarget = nil
+    local highestPriority = 0
     local smallestAngle = math.rad(30)
     
     if not player.Character then return nil end
@@ -97,17 +291,24 @@ local function getTarget()
                 local angle = getAngleBetweenVectors(cameraDirection, toTarget)
                 
                 if angle < smallestAngle then
-                    smallestAngle = angle
-                    bestTarget = otherPlayer
+                    local priority = calculateTargetPriority(otherPlayer, otherPlayer.Character)
+                    
+                    if priority > highestPriority then
+                        highestPriority = priority
+                        bestTarget = otherPlayer
+                        smallestAngle = angle
+                    elseif priority == highestPriority and angle < smallestAngle then
+                        bestTarget = otherPlayer
+                        smallestAngle = angle
+                    end
                 end
             end
         end
     end
     
-    return bestTarget
+    return bestTarget, highestPriority
 end
 
--- Tạo mũi tên trên đầu
 local function createArrow(target)
     if currentArrow then
         currentArrow:Destroy()
@@ -121,18 +322,18 @@ local function createArrow(target)
     
     local arrowGui = Instance.new("BillboardGui")
     arrowGui.Name = "TargetArrow"
-    arrowGui.Size = UDim2.new(0, 25, 0, 25)
+    arrowGui.Size = UDim2.new(0, 100, 0, 100)
     arrowGui.AlwaysOnTop = true
     arrowGui.Enabled = true
     arrowGui.Adornee = head
-    arrowGui.MaxDistance = 150
-    arrowGui.SizeOffset = Vector2.new(0, 2.2)
+    arrowGui.MaxDistance = 500
+    arrowGui.SizeOffset = Vector2.new(0, 2.5)
     
     local arrowLabel = Instance.new("TextLabel")
     arrowLabel.Size = UDim2.new(1, 0, 1, 0)
     arrowLabel.BackgroundTransparency = 1
-    arrowLabel.Text = isLocked and "🔒" or (isAvoiding and "🚫" or "🎯")
-    arrowLabel.TextColor3 = isLocked and Color3.fromRGB(255, 0, 0) or (isAvoiding and Color3.fromRGB(59, 59, 255) or Color3.fromRGB(0, 255, 0))
+    arrowLabel.Text = isLocked and "🔒" or "🎯"
+    arrowLabel.TextColor3 = isLocked and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
     arrowLabel.TextScaled = true
     arrowLabel.Font = Enum.Font.GothamBold
     arrowLabel.Parent = arrowGui
@@ -143,7 +344,6 @@ local function createArrow(target)
     return arrowGui
 end
 
--- Teleport ra SÁT mục tiêu
 local function teleportClose(target)
     if not target or not target.Character then return false end
     
@@ -152,20 +352,17 @@ local function teleportClose(target)
     
     if not targetRoot or not playerRoot then return false end
     
-    -- Tính vị trí SÁT BÊN mục tiêu (cách 1-2 studs)
     local targetCFrame = targetRoot.CFrame
     local lookVector = targetCFrame.LookVector
     local rightVector = targetCFrame.RightVector
     
-    -- Thử các vị trí khác nhau: phải, trái, phía sau
     local possiblePositions = {
-        targetCFrame.Position + rightVector * 1.5,      -- Bên phải
-        targetCFrame.Position - rightVector * 1.5,      -- Bên trái  
-        targetCFrame.Position - lookVector * 1.2,       -- Phía sau gần
-        targetCFrame.Position + lookVector * 1.2,       -- Phía trước (đối diện)
+        targetCFrame.Position + rightVector * 1.5,
+        targetCFrame.Position - rightVector * 1.5,
+        targetCFrame.Position - lookVector * 1.2,
+        targetCFrame.Position + lookVector * 1.2,
     }
     
-    -- Kiểm tra vật cản
     local raycastParams = RaycastParams.new()
     raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
     raycastParams.FilterDescendantsInstances = {player.Character, target.Character}
@@ -193,58 +390,59 @@ local function teleportClose(target)
         end
     end
     
-    -- Quay mặt về phía mục tiêu để dễ tấn công
     local teleportCFrame = CFrame.new(finalPosition, targetRoot.Position)
     playerRoot.CFrame = teleportCFrame
     
     return true
 end
 
--- Tránh xa mục tiêu
-local function avoidTarget()
-    if not targetPlayer or not targetPlayer.Character then return false end
+local function updateInfoLabel()
+    if not player.Character then return end
     
-    local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-    local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    local playerRoot = player.Character:FindFirstChild("HumanoidRootPart")
+    if not playerRoot then return end
     
-    if not targetRoot or not playerRoot then return false end
+    local closestDistance = math.huge
+    local closestTarget = nil
     
-    -- Tính hướng từ mục tiêu đến người chơi
-    local toPlayer = (playerRoot.Position - targetRoot.Position)
-    local currentDistance = toPlayer.Magnitude
-    
-    -- Nếu đang ở quá gần (< AVOID_DISTANCE), di chuyển ra xa
-    if currentDistance < AVOID_DISTANCE then
-        -- Tính vị trí mới cách mục tiêu AVOID_DISTANCE
-        local direction = toPlayer.Unit
-        local targetPosition = targetRoot.Position + direction * AVOID_DISTANCE
-        
-        -- Kiểm tra vật cản
-        local raycastParams = RaycastParams.new()
-        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-        raycastParams.FilterDescendantsInstances = {player.Character, targetPlayer.Character}
-        
-        local raycastResult = workspace:Raycast(
-            targetRoot.Position,
-            direction * AVOID_DISTANCE,
-            raycastParams
-        )
-        
-        local finalPosition = targetPosition
-        if raycastResult then
-            -- Nếu có vật cản, di chuyển đến vị trí trước vật cản
-            finalPosition = raycastResult.Position - direction * 0.5
+    for _, otherPlayer in pairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character then
+            local otherRoot = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if otherRoot then
+                local distance = (playerRoot.Position - otherRoot.Position).Magnitude
+                if distance < closestDistance then
+                    closestDistance = distance
+                    closestTarget = otherPlayer
+                end
+            end
         end
-        
-        -- Quay mặt về phía mục tiêu (nhìn từ xa)
-        local avoidCFrame = CFrame.new(finalPosition, targetRoot.Position)
-        playerRoot.CFrame = avoidCFrame
     end
     
-    return true
+    if closestTarget then
+        local priority = calculateTargetPriority(closestTarget, closestTarget.Character)
+        local priorityText = ""
+        
+        if priority >= AIM_PRIORITY.ATTACKING then
+            priorityText = "⚡ ATTACKING"
+        elseif priority >= AIM_PRIORITY.AIMING_AT_ME then
+            priorityText = "👀 TARGETING YOU"
+        elseif priority >= AIM_PRIORITY.CLOSE_RANGE then
+            priorityText = "🔴 CLOSE RANGE"
+        elseif priority >= AIM_PRIORITY.LOW_HEALTH then
+            priorityText = "💚 LOW HEALTH"
+        else
+            priorityText = "🟢 NORMAL"
+        end
+        
+        infoLabel.Text = string.format("DIST: %dm\nTARGET: %s\n%s", 
+            math.floor(closestDistance), 
+            closestTarget.Name,
+            priorityText)
+    else
+        infoLabel.Text = "DISTANCE: -\nTARGET: NONE\nNO THREATS"
+    end
 end
 
--- Hàm bắt đầu follow liên tục
 local function startContinuousFollow()
     if followConnection then
         followConnection:Disconnect()
@@ -261,7 +459,6 @@ local function startContinuousFollow()
             if targetRoot and playerRoot then
                 local distance = (targetRoot.Position - playerRoot.Position).Magnitude
                 
-                -- Teleport liên tục khi khoảng cách > 3 studs (gần hơn)
                 if distance > 3 then
                     teleportClose(targetPlayer)
                 end
@@ -272,38 +469,8 @@ local function startContinuousFollow()
     end)
 end
 
--- Hàm bắt đầu tránh xa liên tục
-local function startContinuousAvoid()
-    if avoidConnection then
-        avoidConnection:Disconnect()
-        avoidConnection = nil
-    end
-    
-    avoidConnection = RunService.Heartbeat:Connect(function()
-        if not isAvoiding then return end
-        
-        if targetPlayer and targetPlayer.Character then
-            local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-            local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-            
-            if targetRoot and playerRoot then
-                local distance = (targetRoot.Position - playerRoot.Position).Magnitude
-                
-                -- Tránh xa liên tục khi khoảng cách < AVOID_DISTANCE + 1 (có độ trễ)
-                if distance < AVOID_DISTANCE + 1 then
-                    avoidTarget()
-                end
-            end
-        else
-            stopAvoiding()
-        end
-    end)
-end
-
--- Hàm unlock target (tắt cả teleport và avoid)
 local function unlockTarget()
     isLocked = false
-    isAvoiding = false
     targetPlayer = nil
     
     if followConnection then
@@ -311,49 +478,17 @@ local function unlockTarget()
         followConnection = nil
     end
     
-    if avoidConnection then
-        avoidConnection:Disconnect()
-        avoidConnection = nil
-    end
-    
     if currentArrow then
         currentArrow:Destroy()
         currentArrow = nil
     end
     
-    -- Reset màu nút
-    teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
+    teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
     teleportButton.Text = "TELEPORT"
-    avoidButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
-    avoidButton.Text = "TRÁNH XA"
 end
 
--- Hàm dừng tránh xa
-local function stopAvoiding()
-    isAvoiding = false
-    
-    if avoidConnection then
-        avoidConnection:Disconnect()
-        avoidConnection = nil
-    end
-    
-    avoidButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
-    avoidButton.Text = "TRÁNH XA"
-    
-    if isLocked then
-        teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-        teleportButton.Text = "LOCKED"
-    else
-        if currentArrow then
-            currentArrow:Destroy()
-            currentArrow = nil
-        end
-    end
-end
-
--- Hàm lock target (teleport)
 local function lockTarget()
-    local newTarget = getTarget()
+    local newTarget, priority = getBestTarget()
     
     if not newTarget then
         teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
@@ -361,7 +496,7 @@ local function lockTarget()
         
         delay(1, function()
             if not isLocked then
-                teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
+                teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
                 teleportButton.Text = "TELEPORT"
             end
         end)
@@ -370,13 +505,16 @@ local function lockTarget()
     
     targetPlayer = newTarget
     isLocked = true
-    isAvoiding = false
     
-    -- Reset màu nút tránh xa
-    avoidButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
-    avoidButton.Text = "TRÁNH XA"
+    -- Đổi màu theo độ ưu tiên
+    if priority >= AIM_PRIORITY.ATTACKING then
+        teleportButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Đỏ: đang tấn công
+    elseif priority >= AIM_PRIORITY.AIMING_AT_ME then
+        teleportButton.BackgroundColor3 = Color3.fromRGB(255, 100, 0) -- Cam: đang nhắm mình
+    else
+        teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0) -- Xanh: bình thường
+    end
     
-    teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
     teleportButton.Text = "LOCKED"
     
     createArrow(targetPlayer)
@@ -386,42 +524,77 @@ local function lockTarget()
     return true
 end
 
--- Hàm bắt đầu tránh xa
-local function startAvoiding()
-    local newTarget = getTarget()
-    
-    if not newTarget then
-        avoidButton.BackgroundColor3 = Color3.fromRGB(150, 150, 255)
-        avoidButton.Text = "NO TARGET"
-        
-        delay(1, function()
-            if not isAvoiding then
-                avoidButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
-                avoidButton.Text = "TRÁNH XA"
-            end
-        end)
-        return false
+local function startAimBot()
+    if aimBotConnection then
+        aimBotConnection:Disconnect()
+        aimBotConnection = nil
     end
     
-    targetPlayer = newTarget
-    isAvoiding = true
-    isLocked = false
-    
-    -- Reset màu nút teleport
-    teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
-    teleportButton.Text = "TELEPORT"
-    
-    avoidButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
-    avoidButton.Text = "AVOIDING"
-    
-    createArrow(targetPlayer)
-    startContinuousAvoid()
-    avoidTarget()
-    
-    return true
+    aimBotConnection = RunService.Heartbeat:Connect(function()
+        if not aimBotEnabled then return end
+        
+        local bestTarget, priority = getBestTarget()
+        
+        if bestTarget and bestTarget.Character then
+            local targetHead = bestTarget.Character:FindFirstChild("Head")
+            local targetRoot = bestTarget.Character:FindFirstChild("HumanoidRootPart")
+            
+            if targetHead then
+                local cameraPosition = camera.CFrame.Position
+                local targetPosition = targetHead.Position
+                
+                -- Thêm dự đoán chuyển động
+                if targetRoot then
+                    local targetVelocity = targetRoot.Velocity
+                    local distance = (targetPosition - cameraPosition).Magnitude
+                    local timeToTarget = distance / 1000 -- Giả sử tốc độ đạn
+                    targetPosition = targetPosition + targetVelocity * timeToTarget
+                end
+                
+                local newCFrame = CFrame.new(cameraPosition, targetPosition)
+                camera.CFrame = newCFrame
+                currentAimTarget = bestTarget
+                
+                -- Đổi màu aim button theo độ ưu tiên
+                if priority >= AIM_PRIORITY.ATTACKING then
+                    aimButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                elseif priority >= AIM_PRIORITY.AIMING_AT_ME then
+                    aimButton.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
+                else
+                    aimButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+                end
+            elseif targetRoot then
+                local cameraPosition = camera.CFrame.Position
+                local targetPosition = targetRoot.Position
+                local newCFrame = CFrame.new(cameraPosition, targetPosition)
+                camera.CFrame = newCFrame
+                currentAimTarget = bestTarget
+            end
+        else
+            currentAimTarget = nil
+            aimButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        end
+    end)
 end
 
--- Hàm xử lý click nút teleport
+local function toggleAimBot()
+    aimBotEnabled = not aimBotEnabled
+    
+    if aimBotEnabled then
+        aimButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        aimButton.Text = "AIM: ON"
+        startAimBot()
+    else
+        aimButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
+        aimButton.Text = "AIM BOT"
+        if aimBotConnection then
+            aimBotConnection:Disconnect()
+            aimBotConnection = nil
+        end
+        currentAimTarget = nil
+    end
+end
+
 local function handleTeleportClick()
     local currentTime = tick()
     if currentTime - lastClickTime < CLICK_DELAY then
@@ -436,35 +609,25 @@ local function handleTeleportClick()
     end
 end
 
--- Hàm xử lý click nút tránh xa
-local function handleAvoidClick()
-    local currentTime = tick()
-    if currentTime - lastClickTime < CLICK_DELAY then
-        return
-    end
-    lastClickTime = currentTime
-    
-    if isAvoiding then
-        stopAvoiding()
-    else
-        startAvoiding()
-    end
+local function handleAimClick()
+    toggleAimBot()
 end
 
--- Kết nối sự kiện nút
 teleportButton.MouseButton1Click:Connect(handleTeleportClick)
+teleportButton.MouseButton2Click:Connect(toggleWallhack)
 teleportButton.TouchTap:Connect(handleTeleportClick)
 
-avoidButton.MouseButton1Click:Connect(handleAvoidClick)
-avoidButton.TouchTap:Connect(handleAvoidClick)
+aimButton.MouseButton1Click:Connect(handleAimClick)
 
--- Cập nhật mục tiêu liên tục
+-- Cập nhật thông tin liên tục
 RunService.Heartbeat:Connect(function()
+    updateInfoLabel()
+    
     if not player.Character then return end
     
-    local newTarget = getTarget()
+    local newTarget = getBestTarget()
     
-    if isLocked or isAvoiding then
+    if isLocked then
         if targetPlayer and targetPlayer.Character then
             if not currentArrow then
                 createArrow(targetPlayer)
@@ -486,17 +649,33 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Xử lý khi mục tiêu rời game
 Players.PlayerRemoving:Connect(function(leavingPlayer)
     if leavingPlayer == targetPlayer then
         unlockTarget()
     end
+    
+    if leavingPlayer == currentAimTarget then
+        currentAimTarget = nil
+    end
+    
+    if espFolders[leavingPlayer] then
+        espFolders[leavingPlayer]:Destroy()
+        espFolders[leavingPlayer] = nil
+    end
 end)
 
--- Tự động unlock khi respawn
 player.CharacterAdded:Connect(function(character)
     wait(1)
     unlockTarget()
 end)
 
-print("✅ Teleport & Avoid Script Đã Sẵn Sàng!")
+wait(2)
+initializeWallhack()
+
+print("✅ Enhanced Teleport & Smart Aim Bot Script Đã Sẵn Sàng!")
+print("📊 Tính năng mới:")
+print("   • Hiển thị khoảng cách và thông tin mục tiêu")
+print("   • Aimbot thông minh ưu tiên mục tiêu nguy hiểm")
+print("   • Nhận diện kẻ địch đang nhắm vào bạn")
+print("   • Phát hiện kẻ địch đang tấn công")
+print("   • Ưu tiên mục tiêu máu thấp và cự ly gần")
