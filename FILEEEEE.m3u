@@ -163,6 +163,18 @@ http://mytv.hoantran.name.vn:63213/rtp/232.84.3.43:11794
 http://mytv.hoantran.name.vn:63213/rtp/232.84.1.122:10314
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/kaction.jpg",K+ Action
 http://mytv.hoantran.name.vn:63213/rtp/232.84.1.33:8172
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/boxhits.jpg",Box Hits
+https://cloud.sgchill.io.vn/tv/getlink/source/coban1/index.m3u8?id=239&token=2025
+# https://toiyeuvietnam.dpdns.org/CoBan/box-hits/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/boxmovie1.jpg",Box Movie 1
+https://cloud.sgchill.io.vn/tv/getlink/source/coban1/index.m3u8?id=159&token=2025
+# https://toiyeuvietnam.dpdns.org/CoBan/box-movie-1-hd/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/hollywoodclassics.jpg",Hollywood Classics
+https://cloud.sgchill.io.vn/tv/getlink/source/coban1/index.m3u8?id=160&token=2025
+# https://toiyeuvietnam.dpdns.org/CoBan/hollywood-classic-hd/TuyetDoiKhongKinhDoanh.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/inthebox.jpg",In The Box
+https://cloud.sgchill.io.vn/tv/getlink/source/coban1/index.m3u8?id=235&token=2025
+# https://toiyeuvietnam.dpdns.org/CoBan/in-the-box/TuyetDoiKhongKinhDoanh.m3u8
 
 
 
