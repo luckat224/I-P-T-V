@@ -177,6 +177,10 @@ https://cloud.sgchill.io.vn/tv/getlink/source/coban1/index.m3u8?id=235&token=202
 # https://toiyeuvietnam.dpdns.org/CoBan/in-the-box/TuyetDoiKhongKinhDoanh.m3u8
 EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/inthebox.jpg",HTV Thể Thao
 https://live.fptplay53.net/epzhd1/htvcthethao_vhls.smil/chunklist_b5000000.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://raw.githubusercontent.com/PhatBee/phatbeetv/refs/heads/main/logo/SPOTV/SPOTV1.png" group-title="SPOTV", SPOTV1 (MyTV)
+http://luizkun.duckdns.org:63213/rtp/232.84.2.141:10666
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://raw.githubusercontent.com/PhatBee/phatbeetv/refs/heads/main/logo/SPOTV/SPOTV2.png" group-title="SPOTV", SPOTV2 (MyTV)
+http://luizkun.duckdns.org:63213/rtp/232.84.2.142:10672
 
 
 
