@@ -1,4 +1,4 @@
-#EXTM3U url-tvg="https://vnepg.site/epg.xml.gz"
+#EXTM3U 
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 1
 https://live.fptplay53.net/epzch2/vinhlong1_abr.smil/chunklist_b4200000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 2
@@ -183,6 +183,7 @@ http://luizkun.duckdns.org:63213/rtp/232.84.2.141:10666
 http://luizkun.duckdns.org:63213/rtp/232.84.2.142:10672
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/on-football.jpg",ON Football
 http://mytv.hoantran.name.vn:63213/rtp/232.84.1.210:9234
+
 
 
 
