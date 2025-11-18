@@ -36,7 +36,7 @@ https://live.baoquangninh.vn/qtvlive/tv3live.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HÀ NỘI 1
 https://live.fptplay53.net/fnxhd2/hanoitv1_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BTV 1
-https://live.fptplay53.net/epzhd2/btv1_hls.smil/chunklist_b2500000.m3u8
+https://live.fptplay53.net/fnxsd1/btv9_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BÌNH THUẬN
 https://freem3u.xyz/api/live/play.m3u8?vid=45
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CÀ MAU
@@ -146,11 +146,12 @@ https://live.fptplay53.net/fnxhd2/afchd_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐỒNG NAI
 https://live.fptplay53.net/epzsd1/dongnai1_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BÌNH DƯƠNG
-https://live.fptplay53.net/epzhd2/btv1_hls.smil/chunklist_b2500000.m3u8
+https://live.fptplay53.net/fnxsd1/btv9_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",CARTOON NETWORK
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-name="1" tvg-logo="",SCTV8
 https://liveh34.seenow.vn/hls/SCTV8/03.m3u8
+
 
 
 
