@@ -29,7 +29,7 @@ https://live.fptplay53.net/epzhd1/htvcphunu_vhls.smil/chunklist.m3u8
 https://live.fptplay53.net/epzhd1/htvcthuanviethd_vhls.smil/chunklist.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC CA NHẠC
 https://live.fptplay53.net/epzhd1/htvcmusic_vhls.smil/chunklist.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC+ CHANNEL B
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC CHANNEL B
 https://live.fptplay53.net/epzhd1/htvcplus_vhls.smil/chunklist.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",Quảng trị (QTV3)
 https://live.baoquangninh.vn/qtvlive/tv3live.m3u8
@@ -161,6 +161,7 @@ http://mytv.hoantran.name.vn:63213/rtp/232.84.1.33:8172
 http://mytv.hoantran.name.vn:63213/rtp/232.84.3.43:11794
 #EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",Cartoon Network
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
+
 
 
 
