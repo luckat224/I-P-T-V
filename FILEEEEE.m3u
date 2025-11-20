@@ -65,29 +65,29 @@ https://live.fptplay53.net/fnxhd1/vtv7hd_vhls.smil/chunklist_b5000000.m3u8
 https://live.fptplay53.net/epzhd1/vtv8hd_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 9
 https://live.fptplay53.net/fnxhd1/vtv9_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 1
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Giải Trí
 https://freem3u.xyz/api/live/play.m3u8?vid=180
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 2
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Phim Việt
 https://freem3u.xyz/api/live/play.m3u8?vid=175
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 10
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Movies
 https://freem3u.xyz/api/live/play.m3u8?vid=181
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 19
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On E - Channel
 https://freem3u.xyz/api/live/play.m3u8?vid=182
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 4
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On O2TV
 https://freem3u.xyz/api/live/play.m3u8?vid=136
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 5
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On BiBi
 https://freem3u.xyz/api/live/play.m3u8?vid=178
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 12
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On INFO
 https://freem3u.xyz/api/live/play.m3u8?vid=189
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 15
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Cine
 https://freem3u.xyz/api/live/play.m3u8?vid=176
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 17
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Style
 https://freem3u.xyz/api/live/play.m3u8?vid=184
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 20
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Music
 https://freem3u.xyz/api/live/play.m3u8?vid=185
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 22
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On TRENDING
 https://freem3u.xyz/api/live/play.m3u8?vid=186
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTVCAB 9
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Dramas
 https://freem3u.xyz/api/live/play.m3u8?vid=177
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐÀ NẴNG
 https://live.fptplay53.net/epzsd1/danang2_hls.smil/chunklist_b2500000.m3u8
@@ -161,6 +161,7 @@ http://mytv.hoantran.name.vn:63213/rtp/232.84.1.33:8172
 http://mytv.hoantran.name.vn:63213/rtp/232.84.3.43:11794
 #EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",Cartoon Network
 http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
+
 
 
 
