@@ -1,0 +1,14 @@
+// Tiếng Anh Lớp 6
+
+[
+    {
+        "question": "1. CPU là viết tắt của cụm từ nào?",
+        "options": ["Central Processing Unit", "Control Power User", "Computer Personal Unit", "Central Program Utility"],
+        "answer": "Central Processing Unit"
+    },
+    {
+        "question": "2. HTML dùng để làm gì?",
+        "options": ["Thiết kế giao diện web", "Lập trình hệ điều hành", "Tạo virus", "Quản lý cơ sở dữ liệu"],
+        "answer": "Thiết kế giao diện web"
+    }
+]
