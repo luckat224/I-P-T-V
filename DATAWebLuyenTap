@@ -1,16 +1,248 @@
-Môn: Tin học
+Môn: TIN HỌC
+
+
+
+
+
 1. Mạng không dây được kết nối bằng:
 Bluetooth
 Dây mạng
 Cáp điện
 Cáp quang
 Đáp án: Bluetooth
-2. Trong giờ Tin học, giáo viên yêu cầu chỉ ra đâu là ưu điểm của mạng không dây. Các bạn HS đưa ra các ý kiến sau đây: (Đánh giá tính đúng/sai của các phát biểu)
+
+2. Thiết bị cơ bản của mạng có dây là:
+Cáp mạng, Switch
+Access Point, Modem
+Switch, Modem
+Access Point, cáp mạng
+Đáp án: Cáp mạng, Switch
+
+3. Chiếc điều khiển ti vi vi điều khiển ti vi bằng gì?
+Dây cáp
+Bluetooth
+Sóng điện từ
+Mạng không dây
+Đáp án: Sóng điện từ
+
+4. Đâu không phải là đặc điểm của cáp xoắn:
+Lõi làm bằng chất liệu trong suốt
+Truyền thông tin bằng dòng điện
+Có một lớp vỏ bọc lại
+Lõi đồng
+Đáp án: Lõi làm bằng chất liệu trong suốt
+
+5. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 5: Switch)
+Modem
+Cáp quang
+Cáp xoắn
+Switch
+Đáp án: Switch
+
+6. Thiết bị nào sau đây là thiết bị kết nối mạng?
+Cáp xoắn, máy quét, Switch.
+Cáp xoắn, cáp quang, Switch, modem mạng.
+Máy tính, Switch, modem mạng.
+Máy in, cáp quang, Switch, modem mạng.
+Đáp án: Cáp xoắn, cáp quang, Switch, modem mạng.
+
+7. Một mạng máy tính gồm
+Tối thiểu năm máy tính được liên kết với nhau.
+Một số máy tính.
+Một nhóm các máy tính và thiết bị được kết nối để truyền dữ liệu
+Tất cả các máy tính trong một phòng hoặc trong một nhà.
+Đáp án: Một nhóm các máy tính và thiết bị được kết nối để truyền dữ liệu
+
+8. Mạng LAN là mạng kết nối dùng trong phạm vi:
+Lớn
+Vừa
+Nhỏ
+Trên toàn thế giới
+Đáp án: Nhỏ
+
+9. Đơn vị đo dung lượng thông tin nhỏ nhất là gì?
+Byte
+Digit
+Kilobyte
+Bit
+Đáp án: Byte
+
+10. Em hãy cho biết 1 KB = ? B
+1024
+1022
+1025
+1023
+Đáp án: 1024
+
+11. Chu trình xử lí thông tin của máy tính gồm những bước nào:
+Xử lí đầu vào, xử lí dữ liệu, xử lí đầu ra
+Xử lí đầu vào, xử lí đầu ra, xử lí dữ liệu
+Xử lí dữ liệu, xử lí đầu vào, xử lí đầu ra
+Xử lí đầu vào, xử lí dữ liệu ra, xử lí dữ liệu
+Đáp án: Xử lí đầu vào, xử lí dữ liệu, xử lí đầu ra
+
+12. Thiết bị số nào dưới đây có khả năng lưu trữ dữ liệu?
+Bàn phím
+Chuột
+Loa
+Ổ đĩa cứng
+Đáp án: Ổ đĩa cứng
+
+13. Bit là đơn vị nhỏ nhất dùng để:
+Biểu diễn và lưu trữ thông tin
+Biểu diễn các con số
+Biểu diễn các chữ cái
+Biểu diễn các hình ảnh
+Đáp án: Biểu diễn và lưu trữ thông tin
+
+14. Biển báo sau chứa dữ liệu dạng gì? (Hình ảnh gốc cho câu 14: Biển báo 3,5m)
+Dạng hình ảnh
+Dạng chữ
+Dạng số
+Dạng hình ảnh, chữ và số
+Đáp án: Dạng hình ảnh, chữ và số
+
+15. Chú cảnh sát thổi còi và giơ gậy làm hiệu khi đèn giao thông chuyển sang màu đỏ. Em hãy cho biết thông tin đó có dạng gì?
+Hình ảnh
+Âm thanh
+Hình ảnh và âm thanh
+Chữ và âm thanh
+Đáp án: Hình ảnh và âm thanh
+
+16. Thiết bị nào sau đây của máy tính được ví như bộ não của con người?
+Màn hình
+Chuột
+Bàn phím
+CPU
+Đáp án: CPU
+
+17. Con người thu nhận thông tin trực tiếp nhờ:
+Vật mang tin
+Năm giác quan
+Bộ não
+Dữ liệu
+Đáp án: Năm giác quan
+
+18. Em đi trên đường nhìn thấy băng chỉ đường. Vậy biển chỉ đường là:
+Thông tin
+Dữ liệu
+Vật mang tin
+Thông tin và dữ liệu
+Đáp án: Vật mang tin
+
+19. Mỗi sáng, em đều nghe thấy chuông đồng hồ báo thức reo. Theo em, đó là thông tin dạng gì?
+Dạng hình ảnh
+Dạng số
+Dạng âm thanh
+Dạng chữ
+Đáp án: Dạng âm thanh
+
+20. Trong khi điều tra, cảnh sát đã phán đoán, suy luận để chứng minh tội phạm. Hành động đó được gọi là:
+Thu nhận thông tin
+Xử lí thông tin
+Truyền thông tin
+Lưu trữ thông tin
+Đáp án: Xử lí thông tin
+
+21. "Kĩ sư xem bản vẽ để chỉ huy xây dựng công trình". Theo em, vật mang tin trong tình huống này là gì?
+Kĩ sư
+Bộ não ghi nhớ thông tin của kĩ sư
+Bản vẽ trên giấy
+Công trình xây dựng
+Đáp án: Bản vẽ trên giấy
+
+22. Biển báo sau chứa dữ liệu dạng gì? (Hình ảnh gốc cho câu 22: Biển báo đường sắt)
+Dạng hình ảnh
+Dạng chữ
+Dạng số
+Dạng âm thanh
+Đáp án: Dạng hình ảnh
+
+24. Mạng LAN là viết tắt của cụm từ nào?
+Local Arian Network
+Lomal Area Network
+Local Area Nework
+Local Area Network
+Đáp án: Local Area Network
+
+25. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 25: Modem)
+Modem
+Cáp quang
+Cáp xoắn
+Switch
+Đáp án: Modem
+
+26. Thiết bị cơ bản của mạng có dây là:
+Cáp mạng
+Access Point
+Switch
+Cáp quang
+Đáp án: Access Point
+
+27. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 27: Cáp quang)
+Modem
+Cáp quang
+Cáp xoắn
+Switch
+Đáp án: Cáp quang
+
+28. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 28: Cáp xoắn)
+Modem
+Cáp quang
+Cáp xoắn
+Switch
+Đáp án: Cáp xoắn
+
+29. Em hãy cho biết 1 MB = ? KB
+1024
+1022
+1025
+1023
+Đáp án: 1024
+
+30. Xe cứu thương phát còi tín hiệu để người tham gia giao thông nhường đường. Em hãy cho biết thông tin đó có dạng gì?
+Hình ảnh
+Âm thanh
+Hình ảnh và âm thanh
+Chữ và âm thanh
+Đáp án: Âm thanh
+
+PHẦN II - Câu 1: Trong giờ Tin học, giáo viên yêu cầu chỉ ra đâu là ưu điểm của mạng không dây. Các bạn HS đưa ra các ý kiến sau đây:
 A. Kết nối nhanh chóng, tiện lợi, dễ dàng thêm thiết bị mới, đúng
 B. Tín hiệu mạng ổn định, không bị ảnh hưởng bởi yếu tố thời tiết., sai
 C. Không cần dây cáp., đúng
 D. Không hạn chế số lượng thiết bị kết nối., đúng
-Làm cho thông minh nhất, nhận diện chữ thường chữ in, dấu chấm dấu phẩy thiếu chút cũng oke
-Câu 2b. Việc phát hiện ra công cụ đá và răng hóa thạch của Người tối cổ ở Việt Nam chứng tỏ điều gì?
-                Gợi ý: Chứng tỏ người tối cổ xuất hiện khá sớm ở Việt Nam.
-                Đáp án: Chứng tỏ người tối cổ xuất hiện khá sớm ở Việt Nam
+
+PHẦN II - Câu 2: Trong lớp học, cô giáo đặt câu hỏi An xung phong trả lời câu hỏi; sau khi nghe cô giáo giảng bài An đã cẩn thận ghi chép nội dung bài vào tập. Bạn An đã thực hiện những việc làm nào sau đây:
+A. Lưu trữ thông tin, đúng
+B. Trao đổi thông tin, đúng
+C. Tra cứu thông tin, sai
+D. Đọc dữ liệu, sai
+
+PHẦN II - Câu 3: Chọn phát biểu đúng/sai trong các câu bên dưới
+A. Các dòng chữ trên trang sách là dữ liệu chữ và số., đúng
+B. Hình ảnh in trên báo là dữ liệu hình ảnh., đúng
+C. Băng ghi âm chứa dữ liệu chữ., sai
+D. Băng ghi âm chứa dữ liệu âm thanh., đúng
+
+PHẦN II - Câu 4: Chọn phát biểu đúng/sai trong các câu bên dưới
+A. Mạng có dây là mạng dùng dây cáp để truyền dữ liệu, đúng
+B. Thiết bị cơ bản của mạng có dây: cáp mạng và Switch., đúng
+C. Mạng có dây truyền tín hiệu bằng sóng điện từ, sai
+D. Dùng mạng có dây sẽ thuận tiện hơn cho việc di chuyển, sai
+
+PHẦN III - Câu 1: Dựa vào hình ảnh bên dưới em hãy cho biết tên các thiết bị và phần mềm có trong ảnh? (Hình ảnh sơ đồ mạng)
+Gợi ý: modem, switch, máy tính, google chrome, windows 10
+Đáp án: Thiết bị: Modem, Switch, máy tính. Phần mềm: Google Chrome, Windows 10, facebook.
+
+PHẦN III - Câu 2: Hoàn thành bảng bên dưới: Thực hành đổi đơn vị dữ liệu
+Gợi ý: 1 Byte=8bit, 1KB=1024B
+Đáp án: 1 Byte = 8 Bit; 1 KB = 1024 B; 2 KB = 2048 B; 1 MB = 1024 KB
+
+PHẦN III - Câu 3: Nêu ba thành phần của mạng máy tính?
+Gợi ý: máy tính, thiết bị mạng, phần mềm
+Đáp án: 1. Các máy tính/thiết bị gửi nhận. 2. Các thiết bị mạng kết nối. 3. Phần mềm giao tiếp.
+
+PHẦN III - Câu 4: Chu trình xử lí thông tin có mấy bước? Liệt kê?
+Gợi ý: 3 bước
+Đáp án: 3 bước: Xử lí đầu vào -> Xử lí dữ liệu -> Xử lí đầu ra.
