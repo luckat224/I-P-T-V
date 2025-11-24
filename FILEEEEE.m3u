@@ -149,18 +149,19 @@ https://live.fptplay53.net/epzsd1/dongnai1_hls.smil/chunklist_b2500000.m3u8
 https://live.fptplay53.net/epzhd1/htv1_hls.smil/chunklist_b2500000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-name="1" tvg-logo="",SCTV8
 https://liveh34.seenow.vn/hls/SCTV8/03.m3u8
-#EXTINF:0 tvg-id="ksport1hd" tvg-logo="https://img.lichphatsong.site/logo/ksport1hd.jpg",K+ Sport 1
-http://mytv.hoantran.name.vn:63213/rtp/232.84.1.98:8562
-#EXTINF:0 tvg-id="ksport2hd" tvg-logo="https://img.lichphatsong.site/logo/ksport2hd.jpg",K+ Sport 2
-http://mytv.hoantran.name.vn:63213/rtp/232.84.1.34:8178
-#EXTINF:0 tvg-id="kcinehd" tvg-logo="https://img.lichphatsong.site/logo/kcinehd.jpg",K+ Cine
-http://mytv.hoantran.name.vn:63213/rtp/232.84.1.122:10314
-#EXTINF:0 tvg-id="kaction" tvg-logo="https://img.lichphatsong.site/logo/kaction.jpg",K+ Action
-http://mytv.hoantran.name.vn:63213/rtp/232.84.1.33:8172
-#EXTINF:0 tvg-id="kkidshd" tvg-logo="https://img.lichphatsong.site/logo/kkidshd.jpg",K+ Kids
-http://mytv.hoantran.name.vn:63213/rtp/232.84.3.43:11794
+#EXTINF:0 tvg-id="kcinehd" group-title="MyTV" tvg-logo="https://img.lichphatsong.site/logo/kcinehd.jpg",K+ Cine
+http://mytv.hoantran.name.vn:27031/rtp/232.84.1.122:10314
+#EXTINF:0 tvg-id="kaction" group-title="MyTV" tvg-logo="https://img.lichphatsong.site/logo/kaction.jpg",K+ Action
+http://mytv.hoantran.name.vn:27031/rtp/232.84.1.33:8172
+#EXTINF:0 tvg-id="ksport1hd" group-title="MyTV" tvg-logo="https://img.lichphatsong.site/logo/ksport1hd.jpg",K+ Sport 1
+http://mytv.hoantran.name.vn:27031/rtp/232.84.1.37:8196
+#EXTINF:0 tvg-id="ksport2hd" group-title="MyTV" tvg-logo="https://img.lichphatsong.site/logo/ksport2hd.jpg",K+ Sport 2
+http://mytv.hoantran.name.vn:27031/rtp/232.84.1.34:8178
+#EXTINF:0 tvg-id="kkidshd" group-title="MyTV" tvg-logo="https://img.lichphatsong.site/logo/kkidshd.jpg",K+ Kids
+http://mytv.hoantran.name.vn:27031/rtp/232.84.3.42:11800
 #EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",Cartoon Network
-http://mytv.hoantran.name.vn:63213/rtp/232.84.2.144:10684
+http://mytv.hoantran.name.vn:27031/rtp/232.84.2.144:10684
+
 
 
 
