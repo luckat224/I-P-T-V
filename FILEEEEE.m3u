@@ -164,7 +164,8 @@ http://mytv.hoantran.name.vn:27031/rtp/232.84.2.144:10684
 
 #EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",huhu
 
-http://mytv.hoantran.name.vn:27031/rtp/232.84.3.172:10494
+http://mytv.hoantran.name.vn:27031/udp/25.1.3.135:30120
+
 
 
 
