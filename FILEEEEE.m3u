@@ -162,9 +162,10 @@ http://mytv.hoantran.name.vn:27031/rtp/232.84.3.42:11800
 #EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",Cartoon Network
 http://mytv.hoantran.name.vn:27031/rtp/232.84.2.144:10684
 
-#EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",hẹ hẹ
+#EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",hẹ hẹvh
 
 http://mytv.hoantran.name.vn:27031/rtp/239.12.252.70:5000
+
 
 
 
