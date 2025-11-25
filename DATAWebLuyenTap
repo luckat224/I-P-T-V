@@ -1,259 +1,849 @@
-Môn: TIN HỌC
-1. Mạng không dây được kết nối bằng:
-Ảnh: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJMA+gMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAABQYHBAIB/8QANxABAAEDAgIFCgUEAwAAAAAAAAECAwQFEQYhEhMxcdEXMkFRVGFygZGhBxQiscEVI0KCYrLC/8QAGwEBAAMBAQEBAAAAAAAAAAAAAAMFBgQCAQf/xAAyEQEAAgECAwMKBgMAAAAAAAAAAQIDBBEFEjEhQVETFBUiUlNxwdHwYYGRobHxBjJC/9oADAMBAAIRAxEAPwCugKN+kgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ7SdEnN4d1PUOjM1WOj1Xy51/aUWXLXFXmt4xH6o8mSuON7fe6BASpAAAAAAAAAAAAAAAAAAAAAAAAAAAABsXDmm04XD2NiXaOddve7E+maucx99vkzDhrA/qWuYmNMb0TX0q/hjnP7bNmZvj+fbkxR8fp81HxjN/rjj4/Rh+o4tWDn5GLX22blVG/r2ntcy2/iPg/l9Zt5VMfpybfOf8AlTyn7dFUl5pM3l8FcnjH9rbT5fK4q38QB0JgAAAAAAAAAAAAAAAAAAAAHZpeDTqGTGPOXZxqqvNm9vFNU+reI5PNrRSs2no82tFY3lxi4+T3Uva8T61eB5PdS9rxPrV4OL0no/eQ5vP9N7anC4+T3Uva8T61eB5PdS9rxPrV4HpPR+8g8/03tuv8MsDerL1CqOzazRP3q/8AK+o3h7TP6RpNnDmaaq6d5rqp7Jqmd0kyGv1HnGoteOnd8Gb1mby2a146Kx+IWD+a0Gb1Mb141cV/6zyn94n5Mtbpl2KMrFvY9zzLtE0Vd0xszzye6l7XifWrwXPB9fixYZx5bbbT2LLhusx48c0yTspwuPk91L2vE+tXgeT3Uva8T61eC29J6P3kLLz/AE3tqcLj5PdS9rxPrV4IbXNBq0XanIzsa5enss25qmrb1zy5JMeu0+W3LS28vVNXhyW5a23lDgOt0gAAAAAAAAAAAAAAAAALXwzxjkab0MbUOlfxI5RPbXb7vXHuaRh5ePnY9ORiXabtqrsqplhiR0XWs3RsjrcO5+mfPt1c6a++P5Uuv4PTPvfF2W/aVXrOG1y+vj7LftLaBDcP8R4Wt2trU9VkxG9diqece+PXCZZPLivitNLxtLPZMdsduW0bSAI3gAAfKqqaKZqrqimmI3mZnaIhx6tquHpGNN/NuxTH+NMc6q59UQzHiPijM1qqbcTNjEieVmmfO99U+n9lhouHZdXO8dlfH6eLs0uiyaid47I8Vh4l44inp4uizE1dlWTMco+HxUK5cru3Krl2uquuqd6qqp3mZeRsNLo8Wlry44/PvlpNPpseCu1IAHU6AAAAAAAAAAAAAAAAAAAAHuzduWbtN2zXVRcpnemqmdpiW1aNVk16ViV51XSyKrVNVydtucsk4dwf6lrWJizG9FVcTX8Mc5+0NnZn/IMld6Y+/qouMXjetO/qAM2pB5u9Pqq+qmIudGejNXZv6N3ofYGIalmZebl3Lufcrrv77T0v8fdEehyp7jbB/I8RZMRG1F7+9T/t2/fdAv0PT3rfFW1I2iYbPDatsdbV6TAAmSgAAAAAAAAAAAAAAAAAAAAALz+GWD0r2Xn1RypiLVE++ec/x9WgIfhTCjTeH8W3X+mqqjrbkzy2mrnz7o2j5IHiXjeiz08XRppuXOyrI7aafh9ff2d7F6imXiGst5KN+78NoZfNXJrNTbkhP6/xDhaJa/v1dZkTG9Fiif1T3+qGeX+LtXu6lGZTkdX0eVNmnzNvVMenvQd67cv3art6uq5crneqqqd5mXhoNHwrBp6+tHNM9d/kudNw/Fhr60by1rhzinE1qmLVW1jMiOdqZ5Ve+mfT3dqfYPTVVRVFVEzTVE7xMTtMSvXDPG8x0MXWqt47Kcnb/t4qrX8Fmm+TT9seHf8AkrtZwya+vh7Y8HR+JuD08TFzqY5265t19084+8fdnjZ9cxKNV0PJsW5ivrbXStzTO8TMc6dvnEMYd/A83Pp5xz1rP8/cuzhWXmw8k/8AIAuloAAAAAAAAAAAAAAAAAAAAOjA6j87Z/NzMY8VxNzaN56MdsOcfLRvGz5MbxssPEfFeXrE1WbW+Ph+i3TPOv4p/jsV4EeHDjw05McbQ8YsVMVeWkbQAJUgACd4c4nzNEri3vN7Emf1Wap7PfTPoRuq149zUci5hzPUXK5roiY2mInnt8t9vk5BDXBjrknJWNpnr+KKuGlbzeI7Z6gCZKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/9k=
-Ảnh: data:image/jpeg;base64,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H0whmkNpwnE2OFlQ96w3xvxi2mzHfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+jCyoe9Yb434w02N9wn30v6MLKh71hvjfjDTY33CffS/owsqHvWG+N+MNNjfcJ99L+n23ZGxyI2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QA2QB5n98TTMnm/Nxj8x6D49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49Hguh74mmZPN+bjAePR4Loe+JpmTzfm4wHj0eC6HviaZk835uMB49HgujCiDYQAgBACAEAIAQAgBACAEAIAQAgBACAEAIAQAgBACAEAIAQAgBACAEAIAQAgBAH//Z
-Bluetooth
-Dây mạng
-Cáp điện
-Cáp quang
-Đáp án: Bluetooth
+Môn: Tiếng anh
+SMART WORLD 6 - REVISION FOR THE FIRST SEMESTER TEST
 
-2. Thiết bị cơ bản của mạng có dây là:
-Cáp mạng, Switch
-Access Point, Modem
-Switch, Modem
-Access Point, cáp mạng
-Đáp án: Cáp mạng, Switch
+I. PRONUNCIATION (Phát âm)
 
-3. Chiếc điều khiển ti vi vi điều khiển ti vi bằng gì?
-Dây cáp
-Bluetooth
-Sóng điện từ
-Mạng không dây
-Đáp án: Sóng điện từ
+Choose the word whose underlined part is pronounced differently from that of the others.
 
-4. Đâu không phải là đặc điểm của cáp xoắn:
-Lõi làm bằng chất liệu trong suốt
-Truyền thông tin bằng dòng điện
-Có một lớp vỏ bọc lại
-Lõi đồng
-Đáp án: Lõi làm bằng chất liệu trong suốt
+Which word has the underlined part pronounced differently from that of the others?
+A. puppets
+B. shows
+C. orders
+D. stands
+Đáp án: A (âm /s/, các từ còn lại âm /z/)
 
-5. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 5: Switch)
-Modem
-Cáp quang
-Cáp xoắn
-Switch
-Đáp án: Switch
+Which word has the underlined part pronounced differently from that of the others?
+A. fixes
+B. pushes
+C. misses
+D. goes
+Đáp án: D (âm /z/, các từ còn lại âm /ɪz/)
 
-6. Thiết bị nào sau đây là thiết bị kết nối mạng?
-Cáp xoắn, máy quét, Switch.
-Cáp xoắn, cáp quang, Switch, modem mạng.
-Máy tính, Switch, modem mạng.
-Máy in, cáp quang, Switch, modem mạng.
-Đáp án: Cáp xoắn, cáp quang, Switch, modem mạng.
+Which word has the underlined part pronounced differently from that of the others?
+A. fireworks
+B. flowers
+C. gifts
+D. shops
+Đáp án: B (âm /z/, các từ còn lại âm /s/ - Lưu ý: "gifts" /s/, "shops" /s/, "fireworks" /s/, "flowers" /z/. Đề bài có thể in lỗi hoặc đáp án là B)
 
-7. Một mạng máy tính gồm
-Tối thiểu năm máy tính được liên kết với nhau.
-Một số máy tính.
-Một nhóm các máy tính và thiết bị được kết nối để truyền dữ liệu
-Tất cả các máy tính trong một phòng hoặc trong một nhà.
-Đáp án: Một nhóm các máy tính và thiết bị được kết nối để truyền dữ liệu
+Which word has the underlined part pronounced differently from that of the others?
+A. history
+B. biology
+C. village
+D. literature
+Đáp án: B (âm /aɪ/, các từ còn lại âm /ɪ/)
 
-8. Mạng LAN là mạng kết nối dùng trong phạm vi:
-Lớn
-Vừa
-Nhỏ
-Trên toàn thế giới
-Đáp án: Nhỏ
+Which word has the underlined part pronounced differently from that of the others?
+A. indoor
+B. festival
+C. like
+D. dinner
+Đáp án: C (âm /aɪ/, các từ còn lại âm /ɪ/)
 
-9. Đơn vị đo dung lượng thông tin nhỏ nhất là gì?
-Byte
-Digit
-Kilobyte
-Bit
-Đáp án: Byte
+Which word has the underlined part pronounced differently from that of the others?
+A. light
+B. stripe
+C. slim
+D. fine
+Đáp án: C (âm /ɪ/, các từ còn lại âm /aɪ/)
 
-10. Em hãy cho biết 1 KB = ? B
-1024
-1022
-1025
-1023
-Đáp án: 1024
+Choose the word that has a different stress pattern from that of the others.
 
-11. Chu trình xử lí thông tin của máy tính gồm những bước nào:
-Xử lí đầu vào, xử lí dữ liệu, xử lí đầu ra
-Xử lí đầu vào, xử lí đầu ra, xử lí dữ liệu
-Xử lí dữ liệu, xử lí đầu vào, xử lí đầu ra
-Xử lí đầu vào, xử lí dữ liệu ra, xử lí dữ liệu
-Đáp án: Xử lí đầu vào, xử lí dữ liệu, xử lí đầu ra
+Which word has a different stress pattern from that of the others?
+A. secret
+B. scary
+C. event
+D. outdoor
+Đáp án: C (trọng âm 2, các từ còn lại trọng âm 1)
 
-12. Thiết bị số nào dưới đây có khả năng lưu trữ dữ liệu?
-Bàn phím
-Chuột
-Loa
-Ổ đĩa cứng
-Đáp án: Ổ đĩa cứng
+Which word has a different stress pattern from that of the others?
+A. balcony
+B. subject
+C. adventure
+D. favorite
+Đáp án: C (trọng âm 2, các từ còn lại trọng âm 1)
 
-13. Bit là đơn vị nhỏ nhất dùng để:
-Biểu diễn và lưu trữ thông tin
-Biểu diễn các con số
-Biểu diễn các chữ cái
-Biểu diễn các hình ảnh
-Đáp án: Biểu diễn và lưu trữ thông tin
+Which word has a different stress pattern from that of the others?
+A. selfish
+B. picnic
+C. hotel
+D. homework
+Đáp án: C (trọng âm 2, các từ còn lại trọng âm 1)
 
-14. Biển báo sau chứa dữ liệu dạng gì? (Hình ảnh gốc cho câu 14: Biển báo 3,5m)
-Dạng hình ảnh
-Dạng chữ
-Dạng số
-Dạng hình ảnh, chữ và số
-Đáp án: Dạng hình ảnh, chữ và số
+II. MULTIPLE CHOICE (Ngữ pháp & Từ vựng)
 
-15. Chú cảnh sát thổi còi và giơ gậy làm hiệu khi đèn giao thông chuyển sang màu đỏ. Em hãy cho biết thông tin đó có dạng gì?
-Hình ảnh
-Âm thanh
-Hình ảnh và âm thanh
-Chữ và âm thanh
-Đáp án: Hình ảnh và âm thanh
+Choose the most suitable words or phrases to fill in the blanks.
 
-16. Thiết bị nào sau đây của máy tính được ví như bộ não của con người?
-Màn hình
-Chuột
-Bàn phím
-CPU
-Đáp án: CPU
+We like English, physics ________ biology.
+A. to
+B. or
+C. and
+D. so
+Đáp án: C
 
-17. Con người thu nhận thông tin trực tiếp nhờ:
-Vật mang tin
-Năm giác quan
-Bộ não
-Dữ liệu
-Đáp án: Năm giác quan
+We love playing soccer ________ badminton in our free time.
+A. and
+B. or
+C. on
+D. with
+Đáp án: A
 
-18. Em đi trên đường nhìn thấy băng chỉ đường. Vậy biển chỉ đường là:
-Thông tin
-Dữ liệu
-Vật mang tin
-Thông tin và dữ liệu
-Đáp án: Vật mang tin
+There isn’t a gym ________ a swimming pool near my house.
+A. and
+B. or
+C. but
+D. for
+Đáp án: B
 
-19. Mỗi sáng, em đều nghe thấy chuông đồng hồ báo thức reo. Theo em, đó là thông tin dạng gì?
-Dạng hình ảnh
-Dạng số
-Dạng âm thanh
-Dạng chữ
-Đáp án: Dạng âm thanh
+She doesn’t like math ________ biology.
+A. and
+B. or
+C. but
+D. for
+Đáp án: B
 
-20. Trong khi điều tra, cảnh sát đã phán đoán, suy luận để chứng minh tội phạm. Hành động đó được gọi là:
-Thu nhận thông tin
-Xử lí thông tin
-Truyền thông tin
-Lưu trữ thông tin
-Đáp án: Xử lí thông tin
+His hometown is in the south ________ Italy.
+A. in
+B. on
+C. at
+D. of
+Đáp án: D
 
-21. "Kĩ sư xem bản vẽ để chỉ huy xây dựng công trình". Theo em, vật mang tin trong tình huống này là gì?
-Kĩ sư
-Bộ não ghi nhớ thông tin của kĩ sư
-Bản vẽ trên giấy
-Công trình xây dựng
-Đáp án: Bản vẽ trên giấy
+Cần Thơ is in the Mekong Delta, ________ the Hậu River.
+A. for
+B. in
+C. on
+D. at
+Đáp án: C
 
-22. Biển báo sau chứa dữ liệu dạng gì? (Hình ảnh gốc cho câu 22: Biển báo đường sắt)
-Dạng hình ảnh
-Dạng chữ
-Dạng số
-Dạng âm thanh
-Đáp án: Dạng hình ảnh
+The restaurant opens ________ Sundays.
+A. of
+B. for
+C. at
+D. on
+Đáp án: D
 
-24. Mạng LAN là viết tắt của cụm từ nào?
-Local Arian Network
-Lomal Area Network
-Local Area Nework
-Local Area Network
-Đáp án: Local Area Network
+Students don’t go to school ________ Sundays.
+A. in
+B. at
+C. on
+D. of
+Đáp án: C
 
-25. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 25: Modem)
-Modem
-Cáp quang
-Cáp xoắn
-Switch
-Đáp án: Modem
+Tom has Biology, Geography ________ Friday.
+A. at
+B. on
+C. in
+D. with
+Đáp án: B
 
-26. Thiết bị cơ bản của mạng có dây là:
-Cáp mạng
-Access Point
-Switch
-Cáp quang
-Đáp án: Access Point
+Our Math lesson usually finishes ________ 4.00 p.m.
+A. on
+B. of
+C. at
+D. for
+Đáp án: C
 
-27. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 27: Cáp quang)
-Modem
-Cáp quang
-Cáp xoắn
-Switch
-Đáp án: Cáp quang
+My brother sometimes plays game "Free Fire" with his friends ________ the evening.
+A. on
+B. for
+C. at
+D. in
+Đáp án: D
 
-28. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 28: Cáp xoắn)
-Modem
-Cáp quang
-Cáp xoắn
-Switch
-Đáp án: Cáp xoắn
+What do you do ________ your free time?
+A. on
+B. in
+C. at
+D. to
+Đáp án: B
 
-29. Em hãy cho biết 1 MB = ? KB
-1024
-1022
-1025
-1023
-Đáp án: 1024
+My best friend is very kind ________ lazy.
+A. but
+B. and
+C. so
+D. or
+Đáp án: A
 
-30. Xe cứu thương phát còi tín hiệu để người tham gia giao thông nhường đường. Em hãy cho biết thông tin đó có dạng gì?
-Hình ảnh
-Âm thanh
-Hình ảnh và âm thanh
-Chữ và âm thanh
-Đáp án: Âm thanh
+Excuse me, what size are ________ pants over there?
+A. this
+B. that
+C. these
+D. those
+Đáp án: D
 
-PHẦN II - Câu 1: Trong giờ Tin học, giáo viên yêu cầu chỉ ra đâu là ưu điểm của mạng không dây. Các bạn HS đưa ra các ý kiến sau đây:
-A. Kết nối nhanh chóng, tiện lợi, dễ dàng thêm thiết bị mới, đúng
-B. Tín hiệu mạng ổn định, không bị ảnh hưởng bởi yếu tố thời tiết., sai
-C. Không cần dây cáp., đúng
-D. Không hạn chế số lượng thiết bị kết nối., đúng
+The new ship has got a ________ with a lot of books.
+A. cabin
+B. library
+C. swimming pool
+D. shop
+Đáp án: B
 
-PHẦN II - Câu 2: Trong lớp học, cô giáo đặt câu hỏi An xung phong trả lời câu hỏi; sau khi nghe cô giáo giảng bài An đã cẩn thận ghi chép nội dung bài vào tập. Bạn An đã thực hiện những việc làm nào sau đây:
-A. Lưu trữ thông tin, đúng
-B. Trao đổi thông tin, đúng
-C. Tra cứu thông tin, sai
-D. Đọc dữ liệu, sai
+My friends and I ________ camping in the summer. We have a good time.
+A. go usually
+B. usually go
+C. never go
+D. go never
+Đáp án: B
 
-PHẦN II - Câu 3: Chọn phát biểu đúng/sai trong các câu bên dưới
-A. Các dòng chữ trên trang sách là dữ liệu chữ và số., đúng
-B. Hình ảnh in trên báo là dữ liệu hình ảnh., đúng
-C. Băng ghi âm chứa dữ liệu chữ., sai
-D. Băng ghi âm chứa dữ liệu âm thanh., đúng
+Nam ________ video games on Sundays.
+A. often play
+B. plays often
+C. often plays
+D. play often
+Đáp án: C
 
-PHẦN II - Câu 4: Chọn phát biểu đúng/sai trong các câu bên dưới
-A. Mạng có dây là mạng dùng dây cáp để truyền dữ liệu, đúng
-B. Thiết bị cơ bản của mạng có dây: cáp mạng và Switch., đúng
-C. Mạng có dây truyền tín hiệu bằng sóng điện từ, sai
-D. Dùng mạng có dây sẽ thuận tiện hơn cho việc di chuyển, sai
+Nam usually walks to school and he ________ late.
+A. never is
+B. never go
+C. is never
+D. are never
+Đáp án: C
 
-PHẦN III - Câu 1: Dựa vào hình ảnh bên dưới em hãy cho biết tên các thiết bị và phần mềm có trong ảnh? (Hình ảnh sơ đồ mạng)
-Gợi ý: modem, switch, máy tính, google chrome, windows 10
-Đáp án: Thiết bị: Modem, Switch, máy tính. Phần mềm: Google Chrome, Windows 10, facebook.
+He has ________ and brown eyes.
+A. short brown hair
+B. brown short hair
+C. a short brown hair
+D. a brown short hair
+Đáp án: A (Thứ tự tính từ: Kích thước - Màu sắc)
 
-PHẦN III - Câu 2: Hoàn thành bảng bên dưới: Thực hành đổi đơn vị dữ liệu
-Gợi ý: 1 Byte=8bit, 1KB=1024B
-Đáp án: 1 Byte = 8 Bit; 1 KB = 1024 B; 2 KB = 2048 B; 1 MB = 1024 KB
+My sister has ________.
+A. short black hair
+B. short hair black
+C. hair short hair
+D. black short hair
+Đáp án: A
 
-PHẦN III - Câu 3: Nêu ba thành phần của mạng máy tính?
-Gợi ý: máy tính, thiết bị mạng, phần mềm
-Đáp án: 1. Các máy tính/thiết bị gửi nhận. 2. Các thiết bị mạng kết nối. 3. Phần mềm giao tiếp.
+She has ________.
+A. long blond hair
+B. blond long hair
+C. hair long blond
+D. long hair blond
+Đáp án: A
 
-PHẦN III - Câu 4: Chu trình xử lí thông tin có mấy bước? Liệt kê?
-Gợi ý: 3 bước
-Đáp án: 3 bước: Xử lí đầu vào -> Xử lí dữ liệu -> Xử lí đầu ra.
+My sister has ________ hair.
+A. black long curly
+B. long curly black
+C. curly long black
+D. long black curly
+Đáp án: B (Thứ tự: Kích thước - Hình dáng - Màu sắc)
 
+My favorite subject is math. What’s ________?
+A. me
+B. my
+C. yours
+D. her
+Đáp án: C
 
+What’s your favorite subject? ________ is physics.
+A. I
+B. My
+C. Mine
+D. Yours
+Đáp án: C
 
-Môn: Lý thuyết
-PHẦN II - Câu 22: Chu trình xử lí thông tin có mấy bước? Liệt kê?
-Gợi ý: 3 bước
-Đáp án: 3 bước: Xử lí đầu vào -> Xử lí dữ liệu -> Xử lí đầu ra.
+My favorite sport is tennis. What is ________?
+A. your
+B. yours
+C. my
+D. mine
+Đáp án: B
 
-5. Hình dưới đây nói về thiết bị mạng nào? (Hình ảnh gốc cho câu 28: Cáp xoắn)
-Modem
-Cáp quang
-Cáp xoắn
-Switch
-Đáp án: Cáp xoắn
+Do you have a ruler? ________ is at home.
+A. Their
+B. His
+C. Ours
+D. Mine
+Đáp án: D
+
+What’s Peter ________? -> He’s very kind and helpful.
+A. do
+B. doing
+C. love
+D. like
+Đáp án: D (like trong câu hỏi tính cách)
+
+Student A: "Where is your hometown?" -> Student B: "________"
+A. I love my hometown.
+B. It’s in the east of Vietnam.
+C. My hometown is a big city.
+D. My hometown is very good for growing rice.
+Đáp án: B
+
+My favorite sport is volleyball. What’s ________?
+A. their
+B. mine
+C. yours
+D. her
+Đáp án: C
+
+Anna: What does your best friend look like? -> Lucy: ________
+A. She is slim and has long hair.
+B. She is so friendly.
+C. She likes going shopping.
+D. She is eleven years old.
+Đáp án: A
+
+Can I borrow your eraser? I can’t find ________.
+A. yours
+B. me
+C. my
+D. mine
+Đáp án: D
+
+Student A: "What color eyes does your sister have?" – Student B: "________"
+A. She has blue eyes.
+B. She likes green.
+C. She has brown hair.
+D. She has fair skin.
+Đáp án: A
+
+Anna: "What does your best friend look like?" – Lucy: "________"
+A. She is slim and has long hair.
+B. She is so friendly.
+C. She likes going shopping.
+D. She is eleven years old.
+Đáp án: A
+
+Peter: "How often do you go swimming?" -> Jenny: "________"
+A. I go swimming.
+B. I sometimes go swimming.
+C. I don’t like swimming.
+D. I go swimming with my friends.
+Đáp án: B
+
+Student A: "Is he from Italy?" - Student B: "________"
+A. No, he is
+B. Yes, he is
+C. Yes, he has.
+D. No, he hasn’t.
+Đáp án: B
+
+Student A: "What kind of book is it?" – Student B: "________"
+A. It’s a fantasy novel.
+B. I like Harry Porter.
+C. That’s a good idea.
+D. Here you are.
+Đáp án: A
+
+David: "What are you doing tomorrow?" - Mai: "I’m ________ a barbecue at my house."
+A. going
+B. having
+C. playing
+D. making
+Đáp án: B
+
+Ben: "________ do people prepare for Christmas?" - Jim: "They decorate their homes."
+A. Why
+B. Who
+C. How often
+D. How
+Đáp án: D
+
+Student A: "Why don’t we have a picnic this weekend?" – Student B: "________"
+A. Yes, we don’t
+B. No, we do
+C. Good idea
+D. You’re welcome
+Đáp án: C
+
+Student A: "Why don’t you sign up for book club?" – Student B: "________"
+A. Yes, good idea.
+B. I was born in 2003.
+C. I live in San Francisco.
+D. I clean my bedroom.
+Đáp án: A
+
+Student A: "Where is your hometown?" – Student B: "________"
+A. I love my hometown.
+B. It’s in the east of Vietnam.
+C. My hometown is a big city.
+D. My hometown is very good for growing rice.
+Đáp án: B
+
+Student A: "Does your apartment have a gym?" - Student B: "________"
+A. Yes, it is.
+B. No, it isn’t.
+C. Yes, it does.
+D. No, it does.
+Đáp án: C
+
+III. SIGNS (Biển báo)
+
+[Biển báo P - Parking]
+A. You can’t park your car here.
+B. You can park your car here.
+C. There aren’t many cars here.
+D. You can buy cars here.
+Đáp án: B
+
+[Biển báo STOP]
+A. You must stop
+B. You can’t stop
+C. You can’t run
+D. You can’t talk
+Đáp án: A
+
+[Biển báo cấm đỗ xe]
+A. You can’t park your car here.
+B. You can park your car here.
+C. There aren’t many cars here.
+D. You can buy cars here.
+Đáp án: A
+
+[Biển báo cấm ăn uống]
+A. Smoking
+B. No eating
+C. No littering
+D. No drinking
+Đáp án: B (Biển thường bao gồm cả cấm ăn và uống, nhưng B là hợp lý nhất trong ngữ cảnh "No eating")
+
+[Biển báo Open for Takeaway Only]
+A. You can eat in this restaurant.
+B. This restaurant doesn’t open.
+C. You can’t buy food here.
+D. You can’t eat inside restaurant.
+Đáp án: D
+
+[Biển báo Caution Wet Floor]
+A. You can’t go
+B. You must walk carefully
+C. You can run faster
+D. You will fall off
+Đáp án: B
+
+[Biển báo Slow Children at Play]
+A. Children play here.
+B. A park is nearby.
+C. You shouldn’t go fast in this area.
+D. Playing with the children is slow.
+Đáp án: A (Hoặc C cũng đúng về nghĩa, nhưng A mô tả biển báo trực tiếp hơn)
+
+[Biển báo Keep Off The Grass]
+A. Don’t run in class.
+B. Don’t step on grass.
+C. No smoking
+D. Take off your shoes
+Đáp án: B
+
+[Biển báo Please take off your shoes]
+A. People don’t sell shoes in this place.
+B. Please remove your shoes when you enter this place.
+C. You can find shoes when you are in this place.
+D. Don’t buy shoes when you enter this place.
+Đáp án: B
+
+[Biển báo 2m distance]
+A. Come together.
+B. Stand up in two lines.
+C. Go in pairs.
+D. Keep two meters away from people.
+Đáp án: D
+
+IV. VERB FORM (Chia động từ)
+
+Chia động từ trong ngoặc:
+
+Janet is very happy when she gets lucky money. (be)
+
+Cần Thơ is a city in the south of Vietnam. (be)
+
+The children are excited. (be)
+
+I am twelve. (be)
+
+She is happy because she gets good mark of the final test. (be)
+
+My brother and I are students. (be)
+
+There is a book on the desk. (be)
+
+There is an airport in the city. (be)
+
+There are many trees and flowers in my school garden. (be)
+
+There are two chairs in the living room. (be)
+
+There are a lot of pens on the table. (be)
+
+He doesn't go to the library after school on Sundays. (not go)
+
+She doesn't like sports. (not like)
+
+The children don't go to school at weekends. (not go)
+
+Lisa and Toby don't play soccer every day. (not play)
+
+Peter doesn't have English on Fridays. (not have)
+
+I like Math but she doesn't like Math. (not like)
+
+Tom doesn't walk to school every day. (not walk)
+
+What housework does your brother do? (do)
+
+What time does she go to bed every night? (go)
+
+Who do you live with? (live)
+
+What housework does Jane do? (do)
+
+What housework do they do? (do)
+
+I am playing soccer with my friends now. (play)
+
+He is listening to music in his room now. (listen)
+
+She is making dinner with her mom now. (make)
+
+Lan is watching TV with her father at present. (watch)
+
+They are riding their bikes on the street at present. (ride)
+
+Keep silent! You are talking so loudly. (talk)
+
+We are doing our homework at present. (do)
+
+Look! The baby is sleeping in the room. (sleep)
+
+Look! My father is doing arts and crafts. (do)
+
+Mark is having a party at home at the moment. (have)
+
+The children are watching a movie at the moment. (watch)
+
+Hurry up! We are waiting for you. (wait)
+
+She is wearing yellow shoes at the moment. (wear)
+
+Be careful! The car is going so fast. (go)
+
+Keep silent! You are talking so loudly. (talk)
+
+Toby doesn’t like reading books. (read)
+
+Do you like playing table tennis? (play)
+
+I really like learning English. (learn)
+
+Toby loves singing. (sing)
+
+I love using computers. (use)
+
+He enjoys watering the plants. (water)
+
+She enjoys playing video games after school. (play)
+
+They often go swimming at the beach. (swim)
+
+Nam’s family always goes running when they camp. (run)
+
+Do you want to have a barbecue this Sunday? (have)
+
+I want to make a birthday cake for my mother. (make)
+
+Do you want to drink some coffee? (drink)
+
+Tuấn would like to drink some tea. (drink)
+
+He’d like to play badminton with his friend after school. (play)
+
+Peter would like to watch TV after dinner. (watch)
+
+You can give food or money. (give)
+
+She can take part in the charity event. (take)
+
+I can ride a bike. (ride)
+
+Gorillas can climb tall trees. (climb)
+
+People can visit the website if they need to donate. (visit)
+
+V. MATCHING
+
+Match the questions to the answers:
+
+Table 1:
+
+What does she look like? - D. She is tall and slim.
+
+What’s she like? - A. She is funny.
+
+Do you live in a house or an apartment? - B. We live in an apartment.
+
+Does she have any brothers or sisters? - C. No, she doesn’t.
+
+Table 2:
+
+What is Mary like? - D. She is kind, active and sensitive.
+
+How often does Laura play volleyball? - C. Sometimes.
+
+Does your house have a big yard? - B. Yes, it does.
+
+What are you doing this weekend? - A. I’m playing soccer with my brother.
+
+Table 3:
+
+How often do you go running? - D. I rarely go running.
+
+What time does the bus leave? - A. It leaves at 9:30 am.
+
+Who does the most housework in your family? - B. My dad does.
+
+Do you usually go swimming on the weekends? - C. Yes, I do.
+
+Table 4:
+
+What time do you get up? - D. At 6:30.
+
+What does she look like? - C. She is tall and slim.
+
+What housework do you do? - B. I do the dishes.
+
+How do the people prepare for Tet? - A. They decorate their houses.
+
+Table 5:
+
+How much are those shoes? - B. They are $10.
+
+Which club do you want to sign up for? - A. I want to sign up for Soccer Club.
+
+What’s your favorite book? - D. I like Harry Potter.
+
+Is he wearing glasses? - C. Yes, he is.
+
+VI. READING - TRUE/FALSE
+
+Read the following passage. Decide if the statements are TRUE or FALSE:
+
+Passage Context: "People have celebrated Tet in Vietnam for many years... Before Tet, people buy fruits and flowers..."
+
+People buy fruits and flowers before Tet., Đúng
+
+During Tet, children wear new clothes and don’t get lucky money., Sai (Trong bài: "wear new clothes and get lucky money")
+
+Read the passages about Cần Thơ / Charlotte's Web (các đoạn văn ngắn ở ảnh 6) và đánh giá đúng sai:
+
+Passage 2: Cần Thơ
+
+Cần Thơ is in the north of Vietnam., Sai (Bài đọc: "in the south")
+
+It is famous for its floating markets and beautiful rivers., Đúng
+
+The weather is cool in Cần Thơ., Sai (Bài đọc: "The weather is hot")
+
+Cần Thơ is an important center for business and transportation., Đúng
+
+Passage 3: Charlotte's Web
+
+Wilbur is a spider., Sai (Bài đọc: "A shy pig, Wilbur")
+
+Mr. Zuckerman is kind., Sai (Bài đọc: "he is selfish")
+
+Charlotte is a helpful spider., Đúng (Bài đọc: "She is a helpful friend")
+
+Mr. Zuckerman thinks Wilbur is very funny., Sai (Bài đọc: "thinks Wilbur is writing them... Wilbur is amazing")
+
+VII. CLOZE TEST (Điền từ vào đoạn văn)
+
+Choose the word (A, B, C or D) that best fits the blank space:
+
+Passage 1 (Her name is Hoa...):
+
+...a small house near my house. She lives with her parents (1) _________ a small house...
+Đáp án: A. in
+
+She is tall (2) _________ thin.
+Đáp án: C. and
+
+She always (3) _________ glasses when she goes to school.
+Đáp án: D. wears
+
+She really likes (4) _________ comedy movies.
+Đáp án: C. watching
+
+In my class, she is (5) _________, she often makes her...
+Đáp án: A. funny
+
+...often makes her (6) _________ class love her so much.
+Đáp án: A. friends
+
+Passage 2 (Kim is a new friend...):
+
+Kim is a new friend (1) _________ my class.
+Đáp án: A. in
+
+Kim is tall with long blond (2) _________ and blue eyes.
+Đáp án: A. hair
+
+...so she is (3) _________ a yellow T-shirt...
+Đáp án: C. wearing
+
+We are going (4) _________ at the mall...
+Đáp án: A. shopping
+
+...because she’s having a (5) _________ tonight.
+Đáp án: B. party
+
+...making pizza for the party (6) _________ watching TV.
+Đáp án: D. and (hoặc C. but tùy ngữ cảnh, nhưng thường là 'and')
+
+Passage 3 (My favorite book...):
+
+My favorite book (1) _________ Yellow Flowers on the Green Grass.
+Đáp án: B. is
+
+The (2) _________ of the book is Nguyễn Nhật Ánh.
+Đáp án: C. author
+
+It is about Thiều (3) _________ the people around him.
+Đáp án: A. and
+
+I like the book because it (4) _________ us many beautiful things...
+Đáp án: C. shows
+
+...beautiful things (5) _________ Thiều's village.
+Đáp án: B. in
+
+I really (6) _________ this book.
+Đáp án: D. like
+
+Passage 4 (In Vietnam, people...):
+
+In Vietnam, people (1) _________ many different festivals each year.
+Đáp án: A. celebrate
+
+Vietnamese people have to prepare a lot (2) _________ this festival.
+Đáp án: C. for
+
+...people buy fruits and (3) _________ from the market...
+Đáp án: B. flowers
+
+This (4) _________ very important...
+Đáp án: C. is
+
+...children wear new clothes (5) _________ get lucky money.
+Đáp án: A. and
+
+Everyone is happy and (6) _________ about the New Year.
+Đáp án: B. excited
+
+VIII. REARRANGE (Sắp xếp câu)
+
+Rearrange the sentences:
+
+free / you / on / Are / Saturday / ?
+Đáp án: Are you free on Saturday?
+
+do / they / can / What activities / there / ?
+Đáp án: What activities can they do there?
+
+or boy / your / Is / friend / a girl / ?
+Đáp án: Is your friend a boy or a girl? (Hoặc: Is your friend a girl or a boy?)
+
+you / What / doing / are / on Friday / ?
+Đáp án: What are you doing on Friday?
+
+the library / do you / How / go to / often / ?
+Đáp án: How often do you go to the library?
+
+the music / What time / performance / start / does / ?
+Đáp án: What time does the music performance start?
+
+often / on the weekends / play badminton / I / with my dad /.
+Đáp án: I often play badminton with my dad on the weekends.
+
+always / My mother / the supermarket / goes to / after work /.
+Đáp án: My mother always goes to the supermarket after work.
+
+My sister / at the mall / does / on Sundays / the shopping /.
+Đáp án: My sister does the shopping at the mall on Sundays.
+
+do the housework / John / his mom / helps / after school /.
+Đáp án: John helps his mom do the housework after school.
+
+love / I / like football / outdoor activities / doing /.
+Đáp án: I love doing outdoor activities like football.
+
+does / your father / do / What / housework / ? /
+Đáp án: What housework does your father do?
+
+buy / at the bookstore / new books / My parents / usually /.
+Đáp án: My parents usually buy new books at the bookstore.
+
+IX. REWRITE (Viết lại câu)
+
+Rewrite the following sentences:
+
+There is a balcony in my apartment.
+Đáp án: My apartment has a balcony.
+
+There are two bedrooms in my house.
+Đáp án: My house has two bedrooms.
+
+There are forty classrooms in my school.
+Đáp án: My school has forty classrooms.
+
+There are many trees and flowers in my garden.
+Đáp án: My garden has many trees and flowers.
+
+I like History best.
+Đáp án: My favorite subject is History.
+
+I like Physics best.
+Đáp án: My favorite subject is Physics.
+
+He likes Biology best.
+Đáp án: His favorite subject is Biology.
+
+My sister has long black hair.
+Đáp án: My sister's hair is long and black.
+
+He has short hair.
+Đáp án: His hair is short.
+
+Her hair is long and blond.
+Đáp án: She has long blond hair.
+
+I have long blond hair.
+Đáp án: My hair is long and blond.
+
+She has long dark hair.
+Đáp án: Her hair is long and dark.
+
+He has short dark hair.
+Đáp án: His hair is short and dark.
+
+I like acting.
+Đáp án: I am interested in acting. (Hoặc: I am into acting.)
+
+Nam loves reading books.
+Đáp án: Nam is keen on reading books. (Hoặc: Nam is interested in reading books.)
+
+We like playing soccer.
+Đáp án: We are fond of playing soccer.
+
+James loves doing exercise.
+Đáp án: James is interested in doing exercise.
+
+Minh likes playing tennis with his father.
+Đáp án: Minh is into playing tennis with his father.
+
+Emma enjoys dancing.
+Đáp án: Emma is keen on dancing.
+
+We enjoy playing soccer.
+Đáp án: We are into playing soccer.
+
+John wants to go swimming on the weekend.
+Đáp án: John would like to go swimming on the weekend.
+
+We want to have a picnic this weekend.
+Đáp án: We would like to have a picnic this weekend.
+
+I want to travel to many famous places in the world.
+Đáp án: I'd like to travel to many famous places in the world.
+
+24
