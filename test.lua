@@ -112,6 +112,133 @@ local function canShootMe(targetPlayer)
 end
 
 -- ===========================================================================
+-- WALLHACK TỰ ĐỘNG CẬP NHẬT
+-- ===========================================================================
+
+local function createESP(targetPlayer)
+    if espFolders[targetPlayer] then
+        espFolders[targetPlayer]:Destroy()
+        espFolders[targetPlayer] = nil
+    end
+    
+    local folder = Instance.new("Folder")
+    folder.Name = targetPlayer.Name .. "_ESP"
+    folder.Parent = playerGui
+    espFolders[targetPlayer] = folder
+    
+    local function setupCharacter(character)
+        if character and character:IsDescendantOf(workspace) then
+            -- Đảm bảo xóa highlight cũ
+            for _, child in pairs(folder:GetChildren()) do
+                if child:IsA("Highlight") then
+                    child:Destroy()
+                end
+            end
+            
+            -- Tạo highlight mới
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "ESP_Highlight"
+            highlight.FillColor = Color3.fromRGB(255, 50, 50)
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            highlight.FillTransparency = 0.7
+            highlight.OutlineTransparency = 0
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlight.Adornee = character
+            highlight.Parent = folder
+            highlight.Enabled = wallhackEnabled
+            
+            -- Kết nối sự kiện khi character bị destroy
+            character.Destroying:Connect(function()
+                if folder and folder.Parent then
+                    folder:Destroy()
+                    espFolders[targetPlayer] = nil
+                end
+            end)
+            
+            -- Theo dõi humanoid để biết khi chết
+            local humanoid = character:WaitForChild("Humanoid")
+            if humanoid then
+                humanoid.Died:Connect(function()
+                    -- Khi chết, đánh dấu để xóa ESP
+                    if folder and folder.Parent then
+                        folder:Destroy()
+                        espFolders[targetPlayer] = nil
+                    end
+                end)
+            end
+            
+            print("✅ Đã tạo ESP cho: " .. targetPlayer.Name)
+        end
+    end
+    
+    -- Thiết lập character hiện tại
+    if targetPlayer.Character then
+        setupCharacter(targetPlayer.Character)
+    end
+    
+    -- Theo dõi khi character thay đổi (respawn)
+    targetPlayer.CharacterAdded:Connect(function(character)
+        print("🔄 " .. targetPlayer.Name .. " đã respawn, cập nhật ESP...")
+        wait(0.5) -- Đợi character load hoàn toàn
+        setupCharacter(character)
+    end)
+    
+    -- Theo dõi khi player rời game
+    targetPlayer.AncestryChanged:Connect(function()
+        if not targetPlayer or not targetPlayer.Parent then
+            if espFolders[targetPlayer] then
+                espFolders[targetPlayer]:Destroy()
+                espFolders[targetPlayer] = nil
+                print("🗑️ Đã xóa ESP của: " .. targetPlayer.Name)
+            end
+        end
+    end)
+end
+
+local function initializeWallhack()
+    print("🔄 Đang khởi tạo wallhack...")
+    
+    -- Xóa toàn bộ ESP cũ
+    for targetPlayer, folder in pairs(espFolders) do
+        if folder then
+            folder:Destroy()
+        end
+    end
+    espFolders = {}
+    
+    -- Tạo ESP cho tất cả người chơi
+    for _, otherPlayer in pairs(Players:GetPlayers()) do
+        if otherPlayer ~= player then
+            createESP(otherPlayer)
+        end
+    end
+    
+    print("✅ Wallhack đã khởi tạo cho " .. #Players:GetPlayers() - 1 .. " người chơi")
+end
+
+local function toggleWallhack()
+    wallhackEnabled = not wallhackEnabled
+    
+    for targetPlayer, folder in pairs(espFolders) do
+        if folder then
+            for _, child in pairs(folder:GetChildren()) do
+                if child:IsA("Highlight") then
+                    child.Enabled = wallhackEnabled
+                end
+            end
+        end
+    end
+    
+    if wallhackEnabled then
+        teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
+        print("🔵 Wallhack: BẬT")
+    else
+        teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        print("🔴 Wallhack: TẮT")
+    end
+end
+
+-- ===========================================================================
 -- PHẦN AIMBOT ĐƠN GIẢN HOẠT ĐỘNG NGAY
 -- ===========================================================================
 
@@ -292,84 +419,6 @@ local function createTeleportArrow(target)
 end
 
 -- ===========================================================================
--- WALLHACK ĐƠN GIẢN
--- ===========================================================================
-
-local function createSimpleESP(targetPlayer)
-    if espFolders[targetPlayer] then
-        espFolders[targetPlayer]:Destroy()
-    end
-    
-    local folder = Instance.new("Folder")
-    folder.Name = targetPlayer.Name .. "_ESP"
-    folder.Parent = playerGui
-    espFolders[targetPlayer] = folder
-    
-    local function setupCharacter(character)
-        if character and character:IsDescendantOf(workspace) then
-            local highlight = Instance.new("Highlight")
-            highlight.Name = "ESP"
-            highlight.FillColor = Color3.fromRGB(255, 50, 50)
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-            highlight.FillTransparency = 0.7
-            highlight.OutlineTransparency = 0
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            highlight.Adornee = character
-            highlight.Parent = folder
-            highlight.Enabled = wallhackEnabled
-        end
-    end
-    
-    if targetPlayer.Character then
-        setupCharacter(targetPlayer.Character)
-    end
-    
-    targetPlayer.CharacterAdded:Connect(function(character)
-        wait(0.5) -- Đợi character load
-        setupCharacter(character)
-    end)
-end
-
-local function initializeSimpleWallhack()
-    for targetPlayer, folder in pairs(espFolders) do
-        folder:Destroy()
-    end
-    espFolders = {}
-    
-    for _, otherPlayer in pairs(Players:GetPlayers()) do
-        if otherPlayer ~= player then
-            createSimpleESP(otherPlayer)
-        end
-    end
-    
-    Players.PlayerAdded:Connect(function(newPlayer)
-        if newPlayer ~= player then
-            createSimpleESP(newPlayer)
-        end
-    end)
-end
-
-local function toggleWallhack()
-    wallhackEnabled = not wallhackEnabled
-    
-    for targetPlayer, folder in pairs(espFolders) do
-        if folder then
-            for _, child in pairs(folder:GetChildren()) do
-                if child:IsA("Highlight") then
-                    child.Enabled = wallhackEnabled
-                end
-            end
-        end
-    end
-    
-    if wallhackEnabled then
-        teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
-    else
-        teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    end
-end
-
--- ===========================================================================
 -- KẾT NỐI SỰ KIỆN VÀ ĐIỀU KHIỂN CHÍNH
 -- ===========================================================================
 
@@ -516,11 +565,23 @@ end)
 teleportButton.MouseButton2Click:Connect(toggleWallhack)
 
 -- ===========================================================================
--- CLEANUP VÀ KHỞI TẠO
+-- CẬP NHẬT TỰ ĐỘNG KHI CÓ THAY ĐỔI
 -- ===========================================================================
 
--- Cleanup khi player rời
+-- Khi có người chơi mới tham gia
+Players.PlayerAdded:Connect(function(newPlayer)
+    print("👤 Người chơi mới: " .. newPlayer.Name)
+    wait(1) -- Đợi player load
+    if newPlayer ~= player then
+        createESP(newPlayer)
+        print("✅ Đã thêm ESP cho người chơi mới: " .. newPlayer.Name)
+    end
+end)
+
+-- Khi người chơi rời game
 Players.PlayerRemoving:Connect(function(leavingPlayer)
+    print("🚪 Người chơi rời: " .. leavingPlayer.Name)
+    
     if leavingPlayer == targetPlayer then
         unlockTeleport()
     end
@@ -533,26 +594,54 @@ Players.PlayerRemoving:Connect(function(leavingPlayer)
     if espFolders[leavingPlayer] then
         espFolders[leavingPlayer]:Destroy()
         espFolders[leavingPlayer] = nil
+        print("🗑️ Đã xóa ESP của: " .. leavingPlayer.Name)
     end
 end)
 
--- Reset khi player respawn
+-- Khi LOCAL PLAYER respawn - CẬP NHẬT LẠI TOÀN BỘ WALLHACK
 player.CharacterAdded:Connect(function(character)
-    wait(1) -- Đợi character load
+    print("🔄 Local player đã respawn, cập nhật wallhack...")
+    
+    -- Reset trạng thái
     unlockTeleport()
     
-    -- Đảm bảo các kết nối được tạo lại
     if aimEnabled then
         currentTarget = nil
     end
+    
+    -- Đợi một chút rồi khởi tạo lại wallhack
+    wait(2)
+    initializeWallhack()
+    print("✅ Đã cập nhật wallhack sau respawn")
 end)
 
--- Khởi tạo wallhack
-wait(2)
-initializeSimpleWallhack()
+-- Khi có sự thay đổi về team (nếu game có team)
+if player:FindFirstChild("Team") then
+    player.TeamChanged:Connect(function()
+        print("🔄 Team thay đổi, cập nhật wallhack...")
+        wait(1)
+        initializeWallhack()
+    end)
+end
 
-print("✅ Hệ thống Aimbot & Teleport Đã Sẵn Sàng!")
+-- ===========================================================================
+-- KHỞI TẠO HỆ THỐNG
+-- ===========================================================================
+
+-- Khởi tạo lần đầu
+wait(3) -- Đợi game load hoàn toàn
+initializeWallhack()
+
+print("")
+print("🎯 HỆ THỐNG AIMBOT & TELEPORT ĐÃ SẴN SÀNG!")
+print("===========================================")
 print("📌 Hướng dẫn sử dụng:")
 print("   - Click TRÁI nút AIM: Bật/Tắt Aimbot")
 print("   - Click TRÁI nút TELEPORT: Khóa/Thoát mục tiêu") 
 print("   - Click PHẢI nút TELEPORT: Bật/Tắt Wallhack")
+print("")
+print("🔄 Wallhack sẽ tự động cập nhật khi:")
+print("   - Bạn chết/respawn")
+print("   - Địch chết/respawn") 
+print("   - Có người mới tham gia/rời game")
+print("===========================================")
