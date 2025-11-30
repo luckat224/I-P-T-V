@@ -49,7 +49,7 @@ aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
 aimButtonCorner.Parent = aimButton
 
 -- ===========================================================================
--- AIMBOT THÔNG MINH NÂNG CAO
+-- AIMBOT BÁM DÍNH KHÔNG DỰ ĐOÁN
 -- ===========================================================================
 
 local isLocked = false
@@ -68,15 +68,15 @@ local arrowGui = nil
 
 local wallhackEnabled = true
 
--- Cấu hình Aimbot
+-- Cấu hình Aimbot - ĐÃ LOẠI BỎ DỰ ĐOÁN
 local AIMBOT_CONFIG = {
     FOV = 120, -- Góc nhìn (độ)
     MAX_DISTANCE = 500, -- Khoảng cách tối đa
-    SMOOTHING = 0.15, -- Độ mượt (0-1, càng nhỏ càng mượt)
-    PREDICTION = true, -- Dự đoán chuyển động
+    SMOOTHING = 0.08, -- Độ mượt thấp hơn để bám dính tốt hơn
     HEAD_PRIORITY = true, -- Ưu tiên headshot
     VISIBILITY_CHECK = true, -- Kiểm tra tầm nhìn
-    THREAT_PRIORITY = true -- Ưu tiên mục tiêu nguy hiểm
+    STICKY_AIM = true, -- Bám dính chặt vào mục tiêu
+    AIM_POINT = "Head" -- Head, UpperTorso, HumanoidRootPart
 }
 
 -- Hàm kiểm tra team (đồng đội hay địch)
@@ -97,18 +97,15 @@ local function hasClearLineOfSight(pointA, pointB, ignoreList)
     raycastParams.FilterDescendantsInstances = ignoreList or {}
     raycastParams.IgnoreWater = true
     
-    -- Raycast chính
     local raycastResult = workspace:Raycast(pointA, direction * distance, raycastParams)
     
     if raycastResult then
         -- Kiểm tra thêm từ nhiều góc độ để tránh false positive
         local offsets = {
-            Vector3.new(0.5, 0, 0),
-            Vector3.new(-0.5, 0, 0),
-            Vector3.new(0, 0.5, 0),
-            Vector3.new(0, -0.5, 0),
-            Vector3.new(0.3, 0.3, 0),
-            Vector3.new(-0.3, -0.3, 0)
+            Vector3.new(0.3, 0, 0),
+            Vector3.new(-0.3, 0, 0),
+            Vector3.new(0, 0.3, 0),
+            Vector3.new(0, -0.3, 0)
         }
         
         for _, offset in pairs(offsets) do
@@ -140,7 +137,7 @@ local function canShootMe(targetPlayer)
     )
 end
 
--- Hàm tính điểm đe dọa dựa trên nhiều yếu tố
+-- Hàm tính điểm đe dọa đơn giản hóa
 local function calculateThreatScore(targetPlayer, camPos)
     if not targetPlayer.Character then return 0 end
     
@@ -153,11 +150,11 @@ local function calculateThreatScore(targetPlayer, camPos)
     
     -- Yếu tố khoảng cách (gần = điểm cao)
     local distanceScore = math.max(0, 1 - (distance / AIMBOT_CONFIG.MAX_DISTANCE))
-    score = score + distanceScore * 40
+    score = score + distanceScore * 50
     
     -- Yếu tố có thể bắn mình
     if canShootMe(targetPlayer) then
-        score = score + 35
+        score = score + 30
     end
     
     -- Yếu tố tầm nhìn trực tiếp
@@ -167,49 +164,21 @@ local function calculateThreatScore(targetPlayer, camPos)
         {player.Character, targetPlayer.Character}
     )
     if isVisible then
-        score = score + 25
+        score = score + 20
     end
     
     -- Yếu tố góc nhìn (càng ở trung tâm càng tốt)
     local camDir = camera.CFrame.LookVector
     local toTarget = (root.Position - camPos).Unit
     local dot = camDir:Dot(toTarget)
-    local angleScore = (dot + 1) / 2 -- Chuyển từ [-1,1] sang [0,1]
-    score = score + angleScore * 20
-    
-    -- Yếu tố máu (máu thấp = dễ tiêu diệt = ưu tiên)
-    local healthScore = (100 - humanoid.Health) / 100
-    score = score + healthScore * 15
-    
-    -- Yếu tố chuyển động (đang di chuyển = khó bắn hơn)
-    local velocity = root.Velocity.Magnitude
-    if velocity > 10 then
-        score = score - (velocity / 50) * 10
+    if dot > 0.9 then -- Chỉ tính những mục tiêu trong tầm nhìn
+        score = score + (dot * 20)
     end
     
     return math.max(0, score)
 end
 
--- Hàm dự đoán vị trí dựa trên chuyển động
-local function predictPosition(targetPlayer, predictionTime)
-    if not targetPlayer.Character then return nil end
-    
-    local root = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not root then return nil end
-    
-    -- Dự đoán dựa trên vận tốc hiện tại
-    local predictedPos = root.Position + (root.Velocity * predictionTime)
-    
-    -- Giới hạn dự đoán trong phạm vi hợp lý
-    local maxPrediction = 5 -- Giây
-    if predictionTime > maxPrediction then
-        predictedPos = root.Position + (root.Velocity * maxPrediction)
-    end
-    
-    return predictedPos
-end
-
--- Hàm tìm mục tiêu tối ưu với thuật toán thông minh
+-- Hàm tìm mục tiêu tối ưu
 local function findOptimalTarget()
     local camPos = camera.CFrame.Position
     local bestTarget = nil
@@ -242,7 +211,7 @@ local function findOptimalTarget()
     end
     
     -- Chỉ nhắm nếu điểm đủ cao
-    if bestScore < 30 then -- Ngưỡng tối thiểu
+    if bestScore < 40 then -- Ngưỡng tối thiểu cao hơn để chọn mục tiêu tốt
         return nil
     end
     
@@ -392,7 +361,7 @@ local function initializeWallhack()
 end
 
 -- ===========================================================================
--- AIMBOT THÔNG MINH VỚI ĐỘ MƯỢT VÀ DỰ ĐOÁN
+-- AIMBOT BÁM DÍNH TRỰC TIẾP - KHÔNG DỰ ĐOÁN
 -- ===========================================================================
 
 local function showArrow(target)
@@ -429,54 +398,61 @@ local function removeArrow()
     end
 end
 
--- Hàm aim mượt với dự đoán
-local function smoothAim(target)
+-- Hàm aim trực tiếp vào vị trí hiện tại - KHÔNG DỰ ĐOÁN
+local function directAim(target)
     if not target or not target.Character then return end
     
     local camPos = camera.CFrame.Position
     local targetPart = nil
     
-    -- Ưu tiên headshot nếu được bật
+    -- Chọn điểm aim dựa trên cấu hình
     if AIMBOT_CONFIG.HEAD_PRIORITY then
-        targetPart = target.Character:FindFirstChild("Head")
-    end
-    
-    -- Nếu không tìm thấy head thì dùng upper torso
-    if not targetPart then
-        targetPart = target.Character:FindFirstChild("UpperTorso") or 
+        targetPart = target.Character:FindFirstChild("Head") or 
+                    target.Character:FindFirstChild("UpperTorso") or 
                     target.Character:FindFirstChild("HumanoidRootPart")
+    else
+        targetPart = target.Character:FindFirstChild("UpperTorso") or 
+                    target.Character:FindFirstChild("HumanoidRootPart") or 
+                    target.Character:FindFirstChild("Head")
     end
     
     if not targetPart then return end
     
-    -- Dự đoán vị trí nếu được bật
+    -- AIM TRỰC TIẾP - KHÔNG DỰ ĐOÁN
     local targetPos = targetPart.Position
-    if AIMBOT_CONFIG.PREDICTION then
-        local distance = (targetPos - camPos).Magnitude
-        local predictionTime = distance / 1000 -- Thời gian dự đoán dựa trên khoảng cách
-        local predictedPos = predictPosition(target, predictionTime)
-        if predictedPos then
-            targetPos = predictedPos
-        end
-    end
     
     -- Tính toán hướng nhìn mới
     local newLookVector = (targetPos - camPos).Unit
     
-    -- Áp dụng độ mượt
+    -- Áp dụng độ mượt nhẹ để tránh giật
     local currentLookVector = camera.CFrame.LookVector
     local smoothedLookVector = currentLookVector:Lerp(newLookVector, AIMBOT_CONFIG.SMOOTHING)
     
-    -- Cập nhật camera
+    -- Cập nhật camera - aim trực tiếp vào vị trí hiện tại
     camera.CFrame = CFrame.new(camPos, camPos + smoothedLookVector)
 end
 
--- Bắt đầu Aim với thuật toán thông minh
-local function startSmartAim()
+-- Hàm aim cứng (không mượt) cho độ chính xác cao
+local function hardAim(target)
+    if not target or not target.Character then return end
+    
+    local camPos = camera.CFrame.Position
+    local targetPart = target.Character:FindFirstChild("Head") or 
+                      target.Character:FindFirstChild("UpperTorso")
+    
+    if not targetPart then return end
+    
+    -- AIM CỨNG TRỰC TIẾP - KHÔNG MƯỢT
+    local targetPos = targetPart.Position
+    camera.CFrame = CFrame.new(camPos, targetPos)
+end
+
+-- Bắt đầu Aim với độ chính xác cao
+local function startPreciseAim()
     if aimConnection then aimConnection:Disconnect() end
     
     local lastTargetSwitch = 0
-    local TARGET_SWITCH_COOLDOWN = 0.5 -- Giây
+    local TARGET_SWITCH_COOLDOWN = 0.3 -- Giây
     
     aimConnection = RunService.RenderStepped:Connect(function()
         if not aimEnabled then return end
@@ -487,33 +463,37 @@ local function startSmartAim()
            not currentTarget.Character or 
            not currentTarget.Character:FindFirstChild("Humanoid") or 
            currentTarget.Character.Humanoid.Health <= 0 or
-           (currentTime - lastTargetSwitch > TARGET_SWITCH_COOLDOWN and findOptimalTarget() ~= currentTarget) then
+           (currentTime - lastTargetSwitch > TARGET_SWITCH_COOLDOWN) then
             
             local newTarget = findOptimalTarget()
-            if newTarget and newTarget ~= currentTarget then
+            if newTarget then
                 currentTarget = newTarget
                 lastTargetSwitch = currentTime
                 showArrow(currentTarget)
-            elseif not newTarget then
+            else
                 currentTarget = nil
                 removeArrow()
             end
         end
 
-        -- Aim vào mục tiêu
+        -- Aim vào mục tiêu với độ chính xác cao
         if currentTarget then
-            smoothAim(currentTarget)
+            if AIMBOT_CONFIG.STICKY_AIM then
+                hardAim(currentTarget) -- Aim cứng cho độ chính xác
+            else
+                directAim(currentTarget) -- Aim có độ mượt nhẹ
+            end
         end
     end)
 end
 
--- Nút bật/tắt AimBot thông minh
+-- Nút bật/tắt AimBot chính xác
 aimButton.MouseButton1Click:Connect(function()
     aimEnabled = not aimEnabled
     if aimEnabled then
         aimButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
         aimButton.Text = "AIM ON"
-        startSmartAim()
+        startPreciseAim()
     else
         aimButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
         aimButton.Text = "AIM OFF"
@@ -734,4 +714,4 @@ end)
 -- Khởi tạo
 initializeWallhack()
 
-print("✅ Aimbot Thông Minh Đã Sẵn Sàng!")
+print("✅ Aimbot Bám Dính Chính Xác Đã Sẵn Sàng! (Không Dự Đoán)")
