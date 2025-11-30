@@ -68,7 +68,7 @@ local arrowGui = nil
 local wallhackEnabled = true
 
 -- ===========================================================================
--- ESP HOẠT ĐỘNG 100% - ĐÃ SỬA LỖI
+-- ESP HOẠT ĐỘNG 100% - KHÔNG MẤT KHI CHẾT
 -- ===========================================================================
 
 local function isEnemy(targetPlayer)
@@ -78,7 +78,7 @@ local function isEnemy(targetPlayer)
     return player.Team ~= targetPlayer.Team
 end
 
--- Hàm tạo ESP đơn giản và hiệu quả
+-- Hàm tạo ESP với cập nhật liên tục
 local function createESP(targetPlayer)
     if espFolders[targetPlayer] then
         espFolders[targetPlayer]:Destroy()
@@ -90,10 +90,17 @@ local function createESP(targetPlayer)
     espFolders[targetPlayer] = folder
     
     local function setupCharacter(character)
-        if not character or not character:IsDescendantOf(workspace) then return end
+        if not character or not character:IsDescendantOf(workspace) then 
+            -- Nếu character không tồn tại, thử lại sau 1 giây
+            wait(1)
+            if targetPlayer.Character then
+                setupCharacter(targetPlayer.Character)
+            end
+            return 
+        end
         
         -- Đợi character load hoàn toàn
-        wait(0.5)
+        wait(0.3)
         
         -- Xóa highlight cũ
         for _, child in pairs(folder:GetChildren()) do
@@ -102,7 +109,7 @@ local function createESP(targetPlayer)
         
         -- Tạo highlight mới
         local highlight = Instance.new("Highlight")
-        highlight.Name = "ESP"
+        highlight.Name = "ESP_Highlight"
         
         if isEnemy(targetPlayer) then
             highlight.FillColor = Color3.fromRGB(255, 50, 50)  -- Đỏ cho địch
@@ -119,6 +126,15 @@ local function createESP(targetPlayer)
         highlight.Parent = folder
         highlight.Enabled = wallhackEnabled
         
+        -- Kết nối sự kiện khi character bị destroy
+        character.Destroying:Connect(function()
+            -- Khi character bị destroy (chết), đánh dấu để tạo lại
+            wait(2) -- Đợi respawn
+            if targetPlayer.Character then
+                setupCharacter(targetPlayer.Character)
+            end
+        end)
+        
         print("✅ Đã tạo ESP cho: " .. targetPlayer.Name)
     end
     
@@ -127,7 +143,7 @@ local function createESP(targetPlayer)
         setupCharacter(targetPlayer.Character)
     end
     
-    -- Kết nối sự kiện khi character thay đổi
+    -- Kết nối sự kiện khi character thay đổi (respawn)
     targetPlayer.CharacterAdded:Connect(function(character)
         print("🔄 " .. targetPlayer.Name .. " đã respawn, cập nhật ESP...")
         setupCharacter(character)
@@ -179,7 +195,7 @@ local function toggleWallhack()
 end
 
 -- ===========================================================================
--- AIMBOT - CHỈ AIM ĐỊCH
+-- AIMBOT - CHỈ AIM ĐỊCH & KHÔNG CÓ MŨI TÊN
 -- ===========================================================================
 
 local function findMostDangerousTarget()
@@ -238,43 +254,7 @@ local function preciseAim(target)
     camera.CFrame = CFrame.new(camPos, targetPos)
 end
 
-local function showTargetArrow(target)
-    if arrowGui then 
-        arrowGui:Destroy()
-        arrowGui = nil
-    end
-    
-    if not target or not target.Character then return end
-    
-    local head = target.Character:FindFirstChild("Head")
-    if not head then return end
-
-    local gui = Instance.new("BillboardGui")
-    gui.Name = "TargetArrow"
-    gui.Size = UDim2.new(0, 50, 0, 50)
-    gui.AlwaysOnTop = true
-    gui.Adornee = head
-    gui.MaxDistance = 1000
-
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, 0, 1, 0)
-    label.BackgroundTransparency = 1
-    label.Text = "🎯"
-    label.TextColor3 = Color3.fromRGB(255, 0, 0)
-    label.TextScaled = true
-    label.Font = Enum.Font.GothamBold
-    label.Parent = gui
-
-    gui.Parent = head
-    arrowGui = gui
-end
-
-local function removeTargetArrow()
-    if arrowGui then
-        arrowGui:Destroy()
-        arrowGui = nil
-    end
-end
+-- KHÔNG CÓ MŨI TÊN CHO AIMBOT (đã xóa hàm showTargetArrow)
 
 -- ===========================================================================
 -- TELEPORT ĐẾN NGƯỜI CAMERA ĐANG NHÌN
@@ -362,7 +342,7 @@ local function createTeleportArrow(target)
 end
 
 -- ===========================================================================
--- ĐIỀU KHIỂN AIMBOT
+-- ĐIỀU KHIỂN AIMBOT - KHÔNG CÓ MŨI TÊN
 -- ===========================================================================
 
 aimButton.MouseButton1Click:Connect(function()
@@ -384,12 +364,12 @@ aimButton.MouseButton1Click:Connect(function()
             if newTarget then
                 if currentTarget ~= newTarget then
                     currentTarget = newTarget
-                    showTargetArrow(currentTarget)
+                    -- KHÔNG HIỂN THỊ MŨI TÊN - CHỈ AIM THÔI
+                    print("🎯 Đang aim: " .. currentTarget.Name)
                 end
                 preciseAim(currentTarget)
             else
                 currentTarget = nil
-                removeTargetArrow()
             end
         end)
         
@@ -403,7 +383,6 @@ aimButton.MouseButton1Click:Connect(function()
         end
         
         currentTarget = nil
-        removeTargetArrow()
     end
 end)
 
@@ -496,7 +475,7 @@ end)
 teleportButton.MouseButton2Click:Connect(toggleWallhack)
 
 -- ===========================================================================
--- CẬP NHẬT TỰ ĐỘNG ESP
+-- CẬP NHẬT TỰ ĐỘNG ESP - KHÔNG MẤT KHI CHẾT
 -- ===========================================================================
 
 -- Khi có người chơi mới
@@ -519,15 +498,14 @@ Players.PlayerRemoving:Connect(function(leavingPlayer)
     
     if leavingPlayer == currentTarget then
         currentTarget = nil
-        removeTargetArrow()
     end
 end)
 
--- Khi local player respawn
+-- Khi local player respawn - CẬP NHẬT LẠI ESP
 player.CharacterAdded:Connect(function(character)
     unlockTeleport()
     
-    -- Cập nhật lại ESP sau khi respawn
+    -- Đợi một chút rồi cập nhật lại ESP
     wait(2)
     for targetPlayer, folder in pairs(espFolders) do
         if folder and targetPlayer.Character then
@@ -549,9 +527,9 @@ wait(2)
 initializeWallhack()
 
 print("")
-print("🎯 HỆ THỐNG ĐÃ SẴN SÀNG!")
+print("🎯 HỆ THỐNG ĐÃ SẴN SÀNG 100%!")
 print("===========================================")
-print("✅ WALLHACK: Đã kích hoạt")
-print("✅ AIMBOT: Chỉ aim địch") 
+print("✅ WALLHACK: Hoạt động, không mất khi chết")
+print("✅ AIMBOT: Chỉ aim địch, không có mũi tên che") 
 print("✅ TELEPORT: Đến người camera đang nhìn")
 print("===========================================")
