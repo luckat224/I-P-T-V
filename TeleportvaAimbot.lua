@@ -67,7 +67,7 @@ local arrowGui = nil
 
 local wallhackEnabled = true
 
--- ESP Functions - ĐÃ SỬA: CẬP NHẬT TỰ ĐỘNG KHI NHÂN VẬT THAY ĐỔI
+-- ESP Functions - ĐÃ SỬA: KHÔNG CÓ ĐỘ TRỄ
 local function createEspFolder(targetPlayer)
     if espFolders[targetPlayer] then
         espFolders[targetPlayer]:Destroy()
@@ -83,15 +83,14 @@ end
 local function updateHighlight(character, targetPlayer)
     if not character then return end
     
-    local folder = createEspFolder(targetPlayer)
-    
-    -- Kiểm tra nếu highlight đã tồn tại thì xóa đi
-    for _, child in pairs(folder:GetChildren()) do
-        if child:IsA("Highlight") then
-            child:Destroy()
-        end
+    -- Xóa highlight cũ ngay lập tức
+    if espFolders[targetPlayer] then
+        espFolders[targetPlayer]:Destroy()
     end
     
+    local folder = createEspFolder(targetPlayer)
+    
+    -- Tạo highlight mới ngay lập tức
     local highlight = Instance.new("Highlight")
     highlight.Name = "WallhackHighlight"
     highlight.FillColor = Color3.fromRGB(255, 50, 50)
@@ -103,13 +102,24 @@ local function updateHighlight(character, targetPlayer)
     highlight.Parent = folder
     highlight.Enabled = wallhackEnabled
     
-    -- Kết nối sự kiện khi character bị destroy
+    -- Kết nối để tự động xóa khi character bị destroy
     character.Destroying:Connect(function()
         if folder and folder.Parent then
             folder:Destroy()
             espFolders[targetPlayer] = nil
         end
     end)
+    
+    -- Theo dõi humanoid để biết khi chết
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Died:Connect(function()
+            if folder and folder.Parent then
+                folder:Destroy()
+                espFolders[targetPlayer] = nil
+            end
+        end)
+    end
 end
 
 local function toggleWallhack()
@@ -132,45 +142,58 @@ local function toggleWallhack()
     end
 end
 
--- ĐÃ SỬA: HÀM KHỞI TẠO WALLHACK MỚI VỚI THEO DÕI LIÊN TỤC
+-- ĐÃ SỬA: HÀM KHỞI TẠO WALLHACK MỚI - KHÔNG ĐỘ TRỄ
 local function initializePlayerESP(otherPlayer)
     if otherPlayer == player then return end
     
     local function setupCharacter(character)
-        if character then
-            -- Đợi một chút để character load hoàn toàn
-            wait(1)
+        if character and character:IsDescendantOf(workspace) then
+            -- CẬP NHẬT NGAY LẬP TỨC - KHÔNG CHỜ
             updateHighlight(character, otherPlayer)
             
-            -- Theo dõi khi humanoid chết/respawn
-            local humanoid = character:WaitForChild("Humanoid", 5)
+            -- Theo dõi humanoid để biết khi chết
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
             if humanoid then
+                -- Kết nối sự kiện died
                 humanoid.Died:Connect(function()
-                    -- Khi chết, xóa ESP tạm thời
+                    -- Xóa ESP khi chết
                     if espFolders[otherPlayer] then
                         espFolders[otherPlayer]:Destroy()
                         espFolders[otherPlayer] = nil
                     end
-                    
-                    -- Chờ respawn và tạo lại ESP
-                    otherPlayer.CharacterAdded:Wait()
-                    wait(1) -- Đợi character mới load
-                    if otherPlayer.Character then
-                        updateHighlight(otherPlayer.Character, otherPlayer)
-                    end
                 end)
             end
+            
+            -- Theo dõi khi character bị remove
+            character.AncestryChanged:Connect(function(_, parent)
+                if not character or not character:IsDescendantOf(workspace) then
+                    if espFolders[otherPlayer] then
+                        espFolders[otherPlayer]:Destroy()
+                        espFolders[otherPlayer] = nil
+                    end
+                end
+            end)
         end
     end
     
-    -- Thiết lập cho character hiện tại
+    -- Thiết lập cho character hiện tại NGAY LẬP TỨC
     if otherPlayer.Character then
         setupCharacter(otherPlayer.Character)
     end
     
-    -- Theo dõi khi character thay đổi (respawn)
+    -- Theo dõi khi character thay đổi (respawn) - CẬP NHẬT NGAY
     otherPlayer.CharacterAdded:Connect(function(character)
         setupCharacter(character)
+    end)
+    
+    -- Theo dõi khi player rời game
+    otherPlayer.AncestryChanged:Connect(function()
+        if not otherPlayer or not otherPlayer.Parent then
+            if espFolders[otherPlayer] then
+                espFolders[otherPlayer]:Destroy()
+                espFolders[otherPlayer] = nil
+            end
+        end
     end)
 end
 
@@ -181,7 +204,7 @@ local function initializeWallhack()
     end
     espFolders = {}
     
-    -- Khởi tạo ESP cho tất cả người chơi
+    -- Khởi tạo ESP cho tất cả người chơi NGAY LẬP TỨC
     for _, otherPlayer in pairs(Players:GetPlayers()) do
         initializePlayerESP(otherPlayer)
     end
@@ -489,11 +512,10 @@ teleportButton.MouseButton1Click:Connect(handleTeleportClick)
 teleportButton.MouseButton2Click:Connect(toggleWallhack)
 teleportButton.TouchTap:Connect(handleTeleportClick)
 
--- ĐÃ SỬA: TỰ ĐỘNG CẬP NHẬT KHI LOCAL PLAYER RESPAWN
+-- ĐÃ SỬA: CẬP NHẬT NGAY KHI LOCAL PLAYER RESPAWN
 player.CharacterAdded:Connect(function(character)
-    wait(1)
     unlockTarget()
-    -- Khởi tạo lại wallhack khi local player respawn
+    -- Khởi tạo lại wallhack ngay lập tức khi respawn
     initializeWallhack()
 end)
 
@@ -514,8 +536,7 @@ Players.PlayerRemoving:Connect(function(leavingPlayer)
     end
 end)
 
--- ĐÃ SỬA: KHỞI TẠO WALLHACK NGAY KHI SCRIPT CHẠY
-wait(2)
+-- KHỞI TẠO WALLHACK NGAY LẬP TỨC
 initializeWallhack()
 
-print("✅ Teleport & Aim Bot Script Đã Sẵn Sàng!")
+print("✅ Teleport & Aim Bot Script Đã Sẵn Sàng! - KHÔNG ĐỘ TRỄ")
