@@ -49,7 +49,7 @@ aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
 aimButtonCorner.Parent = aimButton
 
 -- ===========================================================================
--- AIMBOT BÁM DÍNH KHÔNG DỰ ĐOÁN
+-- AIMBOT ƯU TIÊN MỤC TIÊU NGUY HIỂM (KẺ BẮN TỈA TỪ XA)
 -- ===========================================================================
 
 local isLocked = false
@@ -68,15 +68,16 @@ local arrowGui = nil
 
 local wallhackEnabled = true
 
--- Cấu hình Aimbot - ĐÃ LOẠI BỎ DỰ ĐOÁN
+-- Cấu hình Aimbot - ĐÃ CẬP NHẬT ĐỂ ƯU TIÊN MỤC TIÊU NGUY HIỂM
 local AIMBOT_CONFIG = {
-    FOV = 120, -- Góc nhìn (độ)
-    MAX_DISTANCE = 500, -- Khoảng cách tối đa
-    SMOOTHING = 0.08, -- Độ mượt thấp hơn để bám dính tốt hơn
-    HEAD_PRIORITY = true, -- Ưu tiên headshot
-    VISIBILITY_CHECK = true, -- Kiểm tra tầm nhìn
-    STICKY_AIM = true, -- Bám dính chặt vào mục tiêu
-    AIM_POINT = "Head" -- Head, UpperTorso, HumanoidRootPart
+    FOV = 360, -- Giờ là 360 độ để nhận diện tất cả mục tiêu xung quanh
+    MAX_DISTANCE = 1000, -- Tăng khoảng cách tối đa để phát hiện kẻ bắn tỉa
+    SMOOTHING = 0.08,
+    HEAD_PRIORITY = true,
+    VISIBILITY_CHECK = true,
+    STICKY_AIM = true,
+    DANGER_PRIORITY = true, -- Ưu tiên mục tiêu nguy hiểm
+    SNIPER_DETECTION = true -- Phát hiện kẻ bắn tỉa
 }
 
 -- Hàm kiểm tra team (đồng đội hay địch)
@@ -100,7 +101,6 @@ local function hasClearLineOfSight(pointA, pointB, ignoreList)
     local raycastResult = workspace:Raycast(pointA, direction * distance, raycastParams)
     
     if raycastResult then
-        -- Kiểm tra thêm từ nhiều góc độ để tránh false positive
         local offsets = {
             Vector3.new(0.3, 0, 0),
             Vector3.new(-0.3, 0, 0),
@@ -112,7 +112,7 @@ local function hasClearLineOfSight(pointA, pointB, ignoreList)
             local newPointA = pointA + offset
             local newRay = workspace:Raycast(newPointA, direction * distance, raycastParams)
             if not newRay then
-                return true -- Có ít nhất một đường ray không bị chặn
+                return true
             end
         end
         return false
@@ -121,7 +121,7 @@ local function hasClearLineOfSight(pointA, pointB, ignoreList)
     return true
 end
 
--- Hàm kiểm tra xem địch có thể nhìn thấy mình
+-- Hàm kiểm tra xem địch có thể nhìn thấy mình (CẢI TIẾN)
 local function canShootMe(targetPlayer)
     if not targetPlayer or not targetPlayer.Character then return false end
     
@@ -137,7 +137,18 @@ local function canShootMe(targetPlayer)
     )
 end
 
--- Hàm tính điểm đe dọa đơn giản hóa
+-- Hàm kiểm tra kẻ bắn tỉa (mục tiêu ở xa có thể bắn mình)
+local function isSniperThreat(targetPlayer, distance)
+    if not targetPlayer.Character then return false end
+    
+    local root = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return false end
+    
+    -- Kẻ bắn tỉa là mục tiêu ở xa (trên 50 studs) và có thể bắn mình
+    return distance > 50 and canShootMe(targetPlayer)
+end
+
+-- Hàm tính điểm đe dọa ĐÃ CẢI TIẾN để ưu tiên kẻ bắn tỉa
 local function calculateThreatScore(targetPlayer, camPos)
     if not targetPlayer.Character then return 0 end
     
@@ -148,13 +159,18 @@ local function calculateThreatScore(targetPlayer, camPos)
     local score = 0
     local distance = (root.Position - camPos).Magnitude
     
-    -- Yếu tố khoảng cách (gần = điểm cao)
+    -- Yếu tố khoảng cách (giảm trọng số khoảng cách gần)
     local distanceScore = math.max(0, 1 - (distance / AIMBOT_CONFIG.MAX_DISTANCE))
-    score = score + distanceScore * 50
+    score = score + distanceScore * 30  -- Giảm trọng số khoảng cách
     
-    -- Yếu tố có thể bắn mình
+    -- Yếu tố có thể bắn mình - TĂNG TRỌNG SỐ LỚN
     if canShootMe(targetPlayer) then
-        score = score + 30
+        score = score + 60  -- Tăng rất cao cho mục tiêu có thể bắn mình
+        
+        -- Thêm điểm thưởng cho kẻ bắn tỉa
+        if isSniperThreat(targetPlayer, distance) then
+            score = score + 50  -- Điểm thưởng rất lớn cho kẻ bắn tỉa
+        end
     end
     
     -- Yếu tố tầm nhìn trực tiếp
@@ -167,25 +183,39 @@ local function calculateThreatScore(targetPlayer, camPos)
         score = score + 20
     end
     
-    -- Yếu tố góc nhìn (càng ở trung tâm càng tốt)
+    -- Yếu tố góc nhìn (giảm trọng số để ưu tiên mục tiêu nguy hiểm hơn là mục tiêu ở trung tâm)
     local camDir = camera.CFrame.LookVector
     local toTarget = (root.Position - camPos).Unit
     local dot = camDir:Dot(toTarget)
-    if dot > 0.9 then -- Chỉ tính những mục tiêu trong tầm nhìn
-        score = score + (dot * 20)
+    
+    -- Mở rộng FOV để nhận diện 360 độ
+    if dot > 0.7 then -- Giảm ngưỡng từ 0.9 xuống 0.7 để nhận diện mục tiêu rộng hơn
+        score = score + (dot * 15) -- Giảm trọng số góc nhìn
+    end
+    
+    -- Yếu tố máu (mục tiêu máu thấp dễ tiêu diệt hơn)
+    local healthScore = (100 - humanoid.Health) / 100
+    score = score + healthScore * 10
+    
+    -- Ưu tiên mục tiêu đang di chuyển chậm hoặc đứng yên (dễ bắn hơn)
+    local velocity = root.Velocity.Magnitude
+    if velocity < 5 then
+        score = score + 15  -- Thưởng cho mục tiêu đứng yên
     end
     
     return math.max(0, score)
 end
 
--- Hàm tìm mục tiêu tối ưu
+-- Hàm tìm mục tiêu tối ưu ĐÃ CẢI TIẾN
 local function findOptimalTarget()
     local camPos = camera.CFrame.Position
     local bestTarget = nil
     local bestScore = 0
     
+    -- Tìm tất cả mục tiêu tiềm năng
+    local potentialTargets = {}
+    
     for _, potentialTarget in pairs(Players:GetPlayers()) do
-        -- Kiểm tra điều kiện cơ bản
         if potentialTarget ~= player and 
            isEnemy(potentialTarget) and 
            potentialTarget.Character then
@@ -194,31 +224,37 @@ local function findOptimalTarget()
             local humanoid = potentialTarget.Character:FindFirstChild("Humanoid")
             
             if root and humanoid and humanoid.Health > 0 then
-                -- Kiểm tra khoảng cách
                 local distance = (root.Position - camPos).Magnitude
                 if distance <= AIMBOT_CONFIG.MAX_DISTANCE then
-                    -- Tính điểm đe dọa
-                    local threatScore = calculateThreatScore(potentialTarget, camPos)
-                    
-                    -- Chọn mục tiêu có điểm cao nhất
-                    if threatScore > bestScore then
-                        bestScore = threatScore
-                        bestTarget = potentialTarget
-                    end
+                    table.insert(potentialTargets, {
+                        player = potentialTarget,
+                        distance = distance
+                    })
                 end
             end
         end
     end
     
-    -- Chỉ nhắm nếu điểm đủ cao
-    if bestScore < 40 then -- Ngưỡng tối thiểu cao hơn để chọn mục tiêu tốt
+    -- Tính điểm cho từng mục tiêu
+    for _, targetData in pairs(potentialTargets) do
+        local threatScore = calculateThreatScore(targetData.player, camPos)
+        
+        -- Ưu tiên mục tiêu nguy hiểm (có thể bắn mình) hơn là mục tiêu gần
+        if threatScore > bestScore then
+            bestScore = threatScore
+            bestTarget = targetData.player
+        end
+    end
+    
+    -- Ngưỡng tối thiểu để chọn mục tiêu
+    if bestScore < 50 then
         return nil
     end
     
     return bestTarget
 end
 
--- ESP Functions
+-- ESP Functions (giữ nguyên)
 local function createEspFolder(targetPlayer)
     if espFolders[targetPlayer] then
         espFolders[targetPlayer]:Destroy()
@@ -240,11 +276,26 @@ local function updateHighlight(character, targetPlayer)
     
     local folder = createEspFolder(targetPlayer)
     
-    -- Xác định màu dựa trên team
+    -- Xác định màu dựa trên team và mức độ nguy hiểm
     local fillColor, outlineColor
     if isEnemy(targetPlayer) then
-        fillColor = Color3.fromRGB(255, 50, 50)
-        outlineColor = Color3.fromRGB(255, 255, 255)
+        local camPos = camera.CFrame.Position
+        local root = character:FindFirstChild("HumanoidRootPart")
+        local distance = root and (root.Position - camPos).Magnitude or 0
+        
+        -- Kẻ địch có thể bắn mình được đánh dấu màu đặc biệt
+        if canShootMe(targetPlayer) then
+            if isSniperThreat(targetPlayer, distance) then
+                fillColor = Color3.fromRGB(255, 0, 0) -- Đỏ rực cho kẻ bắn tỉa nguy hiểm
+                outlineColor = Color3.fromRGB(255, 255, 0)
+            else
+                fillColor = Color3.fromRGB(255, 100, 100) -- Đỏ nhạt cho kẻ địch thông thường có thể bắn mình
+                outlineColor = Color3.fromRGB(255, 255, 255)
+            end
+        else
+            fillColor = Color3.fromRGB(255, 50, 50) -- Đỏ tiêu chuẩn
+            outlineColor = Color3.fromRGB(255, 255, 255)
+        end
     else
         fillColor = Color3.fromRGB(50, 150, 255)
         outlineColor = Color3.fromRGB(200, 200, 200)
@@ -361,7 +412,7 @@ local function initializeWallhack()
 end
 
 -- ===========================================================================
--- AIMBOT BÁM DÍNH TRỰC TIẾP - KHÔNG DỰ ĐOÁN
+-- AIMBOT ƯU TIÊN MỤC TIÊU NGUY HIỂM
 -- ===========================================================================
 
 local function showArrow(target)
@@ -375,13 +426,13 @@ local function showArrow(target)
     gui.Size = UDim2.new(0, 50, 0, 50)
     gui.AlwaysOnTop = true
     gui.Adornee = head
-    gui.MaxDistance = 500
+    gui.MaxDistance = 1000  -- Tăng khoảng cách hiển thị
     gui.SizeOffset = Vector2.new(0, 2.5)
 
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, 0, 1, 0)
     label.BackgroundTransparency = 1
-    label.Text = "🔒"
+    label.Text = "🔫"  -- Đổi biểu tượng để thể hiện mục tiêu ưu tiên
     label.TextColor3 = Color3.fromRGB(255, 0, 0)
     label.TextScaled = true
     label.Font = Enum.Font.GothamBold
@@ -432,27 +483,12 @@ local function directAim(target)
     camera.CFrame = CFrame.new(camPos, camPos + smoothedLookVector)
 end
 
--- Hàm aim cứng (không mượt) cho độ chính xác cao
-local function hardAim(target)
-    if not target or not target.Character then return end
-    
-    local camPos = camera.CFrame.Position
-    local targetPart = target.Character:FindFirstChild("Head") or 
-                      target.Character:FindFirstChild("UpperTorso")
-    
-    if not targetPart then return end
-    
-    -- AIM CỨNG TRỰC TIẾP - KHÔNG MƯỢT
-    local targetPos = targetPart.Position
-    camera.CFrame = CFrame.new(camPos, targetPos)
-end
-
--- Bắt đầu Aim với độ chính xác cao
-local function startPreciseAim()
+-- Bắt đầu Aim với độ chính xác cao và ưu tiên mục tiêu nguy hiểm
+local function startDangerPriorityAim()
     if aimConnection then aimConnection:Disconnect() end
     
     local lastTargetSwitch = 0
-    local TARGET_SWITCH_COOLDOWN = 0.3 -- Giây
+    local TARGET_SWITCH_COOLDOWN = 0.5 -- Tăng thời gian chuyển đổi để ổn định hơn
     
     aimConnection = RunService.RenderStepped:Connect(function()
         if not aimEnabled then return end
@@ -466,10 +502,17 @@ local function startPreciseAim()
            (currentTime - lastTargetSwitch > TARGET_SWITCH_COOLDOWN) then
             
             local newTarget = findOptimalTarget()
-            if newTarget then
+            if newTarget and newTarget ~= currentTarget then
                 currentTarget = newTarget
                 lastTargetSwitch = currentTime
                 showArrow(currentTarget)
+                
+                -- In thông tin mục tiêu mới (debug)
+                local distance = (currentTarget.Character.HumanoidRootPart.Position - camera.CFrame.Position).Magnitude
+                local isDanger = canShootMe(currentTarget)
+                print("🎯 Mục tiêu mới: " .. currentTarget.Name .. 
+                      " | Khoảng cách: " .. math.floor(distance) .. 
+                      " | Nguy hiểm: " .. tostring(isDanger))
             else
                 currentTarget = nil
                 removeArrow()
@@ -478,22 +521,18 @@ local function startPreciseAim()
 
         -- Aim vào mục tiêu với độ chính xác cao
         if currentTarget then
-            if AIMBOT_CONFIG.STICKY_AIM then
-                hardAim(currentTarget) -- Aim cứng cho độ chính xác
-            else
-                directAim(currentTarget) -- Aim có độ mượt nhẹ
-            end
+            directAim(currentTarget)
         end
     end)
 end
 
--- Nút bật/tắt AimBot chính xác
+-- Nút bật/tắt AimBot ưu tiên nguy hiểm
 aimButton.MouseButton1Click:Connect(function()
     aimEnabled = not aimEnabled
     if aimEnabled then
         aimButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
         aimButton.Text = "AIM ON"
-        startPreciseAim()
+        startDangerPriorityAim()
     else
         aimButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
         aimButton.Text = "AIM OFF"
@@ -714,4 +753,4 @@ end)
 -- Khởi tạo
 initializeWallhack()
 
-print("✅ Aimbot Bám Dính Chính Xác Đã Sẵn Sàng! (Không Dự Đoán)")
+print("✅ Aimbot Ưu Tiên Mục Tiêu Nguy Hiểm Đã Sẵn Sàng! (Nhận diện 360 độ)")
