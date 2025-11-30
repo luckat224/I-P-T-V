@@ -74,44 +74,63 @@ local allPlayersESP = {}
 -- HÀM CƠ BẢN - TỐI ƯU TỐC ĐỘ
 -- ===========================================================================
 
--- Kiểm tra team - TỐI ƯU
+-- Kiểm tra team - CHỈ AIM ĐỊCH
 local function isEnemy(targetPlayer)
     if targetPlayer == player then return false end
-    if not player.Team then return true end
-    if not targetPlayer.Team then return true end
+    
+    -- Nếu không có hệ thống team, coi tất cả là địch (trừ bản thân)
+    if not game:GetService("Teams"):GetChildren() or #game:GetService("Teams"):GetChildren() == 0 then
+        return true
+    end
+    
+    -- Nếu người chơi không có team, không aim
+    if not player.Team then return false end
+    if not targetPlayer.Team then return false end
+    
+    -- Chỉ aim nếu khác team
     return player.Team ~= targetPlayer.Team
 end
 
--- Kiểm tra vật cản SIÊU NHANH
-local function hasClearLineOfSight(pointA, pointB, ignoreList)
-    local raycastParams = RaycastParams.new()
-    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-    raycastParams.FilterDescendantsInstances = ignoreList or {}
-    raycastParams.IgnoreWater = true
+-- Hàm tìm người chơi mà camera đang nhìn
+local function getPlayerInSight()
+    if not player.Character then return nil end
     
-    local raycastResult = workspace:Raycast(pointA, (pointB - pointA), raycastParams)
-    return not raycastResult
-end
-
--- Kiểm tra địch có thể nhìn thấy mình - TỐI ƯU
-local function canShootMe(targetPlayer)
-    if not targetPlayer or not targetPlayer.Character then return false end
-    if not player.Character then return false end
+    local camera = workspace.CurrentCamera
+    local cameraPosition = camera.CFrame.Position
+    local cameraDirection = camera.CFrame.LookVector
     
-    local targetHead = targetPlayer.Character:FindFirstChild("Head")
-    local playerHead = player.Character:FindFirstChild("Head")
+    local closestPlayer = nil
+    local closestDistance = math.huge
     
-    if not targetHead or not playerHead then return false end
+    for _, otherPlayer in pairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character then
+            local humanoid = otherPlayer.Character:FindFirstChild("Humanoid")
+            local head = otherPlayer.Character:FindFirstChild("Head")
+            
+            if humanoid and humanoid.Health > 0 and head then
+                -- Tính vector từ camera đến player
+                local toPlayer = head.Position - cameraPosition
+                local distance = toPlayer.Magnitude
+                
+                -- Tính góc giữa hướng camera và hướng đến player
+                local dot = cameraDirection:Dot(toPlayer.Unit)
+                
+                -- Nếu player nằm trong tầm nhìn (góc nhỏ) và gần hơn
+                if dot > 0.9 then -- Góc ~25 độ
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestPlayer = otherPlayer
+                    end
+                end
+            end
+        end
+    end
     
-    return hasClearLineOfSight(
-        targetHead.Position, 
-        playerHead.Position, 
-        {targetPlayer.Character, player.Character}
-    )
+    return closestPlayer
 end
 
 -- ===========================================================================
--- ESP CẬP NHẬT TỨC THÌ - KHÔNG ĐỘ TRỄ
+-- ESP CẬP NHẬT TỨC THÌ - KÍCH HOẠT NGAY KHI CHẠY CODE
 -- ===========================================================================
 
 local function createInstantESP(targetPlayer)
@@ -136,13 +155,13 @@ local function createInstantESP(targetPlayer)
         local highlight = Instance.new("Highlight")
         highlight.Name = "ESP_Highlight"
         
-        -- Màu sắc dựa trên mức độ nguy hiểm
-        if canShootMe(targetPlayer) then
-            highlight.FillColor = Color3.fromRGB(255, 0, 0)  -- Đỏ rực: cực kỳ nguy hiểm
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 0)
-        else
-            highlight.FillColor = Color3.fromRGB(255, 100, 100) -- Đỏ nhạt: kẻ địch thường
+        -- Màu sắc dựa trên team
+        if isEnemy(targetPlayer) then
+            highlight.FillColor = Color3.fromRGB(255, 50, 50)  -- Đỏ: địch
             highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        else
+            highlight.FillColor = Color3.fromRGB(50, 150, 255)  -- Xanh: đồng đội
+            highlight.OutlineColor = Color3.fromRGB(200, 200, 200)
         end
         
         highlight.FillTransparency = 0.5
@@ -162,13 +181,6 @@ local function createInstantESP(targetPlayer)
     local characterConnection
     characterConnection = targetPlayer.CharacterAdded:Connect(function(character)
         createHighlight(character)
-        
-        -- Kết nối sự kiện humanoid để biết khi chết
-        local humanoid = character:WaitForChild("Humanoid")
-        humanoid.Died:Connect(function()
-            -- Khi chết, đánh dấu để tạo lại ESP khi respawn
-            wait() -- Đợi 1 frame
-        end)
     end)
     
     -- Lưu kết nối để cleanup sau
@@ -192,6 +204,8 @@ local function initializeInstantWallhack()
             createInstantESP(otherPlayer)
         end
     end
+    
+    print("🟢 WALLHACK ĐÃ KÍCH HOẠT NGAY LẬP TỨC!")
 end
 
 local function toggleWallhack()
@@ -209,13 +223,15 @@ local function toggleWallhack()
     
     if wallhackEnabled then
         teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
+        print("🔵 Wallhack: BẬT")
     else
         teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        print("🔴 Wallhack: TẮT")
     end
 end
 
 -- ===========================================================================
--- AIMBOT THÔNG MINH - ƯU TIÊN MỤC TIÊU NGUY HIỂM NHẤT
+-- AIMBOT THÔNG MINH - CHỈ AIM ĐỊCH TRONG TRẬN
 -- ===========================================================================
 
 local function findMostDangerousTarget()
@@ -226,6 +242,7 @@ local function findMostDangerousTarget()
     local highestThreatLevel = -1
     
     for _, otherPlayer in pairs(Players:GetPlayers()) do
+        -- CHỈ AIM ĐỊCH - KHÔNG AIM ĐỒNG ĐỘI
         if otherPlayer ~= player and isEnemy(otherPlayer) and otherPlayer.Character then
             local humanoid = otherPlayer.Character:FindFirstChild("Humanoid")
             local rootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -234,25 +251,12 @@ local function findMostDangerousTarget()
                 local threatLevel = 0
                 local distance = (rootPart.Position - camPos).Magnitude
                 
-                -- ƯU TIÊN CAO NHẤT: Mục tiêu có thể bắn mình (đang nhìn thấy mình)
-                if canShootMe(otherPlayer) then
-                    threatLevel = threatLevel + 1000  -- Điểm cực cao cho mục tiêu nguy hiểm
-                    
-                    -- Thêm điểm thưởng nếu mục tiêu rất gần
-                    if distance < 10 then
-                        threatLevel = threatLevel + 500  -- Cực kỳ nguy hiểm
-                    elseif distance < 25 then
-                        threatLevel = threatLevel + 300  -- Rất nguy hiểm
-                    end
-                end
-                
                 -- Ưu tiên mục tiêu trong tầm nhìn của mình
-                local isVisibleToMe = hasClearLineOfSight(
-                    camPos, 
-                    rootPart.Position, 
-                    {player.Character, otherPlayer.Character}
-                )
-                if isVisibleToMe then
+                local camDir = camera.CFrame.LookVector
+                local toTarget = (rootPart.Position - camPos).Unit
+                local dot = camDir:Dot(toTarget)
+                
+                if dot > 0.9 then
                     threatLevel = threatLevel + 200
                 end
                 
@@ -313,7 +317,7 @@ local function showTargetArrow(target)
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, 0, 1, 0)
     label.BackgroundTransparency = 1
-    label.Text = "🔴"
+    label.Text = "🎯"
     label.TextColor3 = Color3.fromRGB(255, 0, 0)
     label.TextScaled = true
     label.Font = Enum.Font.GothamBold
@@ -331,7 +335,7 @@ local function removeTargetArrow()
 end
 
 -- ===========================================================================
--- TELEPORT TỐI ƯU
+-- TELEPORT ĐẾN NGƯỜI CAMERA ĐANG NHÌN
 -- ===========================================================================
 
 local function smartTeleportToTarget(target)
@@ -344,7 +348,7 @@ local function smartTeleportToTarget(target)
     if not targetRoot or not playerRoot then return false end
     
     local targetCF = targetRoot.CFrame
-    local teleportPosition = targetCF.Position - targetCF.LookVector * 3
+    local teleportPosition = targetCF.Position - targetCF.LookVector * 4
     
     -- Kiểm tra vật cản
     local raycastParams = RaycastParams.new()
@@ -411,7 +415,7 @@ local function createTeleportArrow(target)
 end
 
 -- ===========================================================================
--- ĐIỀU KHIỂN AIMBOT
+-- ĐIỀU KHIỂN AIMBOT - CHỈ AIM ĐỊCH
 -- ===========================================================================
 
 aimButton.MouseButton1Click:Connect(function()
@@ -421,7 +425,7 @@ aimButton.MouseButton1Click:Connect(function()
         aimButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
         aimButton.Text = "AIM ON"
         
-        -- Bắt đầu aimbot thông minh
+        -- Bắt đầu aimbot thông minh - CHỈ AIM ĐỊCH
         if aimConnection then 
             aimConnection:Disconnect() 
         end
@@ -429,13 +433,14 @@ aimButton.MouseButton1Click:Connect(function()
         aimConnection = RunService.RenderStepped:Connect(function()
             if not aimEnabled then return end
             
-            -- Luôn tìm mục tiêu nguy hiểm nhất mỗi frame
+            -- Luôn tìm mục tiêu nguy hiểm nhất mỗi frame - CHỈ ĐỊCH
             local newTarget = findMostDangerousTarget()
             
             if newTarget then
                 if currentTarget ~= newTarget then
                     currentTarget = newTarget
                     showTargetArrow(currentTarget)
+                    print("🎯 Đã khóa mục tiêu: " .. currentTarget.Name .. " (Địch)")
                 end
                 preciseAim(currentTarget)
             else
@@ -459,7 +464,7 @@ aimButton.MouseButton1Click:Connect(function()
 end)
 
 -- ===========================================================================
--- ĐIỀU KHIỂN TELEPORT
+-- ĐIỀU KHIỂN TELEPORT - TELEPORT ĐẾN NGƯỜI CAMERA ĐANG NHÌN
 -- ===========================================================================
 
 local function unlockTeleport()
@@ -481,7 +486,8 @@ local function unlockTeleport()
 end
 
 local function lockTeleport()
-    local newTarget = findMostDangerousTarget()
+    -- TÌM NGƯỜI CHƠI MÀ CAMERA ĐANG NHÌN (KHÔNG PHÂN BIỆT TEAM)
+    local newTarget = getPlayerInSight()
     
     if not newTarget then
         teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
@@ -528,6 +534,7 @@ local function lockTeleport()
         end
     end)
     
+    print("🔒 Đã khóa teleport đến: " .. targetPlayer.Name)
     return true
 end
 
@@ -548,7 +555,7 @@ end)
 teleportButton.MouseButton2Click:Connect(toggleWallhack)
 
 -- ===========================================================================
--- HỆ THỐNG CẬP NHẬT TỰ ĐỘNG 100% - KHÔNG ĐỘ TRỄ
+-- HỆ THỐNG CẬP NHẬT TỰ ĐỘNG 100% - KÍCH HOẠT WALL NGAY KHI CHẠY CODE
 -- ===========================================================================
 
 -- Khi có người chơi mới tham gia - CẬP NHẬT NGAY
@@ -581,7 +588,7 @@ player.CharacterAdded:Connect(function(character)
     unlockTeleport()
     
     -- Cập nhật lại ESP cho tất cả người chơi sau khi respawn
-    wait(0.1) -- Đợi 1 frame
+    wait(0.1)
     for targetPlayer, folder in pairs(allPlayersESP) do
         if folder and targetPlayer.Character then
             for _, child in pairs(folder:GetChildren()) do
@@ -601,12 +608,12 @@ if player:FindFirstChild("Team") then
             if folder and targetPlayer.Character then
                 for _, child in pairs(folder:GetChildren()) do
                     if child:IsA("Highlight") then
-                        if canShootMe(targetPlayer) then
-                            child.FillColor = Color3.fromRGB(255, 0, 0)
-                            child.OutlineColor = Color3.fromRGB(255, 255, 0)
-                        else
-                            child.FillColor = Color3.fromRGB(255, 100, 100)
+                        if isEnemy(targetPlayer) then
+                            child.FillColor = Color3.fromRGB(255, 50, 50)
                             child.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        else
+                            child.FillColor = Color3.fromRGB(50, 150, 255)
+                            child.OutlineColor = Color3.fromRGB(200, 200, 200)
                         end
                     end
                 end
@@ -616,13 +623,23 @@ if player:FindFirstChild("Team") then
 end
 
 -- ===========================================================================
--- KHỞI TẠO HỆ THỐNG
+-- KHỞI TẠO HỆ THỐNG - KÍCH HOẠT WALL NGAY KHI CHẠY CODE
 -- ===========================================================================
 
--- Khởi tạo ngay khi script chạy
+-- KÍCH HOẠT WALLHACK NGAY KHI CHẠY CODE
+wait(0.5) -- Đợi game load một chút
 initializeInstantWallhack()
 
+print("")
 print("🎯 HỆ THỐNG ĐÃ SẴN SÀNG 100%")
-print("✅ ESP: Cập nhật tức thì")
-print("✅ Aimbot: Ưu tiên mục tiêu nguy hiểm nhất") 
-print("✅ Teleport: Hoạt động mượt")
+print("===========================================")
+print("✅ WALLHACK: Đã kích hoạt ngay lập tức")
+print("✅ AIMBOT: Chỉ aim địch trong trận") 
+print("✅ TELEPORT: Teleport đến người camera đang nhìn")
+print("✅ ESP: Phân biệt đồng đội (xanh) và địch (đỏ)")
+print("===========================================")
+print("📌 Hướng dẫn sử dụng:")
+print("   - Click TRÁI nút AIM: Bật/Tắt Aimbot (chỉ aim địch)")
+print("   - Click TRÁI nút TELEPORT: Teleport đến người camera đang nhìn") 
+print("   - Click PHẢI nút TELEPORT: Bật/Tắt Wallhack")
+print("===========================================")
