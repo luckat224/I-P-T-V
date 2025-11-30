@@ -67,100 +67,48 @@ local espFolders = {}
 local arrowGui = nil
 local wallhackEnabled = true
 
--- Biến để theo dõi tất cả người chơi
-local allPlayersESP = {}
-
 -- ===========================================================================
--- HÀM CƠ BẢN - TỐI ƯU TỐC ĐỘ
+-- ESP HOẠT ĐỘNG 100% - ĐÃ SỬA LỖI
 -- ===========================================================================
 
--- Kiểm tra team - CHỈ AIM ĐỊCH
 local function isEnemy(targetPlayer)
     if targetPlayer == player then return false end
-    
-    -- Nếu không có hệ thống team, coi tất cả là địch (trừ bản thân)
-    if not game:GetService("Teams"):GetChildren() or #game:GetService("Teams"):GetChildren() == 0 then
-        return true
-    end
-    
-    -- Nếu người chơi không có team, không aim
-    if not player.Team then return false end
+    if not player.Team then return true end
     if not targetPlayer.Team then return false end
-    
-    -- Chỉ aim nếu khác team
     return player.Team ~= targetPlayer.Team
 end
 
--- Hàm tìm người chơi mà camera đang nhìn
-local function getPlayerInSight()
-    if not player.Character then return nil end
-    
-    local camera = workspace.CurrentCamera
-    local cameraPosition = camera.CFrame.Position
-    local cameraDirection = camera.CFrame.LookVector
-    
-    local closestPlayer = nil
-    local closestDistance = math.huge
-    
-    for _, otherPlayer in pairs(Players:GetPlayers()) do
-        if otherPlayer ~= player and otherPlayer.Character then
-            local humanoid = otherPlayer.Character:FindFirstChild("Humanoid")
-            local head = otherPlayer.Character:FindFirstChild("Head")
-            
-            if humanoid and humanoid.Health > 0 and head then
-                -- Tính vector từ camera đến player
-                local toPlayer = head.Position - cameraPosition
-                local distance = toPlayer.Magnitude
-                
-                -- Tính góc giữa hướng camera và hướng đến player
-                local dot = cameraDirection:Dot(toPlayer.Unit)
-                
-                -- Nếu player nằm trong tầm nhìn (góc nhỏ) và gần hơn
-                if dot > 0.9 then -- Góc ~25 độ
-                    if distance < closestDistance then
-                        closestDistance = distance
-                        closestPlayer = otherPlayer
-                    end
-                end
-            end
-        end
-    end
-    
-    return closestPlayer
-end
-
--- ===========================================================================
--- ESP CẬP NHẬT TỨC THÌ - KÍCH HOẠT NGAY KHI CHẠY CODE
--- ===========================================================================
-
-local function createInstantESP(targetPlayer)
-    if allPlayersESP[targetPlayer] then
-        allPlayersESP[targetPlayer]:Destroy()
+-- Hàm tạo ESP đơn giản và hiệu quả
+local function createESP(targetPlayer)
+    if espFolders[targetPlayer] then
+        espFolders[targetPlayer]:Destroy()
     end
     
     local folder = Instance.new("Folder")
     folder.Name = targetPlayer.Name .. "_ESP"
     folder.Parent = playerGui
-    allPlayersESP[targetPlayer] = folder
+    espFolders[targetPlayer] = folder
     
-    local function createHighlight(character)
+    local function setupCharacter(character)
         if not character or not character:IsDescendantOf(workspace) then return end
+        
+        -- Đợi character load hoàn toàn
+        wait(0.5)
         
         -- Xóa highlight cũ
         for _, child in pairs(folder:GetChildren()) do
             child:Destroy()
         end
         
-        -- Tạo highlight mới NGAY LẬP TỨC
+        -- Tạo highlight mới
         local highlight = Instance.new("Highlight")
-        highlight.Name = "ESP_Highlight"
+        highlight.Name = "ESP"
         
-        -- Màu sắc dựa trên team
         if isEnemy(targetPlayer) then
-            highlight.FillColor = Color3.fromRGB(255, 50, 50)  -- Đỏ: địch
+            highlight.FillColor = Color3.fromRGB(255, 50, 50)  -- Đỏ cho địch
             highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
         else
-            highlight.FillColor = Color3.fromRGB(50, 150, 255)  -- Xanh: đồng đội
+            highlight.FillColor = Color3.fromRGB(50, 150, 255)  -- Xanh cho đồng đội
             highlight.OutlineColor = Color3.fromRGB(200, 200, 200)
         end
         
@@ -170,48 +118,48 @@ local function createInstantESP(targetPlayer)
         highlight.Adornee = character
         highlight.Parent = folder
         highlight.Enabled = wallhackEnabled
+        
+        print("✅ Đã tạo ESP cho: " .. targetPlayer.Name)
     end
     
-    -- Xử lý character hiện tại NGAY LẬP TỨC
+    -- Thiết lập character hiện tại
     if targetPlayer.Character then
-        createHighlight(targetPlayer.Character)
+        setupCharacter(targetPlayer.Character)
     end
     
-    -- Kết nối sự kiện CharacterAdded - CẬP NHẬT TỨC THÌ
-    local characterConnection
-    characterConnection = targetPlayer.CharacterAdded:Connect(function(character)
-        createHighlight(character)
+    -- Kết nối sự kiện khi character thay đổi
+    targetPlayer.CharacterAdded:Connect(function(character)
+        print("🔄 " .. targetPlayer.Name .. " đã respawn, cập nhật ESP...")
+        setupCharacter(character)
     end)
-    
-    -- Lưu kết nối để cleanup sau
-    folder:SetAttribute("CharacterConnection", characterConnection)
 end
 
-local function initializeInstantWallhack()
-    -- Xóa toàn bộ ESP cũ
-    for targetPlayer, folder in pairs(allPlayersESP) do
+-- Khởi tạo wallhack
+local function initializeWallhack()
+    print("🔄 Đang khởi tạo wallhack...")
+    
+    -- Xóa ESP cũ
+    for targetPlayer, folder in pairs(espFolders) do
         if folder then
-            local conn = folder:GetAttribute("CharacterConnection")
-            if conn then conn:Disconnect() end
             folder:Destroy()
         end
     end
-    allPlayersESP = {}
+    espFolders = {}
     
-    -- Tạo ESP cho tất cả người chơi NGAY LẬP TỨC
+    -- Tạo ESP cho tất cả người chơi
     for _, otherPlayer in pairs(Players:GetPlayers()) do
         if otherPlayer ~= player then
-            createInstantESP(otherPlayer)
+            createESP(otherPlayer)
         end
     end
     
-    print("🟢 WALLHACK ĐÃ KÍCH HOẠT NGAY LẬP TỨC!")
+    print("✅ Wallhack đã khởi tạo cho " .. (#Players:GetPlayers() - 1) .. " người chơi")
 end
 
 local function toggleWallhack()
     wallhackEnabled = not wallhackEnabled
     
-    for targetPlayer, folder in pairs(allPlayersESP) do
+    for targetPlayer, folder in pairs(espFolders) do
         if folder then
             for _, child in pairs(folder:GetChildren()) do
                 if child:IsA("Highlight") then
@@ -231,7 +179,7 @@ local function toggleWallhack()
 end
 
 -- ===========================================================================
--- AIMBOT THÔNG MINH - CHỈ AIM ĐỊCH TRONG TRẬN
+-- AIMBOT - CHỈ AIM ĐỊCH
 -- ===========================================================================
 
 local function findMostDangerousTarget()
@@ -242,7 +190,6 @@ local function findMostDangerousTarget()
     local highestThreatLevel = -1
     
     for _, otherPlayer in pairs(Players:GetPlayers()) do
-        -- CHỈ AIM ĐỊCH - KHÔNG AIM ĐỒNG ĐỘI
         if otherPlayer ~= player and isEnemy(otherPlayer) and otherPlayer.Character then
             local humanoid = otherPlayer.Character:FindFirstChild("Humanoid")
             local rootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -251,7 +198,10 @@ local function findMostDangerousTarget()
                 local threatLevel = 0
                 local distance = (rootPart.Position - camPos).Magnitude
                 
-                -- Ưu tiên mục tiêu trong tầm nhìn của mình
+                -- Ưu tiên mục tiêu gần
+                threatLevel = threatLevel + (100 - math.min(distance / 5, 100))
+                
+                -- Ưu tiên mục tiêu trong tầm nhìn
                 local camDir = camera.CFrame.LookVector
                 local toTarget = (rootPart.Position - camPos).Unit
                 local dot = camDir:Dot(toTarget)
@@ -260,13 +210,7 @@ local function findMostDangerousTarget()
                     threatLevel = threatLevel + 200
                 end
                 
-                -- Ưu tiên mục tiêu gần
-                threatLevel = threatLevel + (100 - math.min(distance / 5, 100))
-                
-                -- Ưu tiên mục tiêu máu thấp (dễ tiêu diệt)
-                threatLevel = threatLevel + (100 - humanoid.Health)
-                
-                -- Chọn mục tiêu có mức độ đe dọa cao nhất
+                -- Chọn mục tiêu có điểm cao nhất
                 if threatLevel > highestThreatLevel then
                     highestThreatLevel = threatLevel
                     bestTarget = otherPlayer
@@ -291,7 +235,6 @@ local function preciseAim(target)
     local camPos = camera.CFrame.Position
     local targetPos = targetPart.Position
     
-    -- Aim chính xác 100%
     camera.CFrame = CFrame.new(camPos, targetPos)
 end
 
@@ -312,7 +255,6 @@ local function showTargetArrow(target)
     gui.AlwaysOnTop = true
     gui.Adornee = head
     gui.MaxDistance = 1000
-    gui.SizeOffset = Vector2.new(0, 2)
 
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, 0, 1, 0)
@@ -338,6 +280,37 @@ end
 -- TELEPORT ĐẾN NGƯỜI CAMERA ĐANG NHÌN
 -- ===========================================================================
 
+local function getPlayerInSight()
+    if not player.Character then return nil end
+    
+    local camera = workspace.CurrentCamera
+    local cameraPosition = camera.CFrame.Position
+    local cameraDirection = camera.CFrame.LookVector
+    
+    local closestPlayer = nil
+    local closestDistance = math.huge
+    
+    for _, otherPlayer in pairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character then
+            local humanoid = otherPlayer.Character:FindFirstChild("Humanoid")
+            local head = otherPlayer.Character:FindFirstChild("Head")
+            
+            if humanoid and humanoid.Health > 0 and head then
+                local toPlayer = head.Position - cameraPosition
+                local distance = toPlayer.Magnitude
+                local dot = cameraDirection:Dot(toPlayer.Unit)
+                
+                if dot > 0.9 and distance < closestDistance then
+                    closestDistance = distance
+                    closestPlayer = otherPlayer
+                end
+            end
+        end
+    end
+    
+    return closestPlayer
+end
+
 local function smartTeleportToTarget(target)
     if not target or not target.Character then return false end
     if not player.Character then return false end
@@ -350,34 +323,8 @@ local function smartTeleportToTarget(target)
     local targetCF = targetRoot.CFrame
     local teleportPosition = targetCF.Position - targetCF.LookVector * 4
     
-    -- Kiểm tra vật cản
-    local raycastParams = RaycastParams.new()
-    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-    raycastParams.FilterDescendantsInstances = {player.Character, target.Character}
-    
-    local raycastResult = workspace:Raycast(targetRoot.Position, (teleportPosition - targetRoot.Position), raycastParams)
-    
-    if not raycastResult then
-        playerRoot.CFrame = CFrame.new(teleportPosition) * CFrame.Angles(0, math.rad(180), 0)
-        return true
-    else
-        -- Thử các vị trí khác
-        local positions = {
-            targetCF.Position + targetCF.RightVector * 3,
-            targetCF.Position - targetCF.RightVector * 3,
-            targetCF.Position + targetCF.LookVector * 3
-        }
-        
-        for _, pos in ipairs(positions) do
-            local ray = workspace:Raycast(targetRoot.Position, (pos - targetRoot.Position), raycastParams)
-            if not ray then
-                playerRoot.CFrame = CFrame.new(pos)
-                return true
-            end
-        end
-    end
-    
-    return false
+    playerRoot.CFrame = CFrame.new(teleportPosition) * CFrame.Angles(0, math.rad(180), 0)
+    return true
 end
 
 local function createTeleportArrow(target)
@@ -415,7 +362,7 @@ local function createTeleportArrow(target)
 end
 
 -- ===========================================================================
--- ĐIỀU KHIỂN AIMBOT - CHỈ AIM ĐỊCH
+-- ĐIỀU KHIỂN AIMBOT
 -- ===========================================================================
 
 aimButton.MouseButton1Click:Connect(function()
@@ -425,7 +372,6 @@ aimButton.MouseButton1Click:Connect(function()
         aimButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
         aimButton.Text = "AIM ON"
         
-        -- Bắt đầu aimbot thông minh - CHỈ AIM ĐỊCH
         if aimConnection then 
             aimConnection:Disconnect() 
         end
@@ -433,14 +379,12 @@ aimButton.MouseButton1Click:Connect(function()
         aimConnection = RunService.RenderStepped:Connect(function()
             if not aimEnabled then return end
             
-            -- Luôn tìm mục tiêu nguy hiểm nhất mỗi frame - CHỈ ĐỊCH
             local newTarget = findMostDangerousTarget()
             
             if newTarget then
                 if currentTarget ~= newTarget then
                     currentTarget = newTarget
                     showTargetArrow(currentTarget)
-                    print("🎯 Đã khóa mục tiêu: " .. currentTarget.Name .. " (Địch)")
                 end
                 preciseAim(currentTarget)
             else
@@ -464,7 +408,7 @@ aimButton.MouseButton1Click:Connect(function()
 end)
 
 -- ===========================================================================
--- ĐIỀU KHIỂN TELEPORT - TELEPORT ĐẾN NGƯỜI CAMERA ĐANG NHÌN
+-- ĐIỀU KHIỂN TELEPORT
 -- ===========================================================================
 
 local function unlockTeleport()
@@ -486,7 +430,6 @@ local function unlockTeleport()
 end
 
 local function lockTeleport()
-    -- TÌM NGƯỜI CHƠI MÀ CAMERA ĐANG NHÌN (KHÔNG PHÂN BIỆT TEAM)
     local newTarget = getPlayerInSight()
     
     if not newTarget then
@@ -511,7 +454,6 @@ local function lockTeleport()
     createTeleportArrow(targetPlayer)
     smartTeleportToTarget(targetPlayer)
     
-    -- Theo dõi liên tục
     if followConnection then
         followConnection:Disconnect()
     end
@@ -534,7 +476,6 @@ local function lockTeleport()
         end
     end)
     
-    print("🔒 Đã khóa teleport đến: " .. targetPlayer.Name)
     return true
 end
 
@@ -555,22 +496,21 @@ end)
 teleportButton.MouseButton2Click:Connect(toggleWallhack)
 
 -- ===========================================================================
--- HỆ THỐNG CẬP NHẬT TỰ ĐỘNG 100% - KÍCH HOẠT WALL NGAY KHI CHẠY CODE
+-- CẬP NHẬT TỰ ĐỘNG ESP
 -- ===========================================================================
 
--- Khi có người chơi mới tham gia - CẬP NHẬT NGAY
+-- Khi có người chơi mới
 Players.PlayerAdded:Connect(function(newPlayer)
-    createInstantESP(newPlayer)
+    if newPlayer ~= player then
+        createESP(newPlayer)
+    end
 end)
 
--- Khi người chơi rời game - XÓA NGAY
+-- Khi người chơi rời
 Players.PlayerRemoving:Connect(function(leavingPlayer)
-    if allPlayersESP[leavingPlayer] then
-        local folder = allPlayersESP[leavingPlayer]
-        local conn = folder:GetAttribute("CharacterConnection")
-        if conn then conn:Disconnect() end
-        folder:Destroy()
-        allPlayersESP[leavingPlayer] = nil
+    if espFolders[leavingPlayer] then
+        espFolders[leavingPlayer]:Destroy()
+        espFolders[leavingPlayer] = nil
     end
     
     if leavingPlayer == targetPlayer then
@@ -583,13 +523,13 @@ Players.PlayerRemoving:Connect(function(leavingPlayer)
     end
 end)
 
--- Khi LOCAL PLAYER respawn - CẬP NHẬT LẠI TOÀN BỘ NGAY LẬP TỨC
+-- Khi local player respawn
 player.CharacterAdded:Connect(function(character)
     unlockTeleport()
     
-    -- Cập nhật lại ESP cho tất cả người chơi sau khi respawn
-    wait(0.1)
-    for targetPlayer, folder in pairs(allPlayersESP) do
+    -- Cập nhật lại ESP sau khi respawn
+    wait(2)
+    for targetPlayer, folder in pairs(espFolders) do
         if folder and targetPlayer.Character then
             for _, child in pairs(folder:GetChildren()) do
                 if child:IsA("Highlight") then
@@ -600,46 +540,18 @@ player.CharacterAdded:Connect(function(character)
     end
 end)
 
--- Tự động cập nhật ESP khi team thay đổi
-if player:FindFirstChild("Team") then
-    player.TeamChanged:Connect(function()
-        wait(0.1)
-        for targetPlayer, folder in pairs(allPlayersESP) do
-            if folder and targetPlayer.Character then
-                for _, child in pairs(folder:GetChildren()) do
-                    if child:IsA("Highlight") then
-                        if isEnemy(targetPlayer) then
-                            child.FillColor = Color3.fromRGB(255, 50, 50)
-                            child.OutlineColor = Color3.fromRGB(255, 255, 255)
-                        else
-                            child.FillColor = Color3.fromRGB(50, 150, 255)
-                            child.OutlineColor = Color3.fromRGB(200, 200, 200)
-                        end
-                    end
-                end
-            end
-        end
-    end)
-end
-
 -- ===========================================================================
--- KHỞI TẠO HỆ THỐNG - KÍCH HOẠT WALL NGAY KHI CHẠY CODE
+-- KHỞI TẠO HỆ THỐNG
 -- ===========================================================================
 
--- KÍCH HOẠT WALLHACK NGAY KHI CHẠY CODE
-wait(0.5) -- Đợi game load một chút
-initializeInstantWallhack()
+-- Kích hoạt wallhack ngay khi chạy code
+wait(2)
+initializeWallhack()
 
 print("")
-print("🎯 HỆ THỐNG ĐÃ SẴN SÀNG 100%")
+print("🎯 HỆ THỐNG ĐÃ SẴN SÀNG!")
 print("===========================================")
-print("✅ WALLHACK: Đã kích hoạt ngay lập tức")
-print("✅ AIMBOT: Chỉ aim địch trong trận") 
-print("✅ TELEPORT: Teleport đến người camera đang nhìn")
-print("✅ ESP: Phân biệt đồng đội (xanh) và địch (đỏ)")
-print("===========================================")
-print("📌 Hướng dẫn sử dụng:")
-print("   - Click TRÁI nút AIM: Bật/Tắt Aimbot (chỉ aim địch)")
-print("   - Click TRÁI nút TELEPORT: Teleport đến người camera đang nhìn") 
-print("   - Click PHẢI nút TELEPORT: Bật/Tắt Wallhack")
+print("✅ WALLHACK: Đã kích hoạt")
+print("✅ AIMBOT: Chỉ aim địch") 
+print("✅ TELEPORT: Đến người camera đang nhìn")
 print("===========================================")
