@@ -15,7 +15,7 @@ gui.Parent = playerGui
 
 local teleportButton = Instance.new("TextButton")
 teleportButton.Size = UDim2.new(0, 80, 0, 80)
-teleportButton.Position = UDim2.new(0, 20, 0, 20) -- Đã đưa lên trên
+teleportButton.Position = UDim2.new(0, 20, 0, 20)
 teleportButton.AnchorPoint = Vector2.new(0, 0)
 teleportButton.Text = "TELEPORT"
 teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
@@ -30,10 +30,9 @@ local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(1, 0)
 buttonCorner.Parent = teleportButton
 
--- Đã sửa: Aim Bot button sát màn hình bên phải và đưa lên trên
 local aimButton = Instance.new("TextButton")
 aimButton.Size = UDim2.new(0, 100, 0, 40)
-aimButton.Position = UDim2.new(1, -110, 0, 20) -- Đã đưa lên trên (Y = 20)
+aimButton.Position = UDim2.new(1, -110, 0, 20)
 aimButton.AnchorPoint = Vector2.new(0, 0)
 aimButton.Text = "AIM OFF"
 aimButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
@@ -68,7 +67,7 @@ local arrowGui = nil
 
 local wallhackEnabled = true
 
--- ESP Functions (giữ nguyên từ code gốc)
+-- ESP Functions - ĐÃ SỬA: CẬP NHẬT TỰ ĐỘNG KHI NHÂN VẬT THAY ĐỔI
 local function createEspFolder(targetPlayer)
     if espFolders[targetPlayer] then
         espFolders[targetPlayer]:Destroy()
@@ -81,10 +80,17 @@ local function createEspFolder(targetPlayer)
     return folder
 end
 
-local function createHighlight(character, targetPlayer)
+local function updateHighlight(character, targetPlayer)
     if not character then return end
     
     local folder = createEspFolder(targetPlayer)
+    
+    -- Kiểm tra nếu highlight đã tồn tại thì xóa đi
+    for _, child in pairs(folder:GetChildren()) do
+        if child:IsA("Highlight") then
+            child:Destroy()
+        end
+    end
     
     local highlight = Instance.new("Highlight")
     highlight.Name = "WallhackHighlight"
@@ -95,6 +101,15 @@ local function createHighlight(character, targetPlayer)
     highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     highlight.Adornee = character
     highlight.Parent = folder
+    highlight.Enabled = wallhackEnabled
+    
+    -- Kết nối sự kiện khi character bị destroy
+    character.Destroying:Connect(function()
+        if folder and folder.Parent then
+            folder:Destroy()
+            espFolders[targetPlayer] = nil
+        end
+    end)
 end
 
 local function toggleWallhack()
@@ -102,7 +117,11 @@ local function toggleWallhack()
     
     for targetPlayer, folder in pairs(espFolders) do
         if folder then
-            folder.Enabled = wallhackEnabled
+            for _, child in pairs(folder:GetChildren()) do
+                if child:IsA("Highlight") then
+                    child.Enabled = wallhackEnabled
+                end
+            end
         end
     end
     
@@ -113,40 +132,70 @@ local function toggleWallhack()
     end
 end
 
+-- ĐÃ SỬA: HÀM KHỞI TẠO WALLHACK MỚI VỚI THEO DÕI LIÊN TỤC
+local function initializePlayerESP(otherPlayer)
+    if otherPlayer == player then return end
+    
+    local function setupCharacter(character)
+        if character then
+            -- Đợi một chút để character load hoàn toàn
+            wait(1)
+            updateHighlight(character, otherPlayer)
+            
+            -- Theo dõi khi humanoid chết/respawn
+            local humanoid = character:WaitForChild("Humanoid", 5)
+            if humanoid then
+                humanoid.Died:Connect(function()
+                    -- Khi chết, xóa ESP tạm thời
+                    if espFolders[otherPlayer] then
+                        espFolders[otherPlayer]:Destroy()
+                        espFolders[otherPlayer] = nil
+                    end
+                    
+                    -- Chờ respawn và tạo lại ESP
+                    otherPlayer.CharacterAdded:Wait()
+                    wait(1) -- Đợi character mới load
+                    if otherPlayer.Character then
+                        updateHighlight(otherPlayer.Character, otherPlayer)
+                    end
+                end)
+            end
+        end
+    end
+    
+    -- Thiết lập cho character hiện tại
+    if otherPlayer.Character then
+        setupCharacter(otherPlayer.Character)
+    end
+    
+    -- Theo dõi khi character thay đổi (respawn)
+    otherPlayer.CharacterAdded:Connect(function(character)
+        setupCharacter(character)
+    end)
+end
+
 local function initializeWallhack()
+    -- Xóa toàn bộ ESP cũ
     for targetPlayer, folder in pairs(espFolders) do
         folder:Destroy()
     end
     espFolders = {}
     
+    -- Khởi tạo ESP cho tất cả người chơi
     for _, otherPlayer in pairs(Players:GetPlayers()) do
-        if otherPlayer ~= player then
-            if otherPlayer.Character then
-                createHighlight(otherPlayer.Character, otherPlayer)
-            end
-            
-            otherPlayer.CharacterAdded:Connect(function(character)
-                wait(1)
-                createHighlight(character, otherPlayer)
-            end)
-        end
+        initializePlayerESP(otherPlayer)
     end
     
+    -- Theo dõi người chơi mới tham gia
     Players.PlayerAdded:Connect(function(newPlayer)
-        if newPlayer ~= player then
-            newPlayer.CharacterAdded:Connect(function(character)
-                wait(1)
-                createHighlight(character, newPlayer)
-            end)
-        end
+        initializePlayerESP(newPlayer)
     end)
 end
 
 -- ===========================================================================
--- PHẦN AIMBOT MỚI (TỪ CODE CỦA BẠN)
+-- PHẦN AIMBOT MỚI
 -- ===========================================================================
 
--- Mũi tên trên đầu đối thủ
 local function showArrow(target)
     if arrowGui then arrowGui:Destroy() end
     if not target or not target.Character then return end
@@ -186,7 +235,7 @@ local function getVisibleTarget()
     local camPos = camera.CFrame.Position
     local camDir = camera.CFrame.LookVector
     local bestTarget = nil
-    local bestDot = 0.98 -- chỉ aim khi nhìn gần chính diện
+    local bestDot = 0.98
     
     for _, p in pairs(Players:GetPlayers()) do
         if p ~= player and p.Character then
@@ -220,7 +269,6 @@ local function startAim()
     aimConnection = RunService.RenderStepped:Connect(function()
         if not aimEnabled then return end
 
-        -- Nếu chưa có mục tiêu hoặc mất nhân vật → tìm lại
         if not currentTarget or not currentTarget.Character or not currentTarget.Character:FindFirstChild("Humanoid") or currentTarget.Character.Humanoid.Health <= 0 then
             currentTarget = getVisibleTarget()
             if currentTarget then
@@ -395,7 +443,7 @@ local function unlockTarget()
 end
 
 local function lockTarget()
-    local newTarget = getVisibleTarget() -- Sử dụng hàm mới
+    local newTarget = getVisibleTarget()
     
     if not newTarget then
         teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
@@ -441,6 +489,14 @@ teleportButton.MouseButton1Click:Connect(handleTeleportClick)
 teleportButton.MouseButton2Click:Connect(toggleWallhack)
 teleportButton.TouchTap:Connect(handleTeleportClick)
 
+-- ĐÃ SỬA: TỰ ĐỘNG CẬP NHẬT KHI LOCAL PLAYER RESPAWN
+player.CharacterAdded:Connect(function(character)
+    wait(1)
+    unlockTarget()
+    -- Khởi tạo lại wallhack khi local player respawn
+    initializeWallhack()
+end)
+
 -- Cleanup khi người chơi rời
 Players.PlayerRemoving:Connect(function(leavingPlayer)
     if leavingPlayer == targetPlayer then
@@ -458,11 +514,7 @@ Players.PlayerRemoving:Connect(function(leavingPlayer)
     end
 end)
 
-player.CharacterAdded:Connect(function(character)
-    wait(1)
-    unlockTarget()
-end)
-
+-- ĐÃ SỬA: KHỞI TẠO WALLHACK NGAY KHI SCRIPT CHẠY
 wait(2)
 initializeWallhack()
 
