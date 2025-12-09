@@ -68,7 +68,7 @@ https://live.fptplay53.net/fnxhd1/vtv9_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Giải Trí
 https://freem3u.xyz/api/live/play.m3u8?vid=180
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Phim Việt
-https://cloud.sgchill.io.vn/tv/getlink/source/coban1/index.m3u8?id=175&token=2025
+https://freem3u.xyz/api/live/play.m3u8?vid=175
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Movies
 https://freem3u.xyz/api/live/play.m3u8?vid=181
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On E - Channel
@@ -161,6 +161,7 @@ http://mytv.hoantran.name.vn:27031/rtp/232.84.1.34:8178
 http://mytv.hoantran.name.vn:27031/rtp/232.84.3.42:11800
 #EXTINF:0 tvg-id="cartoonhd" tvg-logo="https://img.lichphatsong.site/logo/cartoonhd.jpg",Cartoon Network
 http://mytv.hoantran.name.vn:27031/rtp/232.84.2.144:10684
+
 
 
 
