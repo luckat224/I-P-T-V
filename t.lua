@@ -13,6 +13,7 @@ gui.Name = "TeleportGui"
 gui.ResetOnSpawn = false
 gui.Parent = playerGui
 
+-- Nút TELEPORT
 local teleportButton = Instance.new("TextButton")
 teleportButton.Size = UDim2.new(0, 80, 0, 80)
 teleportButton.Position = UDim2.new(0, 20, 0, 20)
@@ -30,6 +31,7 @@ local buttonCorner = Instance.new("UICorner")
 buttonCorner.CornerRadius = UDim.new(1, 0)
 buttonCorner.Parent = teleportButton
 
+-- Nút AIM
 local aimButton = Instance.new("TextButton")
 aimButton.Size = UDim2.new(0, 100, 0, 40)
 aimButton.Position = UDim2.new(1, -110, 0, 20)
@@ -46,6 +48,24 @@ aimButton.Parent = gui
 local aimButtonCorner = Instance.new("UICorner")
 aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
 aimButtonCorner.Parent = aimButton
+
+-- NÚT TRÁNH XA (DODGE) - ĐÃ THÊM LẠI
+local dodgeButton = Instance.new("TextButton")
+dodgeButton.Size = UDim2.new(0, 80, 0, 40)
+dodgeButton.Position = UDim2.new(0, 20, 0, 110)
+dodgeButton.AnchorPoint = Vector2.new(0, 0)
+dodgeButton.Text = "TRÁNH XA"
+dodgeButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+dodgeButton.TextColor3 = Color3.new(1, 1, 1)
+dodgeButton.TextSize = 14
+dodgeButton.Font = Enum.Font.GothamBold
+dodgeButton.BorderSizePixel = 0
+dodgeButton.AutoButtonColor = false
+dodgeButton.Parent = gui
+
+local dodgeButtonCorner = Instance.new("UICorner")
+dodgeButtonCorner.CornerRadius = UDim.new(0.3, 0)
+dodgeButtonCorner.Parent = dodgeButton
 
 -- ===========================================================================
 -- BIẾN TOÀN CỤC
@@ -306,12 +326,137 @@ aimButton.MouseButton1Click:Connect(function()
 end)
 
 -- ===========================================================================
--- TELEPORT HỆ THỐNG THÔNG MINH (TRÁNH VẬT CẢN NHƯ BANH NẢY)
+-- HÀM TRÁNH XA THÔNG MINH - ĐÃ THÊM LẠI
 -- ===========================================================================
-local function getAngleBetweenVectors(v1, v2)
-    return math.acos(v1:Dot(v2) / (v1.Magnitude * v2.Magnitude))
+local function findSafeDodgePosition(currentPos, avoidDirection, maxDistance)
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    raycastParams.FilterDescendantsInstances = {player.Character}
+    raycastParams.IgnoreWater = true
+    
+    -- Các hướng tránh khác nhau (ưu tiên hướng trái/phải trước)
+    local testDirections = {
+        avoidDirection:Cross(Vector3.new(0, 1, 0)).Unit,  -- Trái
+        avoidDirection:Cross(Vector3.new(0, -1, 0)).Unit, -- Phải
+        Vector3.new(0, 1, 0),  -- Lên
+        Vector3.new(0, -1, 0), -- Xuống
+        -avoidDirection,       -- Ngược lại hoàn toàn
+        avoidDirection:Cross(Vector3.new(1, 0, 0)).Unit,  -- Hướng khác 1
+        avoidDirection:Cross(Vector3.new(-1, 0, 0)).Unit, -- Hướng khác 2
+    }
+    
+    local bestPosition = nil
+    
+    for _, dir in ipairs(testDirections) do
+        local testPosition = currentPos + (dir * maxDistance)
+        
+        -- Kiểm tra có vật cản không
+        local ray = Ray.new(currentPos, dir * maxDistance)
+        local hit = workspace:Raycast(ray.Origin, ray.Direction * maxDistance, raycastParams)
+        
+        if not hit then
+            -- Kiểm tra mặt đất
+            local groundRay = Ray.new(testPosition + Vector3.new(0, 5, 0), Vector3.new(0, -10, 0))
+            local groundHit = workspace:Raycast(groundRay.Origin, groundRay.Direction, raycastParams)
+            
+            if groundHit then
+                bestPosition = groundHit.Position + Vector3.new(0, 3, 0)
+                break
+            end
+        else
+            -- Nếu có vật cản, thử khoảng cách ngắn hơn
+            local shorterDistance = maxDistance * 0.5
+            local shorterPosition = currentPos + (dir * shorterDistance)
+            local shorterRay = Ray.new(currentPos, dir * shorterDistance)
+            local shorterHit = workspace:Raycast(shorterRay.Origin, shorterRay.Direction, raycastParams)
+            
+            if not shorterHit then
+                local groundRay = Ray.new(shorterPosition + Vector3.new(0, 5, 0), Vector3.new(0, -10, 0))
+                local groundHit = workspace:Raycast(groundRay.Origin, groundRay.Direction, raycastParams)
+                
+                if groundHit then
+                    bestPosition = groundHit.Position + Vector3.new(0, 3, 0)
+                    break
+                end
+            end
+        end
+    end
+    
+    return bestPosition
 end
 
+local function dodgeAway()
+    local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if not playerRoot then return end
+    
+    local currentPos = playerRoot.Position
+    local avoidDirection
+    
+    -- Xác định hướng cần tránh
+    if targetPlayer and targetPlayer.Character then
+        -- Nếu đang lock mục tiêu, tránh xa mục tiêu đó
+        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if targetRoot then
+            avoidDirection = (currentPos - targetRoot.Position).Unit
+        else
+            avoidDirection = playerRoot.CFrame.LookVector
+        end
+    elseif currentTarget and currentTarget.Character then
+        -- Nếu đang aim mục tiêu, tránh xa mục tiêu đó
+        local targetRoot = currentTarget.Character:FindFirstChild("HumanoidRootPart")
+        if targetRoot then
+            avoidDirection = (currentPos - targetRoot.Position).Unit
+        else
+            avoidDirection = playerRoot.CFrame.LookVector
+        end
+    else
+        -- Nếu không có mục tiêu, tránh theo hướng ngược lại với hướng nhìn
+        avoidDirection = -playerRoot.CFrame.LookVector
+    end
+    
+    -- Tìm vị trí an toàn để tránh
+    local safePosition = findSafeDodgePosition(currentPos, avoidDirection, 15)
+    
+    if safePosition then
+        -- Teleport đến vị trí an toàn
+        local lookCFrame = CFrame.new(safePosition, safePosition + avoidDirection)
+        playerRoot.CFrame = lookCFrame
+        
+        -- Hiệu ứng visual
+        dodgeButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        dodgeButton.Text = "ĐÃ TRÁNH!"
+        
+        task.wait(0.5)
+        
+        dodgeButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+        dodgeButton.Text = "TRÁNH XA"
+        
+        return true
+    else
+        -- Nếu không tìm thấy vị trí an toàn, thử teleport lùi đơn giản
+        local fallbackPosition = currentPos + (avoidDirection * 10)
+        playerRoot.CFrame = CFrame.new(fallbackPosition, fallbackPosition + avoidDirection)
+        
+        dodgeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        dodgeButton.Text = "KHÔNG AN TOÀN!"
+        
+        task.wait(0.5)
+        
+        dodgeButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+        dodgeButton.Text = "TRÁNH XA"
+        
+        return false
+    end
+end
+
+-- Kết nối nút TRÁNH XA
+dodgeButton.MouseButton1Click:Connect(function()
+    dodgeAway()
+end)
+
+-- ===========================================================================
+-- TELEPORT HỆ THỐNG THÔNG MINH (TRÁNH VẬT CẢN NHƯ BANH NẢY)
+-- ===========================================================================
 local function createArrow(target)
     if currentArrow then
         currentArrow:Destroy()
@@ -564,4 +709,4 @@ end)
 -- KHỞI TẠO
 initializeWallhack()
 
-print("✅ Teleport & Aim Bot Script Đã Sẵn Sàng! - HỆ THỐNG THÔNG MINH")
+print("✅ Teleport & Aim Bot Script Đã Sẵn Sàng! - CÓ NÚT TRÁNH XA")
