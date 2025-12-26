@@ -49,7 +49,7 @@ local aimButtonCorner = Instance.new("UICorner")
 aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
 aimButtonCorner.Parent = aimButton
 
--- NÚT TRÁNH XA (DODGE) - ĐÃ THÊM LẠI
+-- NÚT TRÁNH XA (DODGE)
 local dodgeButton = Instance.new("TextButton")
 dodgeButton.Size = UDim2.new(0, 80, 0, 40)
 dodgeButton.Position = UDim2.new(0, 20, 0, 110)
@@ -70,10 +70,6 @@ dodgeButtonCorner.Parent = dodgeButton
 -- ===========================================================================
 -- BIẾN TOÀN CỤC
 -- ===========================================================================
-local isLocked = false
-local targetPlayer = nil
-local currentArrow = nil
-local followConnection = nil
 local lastClickTime = 0
 local CLICK_DELAY = 0.3
 
@@ -326,7 +322,7 @@ aimButton.MouseButton1Click:Connect(function()
 end)
 
 -- ===========================================================================
--- HÀM TRÁNH XA THÔNG MINH - ĐÃ THÊM LẠI
+-- HÀM TRÁNH XA THÔNG MINH - TRÁNH XA HƠN
 -- ===========================================================================
 local function findSafeDodgePosition(currentPos, avoidDirection, maxDistance)
     local raycastParams = RaycastParams.new()
@@ -346,8 +342,10 @@ local function findSafeDodgePosition(currentPos, avoidDirection, maxDistance)
     }
     
     local bestPosition = nil
+    local bestDistance = 0
     
     for _, dir in ipairs(testDirections) do
+        -- Tăng khoảng cách lên 20-25 studs (tránh xa hơn)
         local testPosition = currentPos + (dir * maxDistance)
         
         -- Kiểm tra có vật cản không
@@ -360,12 +358,18 @@ local function findSafeDodgePosition(currentPos, avoidDirection, maxDistance)
             local groundHit = workspace:Raycast(groundRay.Origin, groundRay.Direction, raycastParams)
             
             if groundHit then
-                bestPosition = groundHit.Position + Vector3.new(0, 3, 0)
-                break
+                local groundPos = groundHit.Position
+                local distanceFromStart = (groundPos - currentPos).Magnitude
+                
+                -- Ưu tiên vị trí xa nhất
+                if distanceFromStart > bestDistance then
+                    bestDistance = distanceFromStart
+                    bestPosition = groundPos + Vector3.new(0, 3, 0)
+                end
             end
         else
-            -- Nếu có vật cản, thử khoảng cách ngắn hơn
-            local shorterDistance = maxDistance * 0.5
+            -- Nếu có vật cản, thử khoảng cách ngắn hơn nhưng vẫn xa
+            local shorterDistance = maxDistance * 0.7
             local shorterPosition = currentPos + (dir * shorterDistance)
             local shorterRay = Ray.new(currentPos, dir * shorterDistance)
             local shorterHit = workspace:Raycast(shorterRay.Origin, shorterRay.Direction, raycastParams)
@@ -375,10 +379,29 @@ local function findSafeDodgePosition(currentPos, avoidDirection, maxDistance)
                 local groundHit = workspace:Raycast(groundRay.Origin, groundRay.Direction, raycastParams)
                 
                 if groundHit then
-                    bestPosition = groundHit.Position + Vector3.new(0, 3, 0)
-                    break
+                    local groundPos = groundHit.Position
+                    local distanceFromStart = (groundPos - currentPos).Magnitude
+                    
+                    if distanceFromStart > bestDistance then
+                        bestDistance = distanceFromStart
+                        bestPosition = groundPos + Vector3.new(0, 3, 0)
+                    end
                 end
             end
+        end
+    end
+    
+    -- Nếu không tìm được vị trí tốt, thử lùi thẳng với khoảng cách ngắn hơn
+    if not bestPosition then
+        local fallbackDir = -avoidDirection
+        local fallbackDistance = 15
+        local fallbackPosition = currentPos + (fallbackDir * fallbackDistance)
+        
+        local groundRay = Ray.new(fallbackPosition + Vector3.new(0, 5, 0), Vector3.new(0, -10, 0))
+        local groundHit = workspace:Raycast(groundRay.Origin, groundRay.Direction, raycastParams)
+        
+        if groundHit then
+            bestPosition = groundHit.Position + Vector3.new(0, 3, 0)
         end
     end
     
@@ -387,21 +410,13 @@ end
 
 local function dodgeAway()
     local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if not playerRoot then return end
+    if not playerRoot then return false end
     
     local currentPos = playerRoot.Position
     local avoidDirection
     
     -- Xác định hướng cần tránh
-    if targetPlayer and targetPlayer.Character then
-        -- Nếu đang lock mục tiêu, tránh xa mục tiêu đó
-        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if targetRoot then
-            avoidDirection = (currentPos - targetRoot.Position).Unit
-        else
-            avoidDirection = playerRoot.CFrame.LookVector
-        end
-    elseif currentTarget and currentTarget.Character then
+    if currentTarget and currentTarget.Character then
         -- Nếu đang aim mục tiêu, tránh xa mục tiêu đó
         local targetRoot = currentTarget.Character:FindFirstChild("HumanoidRootPart")
         if targetRoot then
@@ -414,8 +429,8 @@ local function dodgeAway()
         avoidDirection = -playerRoot.CFrame.LookVector
     end
     
-    -- Tìm vị trí an toàn để tránh
-    local safePosition = findSafeDodgePosition(currentPos, avoidDirection, 15)
+    -- Tìm vị trí an toàn để tránh (TĂNG KHOẢNG CÁCH LÊN 25 studs)
+    local safePosition = findSafeDodgePosition(currentPos, avoidDirection, 25)
     
     if safePosition then
         -- Teleport đến vị trí an toàn
@@ -434,7 +449,7 @@ local function dodgeAway()
         return true
     else
         -- Nếu không tìm thấy vị trí an toàn, thử teleport lùi đơn giản
-        local fallbackPosition = currentPos + (avoidDirection * 10)
+        local fallbackPosition = currentPos + (avoidDirection * 20)
         playerRoot.CFrame = CFrame.new(fallbackPosition, fallbackPosition + avoidDirection)
         
         dodgeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
@@ -455,51 +470,14 @@ dodgeButton.MouseButton1Click:Connect(function()
 end)
 
 -- ===========================================================================
--- TELEPORT HỆ THỐNG THÔNG MINH (TRÁNH VẬT CẢN NHƯ BANH NẢY)
+-- TELEPORT MỘT LẦN (KHÔNG TỰ ĐỘNG THEO DÕI)
 -- ===========================================================================
-local function createArrow(target)
-    if currentArrow then
-        currentArrow:Destroy()
-        currentArrow = nil
-    end
-    
-    if not target or not target.Character then return end
-    
-    local head = target.Character:FindFirstChild("Head")
-    if not head then return end
-    
-    local arrowGui = Instance.new("BillboardGui")
-    arrowGui.Name = "TargetArrow"
-    arrowGui.Size = UDim2.new(0, 50, 0, 50)
-    arrowGui.AlwaysOnTop = true
-    arrowGui.Enabled = true
-    arrowGui.Adornee = head
-    arrowGui.MaxDistance = 500
-    arrowGui.SizeOffset = Vector2.new(0, 2.5)
-    
-    local arrowLabel = Instance.new("TextLabel")
-    arrowLabel.Size = UDim2.new(1, 0, 1, 0)
-    arrowLabel.BackgroundTransparency = 1
-    arrowLabel.Text = isLocked and "🔒" or "🎯"
-    arrowLabel.TextColor3 = isLocked and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
-    arrowLabel.TextScaled = true
-    arrowLabel.Font = Enum.Font.GothamBold
-    arrowLabel.Parent = arrowGui
-    
-    arrowGui.Parent = head
-    currentArrow = arrowGui
-    
-    return arrowGui
-end
-
--- Hàm teleport thông minh: tìm vị trí trống tốt nhất quanh mục tiêu
 local function findOptimalTeleportPosition(targetRoot, maxAttempts)
     if not targetRoot then return nil end
     
-    local baseCFrame = targetRoot.CFrame
     local basePosition = targetRoot.Position
     
-    -- Danh sách hướng thử (giống như banh nảy)
+    -- Danh sách hướng thử
     local directions = {
         Vector3.new(1, 0, 0),   -- Phải
         Vector3.new(-1, 0, 0),  -- Trái
@@ -521,7 +499,7 @@ local function findOptimalTeleportPosition(targetRoot, maxAttempts)
     
     for i = 1, maxAttempts do
         for _, dir in ipairs(directions) do
-            -- Tăng khoảng cách dần dần
+            -- Khoảng cách 2-4 studs
             local distance = 2 + (i * 0.5)
             local testPosition = basePosition + (dir * distance)
             
@@ -542,7 +520,7 @@ local function findOptimalTeleportPosition(targetRoot, maxAttempts)
                     if distanceToTarget >= 2 and distanceToTarget <= 4 then
                         if distanceToTarget < bestDistance then
                             bestDistance = distanceToTarget
-                            bestPosition = groundPosition + Vector3.new(0, 3, 0) -- Nâng lên một chút
+                            bestPosition = groundPosition + Vector3.new(0, 3, 0)
                         end
                     end
                 end
@@ -557,7 +535,7 @@ local function findOptimalTeleportPosition(targetRoot, maxAttempts)
     return bestPosition or (basePosition + Vector3.new(0, 3, 0))
 end
 
-local function smartTeleport(target)
+local function singleTeleport(target)
     if not target or not target.Character then return false end
     
     local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
@@ -572,85 +550,20 @@ local function smartTeleport(target)
         -- Tạo CFrame nhìn về phía mục tiêu
         local lookCFrame = CFrame.new(teleportPosition, targetRoot.Position)
         playerRoot.CFrame = lookCFrame
+        
+        -- Hiệu ứng feedback
+        teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        teleportButton.Text = "ĐÃ TELE!"
+        
+        task.wait(0.5)
+        
+        teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
+        teleportButton.Text = "TELEPORT"
+        
         return true
     end
     
     return false
-end
-
-local function startContinuousFollow()
-    if followConnection then
-        followConnection:Disconnect()
-        followConnection = nil
-    end
-    
-    followConnection = RunService.Heartbeat:Connect(function()
-        if not isLocked then return end
-        
-        if targetPlayer and targetPlayer.Character then
-            local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-            local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-            
-            if targetRoot and playerRoot then
-                local distance = (targetRoot.Position - playerRoot.Position).Magnitude
-                
-                -- Chỉ teleport khi ở xa hơn 5 studs
-                if distance > 5 then
-                    smartTeleport(targetPlayer)
-                end
-            end
-        else
-            unlockTarget()
-        end
-    end)
-end
-
-local function unlockTarget()
-    isLocked = false
-    targetPlayer = nil
-    
-    if followConnection then
-        followConnection:Disconnect()
-        followConnection = nil
-    end
-    
-    if currentArrow then
-        currentArrow:Destroy()
-        currentArrow = nil
-    end
-    
-    teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
-    teleportButton.Text = "TELEPORT"
-end
-
-local function lockTarget()
-    -- Ưu tiên mục tiêu đang bị aim
-    local newTarget = currentTarget or getVisibleTarget()
-    
-    if not newTarget then
-        teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
-        teleportButton.Text = "NO TARGET"
-        
-        delay(1, function()
-            if not isLocked then
-                teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
-                teleportButton.Text = "TELEPORT"
-            end
-        end)
-        return false
-    end
-    
-    targetPlayer = newTarget
-    isLocked = true
-    
-    teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-    teleportButton.Text = "LOCKED"
-    
-    createArrow(targetPlayer)
-    startContinuousFollow()
-    smartTeleport(targetPlayer)
-    
-    return true
 end
 
 local function handleTeleportClick()
@@ -660,24 +573,23 @@ local function handleTeleportClick()
     end
     lastClickTime = currentTime
     
-    if isLocked then
-        unlockTarget()
-    else
-        -- Nếu đang có mục tiêu aim, teleport đến mục tiêu đó ngay
-        if currentTarget then
-            targetPlayer = currentTarget
-            isLocked = true
-            
-            teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-            teleportButton.Text = "LOCKED"
-            
-            createArrow(targetPlayer)
-            startContinuousFollow()
-            smartTeleport(targetPlayer)
-        else
-            lockTarget()
-        end
+    -- Ưu tiên mục tiêu đang bị aim
+    local target = currentTarget or getVisibleTarget()
+    
+    if not target then
+        teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
+        teleportButton.Text = "NO TARGET"
+        
+        task.wait(1)
+        
+        teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
+        teleportButton.Text = "TELEPORT"
+        
+        return false
     end
+    
+    -- Thực hiện teleport một lần duy nhất
+    singleTeleport(target)
 end
 
 teleportButton.MouseButton1Click:Connect(handleTeleportClick)
@@ -686,15 +598,12 @@ teleportButton.TouchTap:Connect(handleTeleportClick)
 
 -- Cleanup và khởi tạo
 player.CharacterAdded:Connect(function(character)
-    unlockTarget()
+    teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
+    teleportButton.Text = "TELEPORT"
     initializeWallhack()
 end)
 
 Players.PlayerRemoving:Connect(function(leavingPlayer)
-    if leavingPlayer == targetPlayer then
-        unlockTarget()
-    end
-    
     if leavingPlayer == currentTarget then
         currentTarget = nil
         removeArrow()
@@ -709,4 +618,7 @@ end)
 -- KHỞI TẠO
 initializeWallhack()
 
-print("✅ Teleport & Aim Bot Script Đã Sẵn Sàng! - CÓ NÚT TRÁNH XA")
+print("✅ Teleport & Aim Bot Script Đã Sẵn Sàng!")
+print("📌 TELEPORT: Một lần duy nhất, không tự theo dõi")
+print("📌 TRÁNH XA: Tránh xa 25 studs")
+print("📌 AIM: Tự động lock mục tiêu")
