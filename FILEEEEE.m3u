@@ -123,8 +123,8 @@ https://live.fptplay53.net/fnxsd1/ninhbinh_hls.smil/chunklist_b2500000.m3u8
 https://liveh34.vtvprime.vn/hls/SCTV22/04.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",PHÚ THỌ
 https://live.fptplay53.net/fnxsd1/phutho_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SCTV4
-https://liveh12.seenow.vn/hls/SCTV4/03.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ON VFamily
+https://freem3u.xyz/api/live/play.m3u8?vid=187
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SCTV6
 https://live.fptplay53.net/epzhd2/film360_vhls.smil/chunklist_b5000000.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SƠN LA
@@ -151,6 +151,7 @@ https://live.fptplay53.net/epzhd1/htv1_hls.smil/chunklist_b2500000.m3u8
 https://liveh34.seenow.vn/hls/SCTV8/03.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-name="1" tvg-logo="",CARTOON NETWORK
 http://akasaijr.myftp.org:21585/cartoon/index.m3u8
+
 
 
 
