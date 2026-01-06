@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình kiểm tra liên kết (M3U)</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Sử dụng font Inter làm font chữ mặc định */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+        <div class="p-6 md:p-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-center text-white mb-6">
+                Trình kiểm tra liên kết M3U
+            </h1>
+
+            <!-- Chức năng 1: Kiểm tra từ văn bản -->
+            <div>
+                <p class="text-center text-gray-400 mb-4 text-sm">
+                    Dán danh sách M3U hoặc URL bất kỳ. Công cụ sẽ tự động lọc và trích xuất tên kênh.
+                </p>
+                <textarea id="linksInput"
+                    class="w-full h-48 p-4 bg-gray-900 border border-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                    placeholder="#EXTINF:-1,Vĩnh Long 1
+https://example.com/vinhlong1.m3u8
+https://www.youtube.com/@tenkenh
+..."></textarea>
+            </div>
+
+            <!-- Nút kiểm tra & Nút Dừng -->
+            <button id="checkButton"
+                class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg id="buttonSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                <span id="buttonText">Kiểm tra liên kết</span>
+            </button>
+            
+            <button id="stopButton"
+                class="w-full mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center hidden">
+                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 11.5a1.5 1.5 0 011.5-1.5h1a1.5 1.5 0 010 3h-1A1.5 1.5 0 018 11.5z" clip-rule="evenodd" />
+                </svg>
+                <span>Dừng kiểm tra</span>
+            </button>
+        </div>
+
+        <!-- Khu vực Thống kê và Tiến độ -->
+        <div id="statsArea" class="p-6 md:p-8 bg-gray-850 border-t border-gray-700 hidden">
+            <h2 class="text-xl font-semibold text-white mb-4">Thống kê</h2>
+            
+            <!-- Bảng thống kê -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-center">
+                <div class="p-3 bg-gray-700 rounded-lg">
+                    <span id="statTotal" class="block text-2xl font-bold text-blue-400">0</span>
+                    <span class="text-sm text-gray-400">Tổng số</span>
+                </div>
+                <div class="p-3 bg-gray-700 rounded-lg">
+                    <span id="statChecked" class="block text-2xl font-bold text-yellow-400">0</span>
+                    <span class="text-sm text-gray-400">Đã kiểm tra</span>
+                </div>
+                <div class="p-3 bg-gray-700 rounded-lg">
+                    <span id="statLive" class="block text-2xl font-bold text-green-400">0</span>
+                    <span class="text-sm text-gray-400">Sống</span>
+                </div>
+                <div class="p-3 bg-gray-700 rounded-lg">
+                    <span id="statDie" class="block text-2xl font-bold text-red-400">0</span>
+                    <span class="text-sm text-gray-400">Chết</span>
+                </div>
+            </div>
+
+            <!-- Thanh tiến trình -->
+            <div class="w-full bg-gray-700 rounded-full h-2.5 mb-2">
+                <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <!-- THAY ĐỔI: Thêm đồng hồ đếm giờ (Đã trôi qua) -->
+            <div class="flex justify-between text-sm text-gray-400">
+                <span>
+                    Đã trôi qua: <span id="statElapsed" class="font-semibold">00:00.0</span>
+                </span>
+                <span>
+                    Thời gian dự kiến: <span id="statEta" class="font-semibold">...</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Khu vực kết quả -->
+        <div id="resultsArea" class="p-6 md:p-8 bg-gray-850 border-t border-gray-700">
+            <h2 class="text-xl font-semibold text-white mb-4">Kết quả</h2>
+            <div id="resultsList" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                <!-- Kết quả sẽ được chèn vào đây -->
+                <p id="placeholderText" class="text-gray-500">Chưa có kết quả. Vui lòng nhấn kiểm tra.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chú thích về giới hạn -->
+    <div class="max-w-3xl mx-auto mt-4 text-center text-gray-500 text-xs md:text-sm">
+        <p><strong>Lưu ý:</strong> "Có thể truy cập" có nghĩa là trình duyệt đã gửi thành công yêu cầu. Do giới hạn của trình duyệt (CORS), không thể phân biệt giữa trang "200 OK" (tồn tại) và "404 Not Found" (không tìm thấy) từ phía máy khách. "Không thể truy cập" thường có nghĩa là lỗi mạng hoặc DNS.</p>
+    </div>
+
+    <script>
+        // --- CÁC PHẦN TỬ DOM ---
+        const linksInput = document.getElementById('linksInput');
+        
+        const checkButton = document.getElementById('checkButton');
+        const stopButton = document.getElementById('stopButton');
+        const buttonText = document.getElementById('buttonText');
+        const buttonSpinner = document.getElementById('buttonSpinner');
+        
+        const statsArea = document.getElementById('statsArea');
+        const statTotal = document.getElementById('statTotal');
+        const statChecked = document.getElementById('statChecked');
+        const statLive = document.getElementById('statLive');
+        const statDie = document.getElementById('statDie');
+        const progressBar = document.getElementById('progressBar');
+        const statEta = document.getElementById('statEta');
+        const statElapsed = document.getElementById('statElapsed'); // THÊM MỚI
+
+        const resultsList = document.getElementById('resultsList');
+        const placeholderText = document.getElementById('placeholderText');
+
+        // --- BIẾN TOÀN CỤC ---
+        let isChecking = false;
+        let abortController;
+        let totalLinks = 0;
+        let checkedLinks = 0;
+        let liveLinks = 0;
+        let dieLinks = 0;
+        let checkStartTime = 0;
+        let elapsedTimerId = null; // THÊM MỚI: ID cho đồng hồ đếm giờ
+
+        // Biểu thức chính quy (Regex) để trích xuất URL (chỉ http/https)
+        const urlRegex = new RegExp("(https?:\\/\\/[^\\s/$.?#].[^\\s]*)", "gi");
+
+        // SVG Icons cho các trạng thái
+        const icons = {
+            checking: `
+                <svg class="animate-spin h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-yellow-400">Đang kiểm tra...</span>`,
+            reachable: `
+                <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-green-400">Có thể truy cập</span>`,
+            unreachable: `
+                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-red-400">Không thể truy cập</span>`,
+            stopped: `
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-gray-400">Đã dừng</span>`
+        };
+
+        // --- CÁC HÀM XỬ LÝ SỰ KIỆN ---
+
+        // Xử lý sự kiện nhấp vào nút DỪNG
+        stopButton.addEventListener('click', () => {
+            isChecking = false;
+            if (abortController) {
+                abortController.abort();
+            }
+            resetButtonState();
+            statEta.textContent = 'Đã dừng bởi người dùng';
+            // Dừng đồng hồ đếm giờ (nó cũng sẽ tự dừng ở lần tick tiếp theo)
+            if (elapsedTimerId) clearInterval(elapsedTimerId);
+            elapsedTimerId = null;
+        });
+
+        // Xử lý sự kiện nhấp vào nút KIỂM TRA
+        checkButton.addEventListener('click', () => {
+            isChecking = true;
+            abortController = new AbortController();
+
+            // Đặt lại giao diện
+            resultsList.innerHTML = '';
+            placeholderText.style.display = 'none';
+            statsArea.classList.remove('hidden');
+            
+            // Đặt lại nút
+            checkButton.classList.add('hidden');
+            stopButton.classList.remove('hidden');
+
+            // Đặt lại thống kê
+            totalLinks = 0;
+            checkedLinks = 0;
+            liveLinks = 0;
+            dieLinks = 0;
+            checkStartTime = performance.now();
+            updateStatsAndProgress('start');
+            
+            // Đặt lại và bắt đầu đồng hồ đếm giờ
+            statElapsed.textContent = '00:00.0';
+            if (elapsedTimerId) clearInterval(elapsedTimerId);
+            elapsedTimerId = setInterval(updateElapsedTime, 100); // Cập nhật mỗi 100ms
+            
+            // Bắt đầu xử lý
+            processPastedText();
+        });
+
+        // --- CÁC HÀM XỬ LÝ CHÍNH ---
+
+        // CHỨC NĂNG: Xử lý văn bản dán vào
+        function processPastedText() {
+            const inputText = linksInput.value;
+            const lines = inputText.split('\n');
+            const urlMap = new Map();
+            let pendingChannelName = null;
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+
+                if (trimmedLine.startsWith('#EXTINF:')) {
+                    const parts = trimmedLine.split(',');
+                    if (parts.length > 1) {
+                        pendingChannelName = parts[parts.length - 1].trim();
+                    } else {
+                        pendingChannelName = null;
+                    }
+                } else if (trimmedLine.match(urlRegex) && trimmedLine.match(urlRegex)[0] === trimmedLine) {
+                    const url = trimmedLine;
+                    if (pendingChannelName) {
+                        urlMap.set(url, `Kênh TV: ${pendingChannelName}`);
+                        pendingChannelName = null;
+                    } else if (!urlMap.has(url)) {
+                        const displayName = extractDisplayName(url); 
+                        urlMap.set(url, displayName);
+                    }
+                } else {
+                    pendingChannelName = null;
+                }
+            }
+            
+            totalLinks = urlMap.size;
+            statTotal.textContent = totalLinks;
+
+            if (totalLinks === 0) {
+                resultsList.innerHTML = '<p class="text-gray-500">Không tìm thấy URL hợp lệ nào (phải bắt đầu bằng http:// hoặc https://).</p>';
+                resetButtonState();
+                statsArea.classList.add('hidden');
+                return;
+            }
+
+            displayAndCheckLinks(urlMap);
+        }
+
+        // --- CÁC HÀM HỖ TRỢ (Dùng chung) ---
+
+        // Hàm Hỗ trợ: Hiển thị và kiểm tra danh sách link (từ Map)
+        async function displayAndCheckLinks(urlMap) {
+            const CONCURRENT_LIMIT = 15; // Giới hạn 15 request cùng lúc
+            const tasks = [];
+
+            for (const [url, displayName] of urlMap.entries()) {
+                const resultRow = document.createElement('div');
+                resultRow.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-lg';
+                
+                const urlSpan = document.createElement('span');
+                urlSpan.className = 'text-sm font-medium text-gray-200 truncate w-3/5 md:w-4/5';
+                urlSpan.textContent = displayName.replace(/\s+/g, ' '); 
+                urlSpan.title = url; 
+                
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'status-indicator text-sm font-medium flex items-center gap-1.5 justify-end w-2/5 md:w-1/5';
+                statusSpan.innerHTML = icons.checking;
+                
+                resultRow.appendChild(urlSpan);
+                resultRow.appendChild(statusSpan);
+                resultsList.appendChild(resultRow);
+
+                tasks.push(async () => {
+                    if (!isChecking) return;
+                    await checkSingleLink(url, statusSpan, urlSpan, abortController.signal);
+                });
+            }
+
+            // Chạy các tác vụ với giới hạn đồng thời
+            const pool = new Set();
+            for (const task of tasks) {
+                if (!isChecking) break; // Dừng vòng lặp for nếu nhấn Stop
+
+                const promise = task();
+                pool.add(promise);
+                // Tự động xóa promise khỏi pool khi nó hoàn thành
+                promise.then(() => pool.delete(promise)).catch(() => pool.delete(promise));
+
+                if (pool.size >= CONCURRENT_LIMIT) {
+                    await Promise.race(pool); // Chờ cho một cái nhanh nhất hoàn thành
+                }
+            }
+            
+            // Chờ nốt những cái cuối cùng trong pool
+            await Promise.allSettled(pool);
+            
+            // Kích hoạt lại nút nếu không bị dừng
+            if (isChecking) {
+                isChecking = false; // Tín hiệu dừng cho timer
+                const elapsedTime = performance.now() - checkStartTime;
+                
+                // Cập nhật lần cuối cho cả hai
+                statEta.textContent = `Hoàn tất! (${(elapsedTime / 1000).toFixed(1)}s)`;
+                updateElapsedTimeText(elapsedTime); // Cập nhật đồng hồ lần cuối
+                
+                resetButtonState(); // Sẽ dọn dẹp nốt interval
+            }
+        }
+        
+        // Hàm Hỗ trợ: Cập nhật đồng hồ đếm giờ
+        function updateElapsedTime() {
+            if (!isChecking) {
+                if (elapsedTimerId) clearInterval(elapsedTimerId);
+                elapsedTimerId = null;
+                return;
+            }
+            
+            const elapsedTimeMs = performance.now() - checkStartTime;
+            updateElapsedTimeText(elapsedTimeMs);
+        }
+        
+        // Hàm Hỗ trợ: Định dạng và hiển thị văn bản thời gian trôi qua
+        function updateElapsedTimeText(elapsedTimeMs) {
+            const totalSeconds = Math.floor(elapsedTimeMs / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const milliseconds = Math.floor((elapsedTimeMs % 1000) / 100); // Lấy 1 chữ số thập phân
+
+            statElapsed.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${milliseconds}`;
+        }
+
+        // Hàm Hỗ trợ: Trích xuất tên hiển thị (cho MẠNG XÃ HỘI)
+        function extractDisplayName(url) {
+            const rules = [
+                { regex: new RegExp("https?:\\/\\/(?:www\\.)?youtube\\.com\\/@([^/?]+)"), prefix: "Kênh YT: @" },
+                { regex: new RegExp("https?:\\/\\/(?:www\\.)?youtube\\.com\\/c\\/([^/?]+)"), prefix: "Kênh YT:" },
+                { regex: new RegExp("https?:\\/\\/(?:www\\.)?youtube\\.com\\/user\\/([^/?]+)"), prefix: "Kênh YT:" },
+                { regex: new RegExp("https?:\\/\\/(?:www\\.)?tiktok\\.com\\/@([^/?]+)"), prefix: "Kênh TikTok: @" },
+                { regex: new RegExp("https?:\\/\\/(?:www\\.)?(?:x|twitter)\\.com\\/([^/?]+)"), prefix: "Twitter/X:" },
+                { regex: new RegExp("https?:\\/\\/(?:www\\.)?instagram\\.com\\/([^/?]+)"), prefix: "Instagram:" },
+                { regex: new RegExp("https:\\/\\/(?:www\\.)?facebook\\.com\\/(?:people\\/|)([a-zA-Z0-9\\.]+)"), prefix: "Facebook:" }
+            ];
+
+            const commonPathsToIgnore = [
+                'posts', 'groups', 'events', 'login', 'sharer', 'watch', 
+                'gaming', 'pages', 'stories', 'profile.php', 'photo.php', 'videos'
+            ];
+
+            for (const rule of rules) {
+                const match = url.match(rule.regex);
+                if (match && match[1]) {
+                    const potentialName = match[1];
+                     if (rule.prefix === 'Facebook:' && (commonPathsToIgnore.includes(potentialName.toLowerCase()) || potentialName.includes('?'))) {
+                        continue; 
+                    }
+                    return `${rule.prefix} ${potentialName}`;
+                }
+            }
+            return url;
+        }
+
+        // Hàm Hỗ trợ: Kiểm tra một URL duy nhất
+        async function checkSingleLink(url, statusElement, urlSpan, signal) {
+            const startTime = performance.now();
+            let status = 'checking';
+            let time = null;
+            
+            try {
+                await fetch(url, {
+                    method: 'GET',
+                    mode: 'no-cors', 
+                    cache: 'no-cache',
+                    referrerPolicy: 'no-referrer',
+                    signal: signal // Truyền tín hiệu Abort
+                });
+                status = 'reachable';
+                time = (performance.now() - startTime).toFixed(0);
+            } catch (error) {
+                status = (error.name === 'AbortError') ? 'stopped' : 'unreachable';
+            } finally {
+                // Cập nhật giao diện hàng
+                updateResultStatus(statusElement, status, time, urlSpan, url);
+                
+                // Cập nhật thống kê
+                if (status !== 'stopped') {
+                    checkedLinks++;
+                    if (status === 'reachable') liveLinks++;
+                    if (status === 'unreachable') dieLinks++;
+                }
+                updateStatsAndProgress(status);
+            }
+        }
+
+        // Hàm Hỗ trợ: Cập nhật giao diện một hàng kết quả
+        function updateResultStatus(element, status, time, urlSpan, url) {
+            let statusHTML = icons[status];
+            if (time) {
+                statusHTML += `<span class="text-gray-500 text-sm ml-2">(${time} ms)</span>`;
+            }
+            element.innerHTML = statusHTML;
+
+            // Xóa các lớp màu cũ
+            urlSpan.classList.remove('text-green-400', 'text-red-400');
+            
+            if (status === 'reachable') {
+                urlSpan.classList.add('text-green-400');
+            } else if (status === 'unreachable') {
+                urlSpan.classList.add('text-red-400');
+                // Hiển thị chi tiết URL khi bị lỗi
+                urlSpan.innerHTML += ` <span class="text-gray-500 text-xs break-all">(${url})</span>`;
+            }
+        }
+
+        // Hàm Hỗ trợ: Cập nhật Thống kê và ETA
+        function updateStatsAndProgress(status) {
+            if (!isChecking || status === 'stopped') return;
+
+            statChecked.textContent = checkedLinks;
+            statLive.textContent = liveLinks;
+            statDie.textContent = dieLinks;
+
+            // Cập nhật Progress Bar
+            const progress = (totalLinks > 0) ? (checkedLinks / totalLinks) * 100 : 0;
+            progressBar.style.width = `${progress.toFixed(2)}%`;
+
+            // Cập nhật ETA
+            const elapsedTime = performance.now() - checkStartTime;
+            if (checkedLinks > 0) {
+                const avgTimePerLink = elapsedTime / checkedLinks;
+                const linksRemaining = totalLinks - checkedLinks;
+                const etaMs = linksRemaining * avgTimePerLink;
+
+                if (linksRemaining > 0) {
+                    statEta.textContent = `~${(etaMs / 1000).toFixed(1)} giây`;
+                } else {
+                    statEta.textContent = `Hoàn tất! (${(elapsedTime / 1000).toFixed(1)}s)`;
+                }
+            } else {
+                statEta.textContent = 'Đang tính toán...';
+            }
+        }
+
+        // Hàm Hỗ trợ: Đặt lại nút kiểm tra
+        function resetButtonState() {
+            isChecking = false;
+            // Dừng đồng hồ đếm giờ
+            if (elapsedTimerId) {
+                clearInterval(elapsedTimerId);
+                elapsedTimerId = null;
+            }
+            
+            stopButton.classList.add('hidden');
+            checkButton.classList.remove('hidden');
+            checkButton.disabled = false;
+            buttonSpinner.classList.add('hidden');
+            buttonText.textContent = 'Kiểm tra liên kết';
+        }
+
+    </script>
+</body>
+</html>
+
