@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bộ chuyển tiền - Bội số 50.000₫</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --card:#ffffff;
+      --accent:#0aa3a0; /* muted teal accent (less saturated) */
+      --muted:#374151; /* darker slate for good contrast */
+      --glass: rgba(2,6,23,0.04);
+    }
+    *{box-sizing:border-box;font-family:Inter,Segoe UI,Roboto,'Helvetica Neue',Arial}
+  /* larger base font for better readability on mobile */
+  html{font-size:20px}
+    body{margin:0;min-height:100vh;background:var(--bg);color:#042f2d;display:flex;align-items:center;justify-content:center;padding:20px;line-height:1.2}
+    .wrap{width:100%;max-width:540px;background:var(--card);border-radius:14px;padding:20px;border:1px solid #eef2f7;box-shadow:0 8px 28px rgba(16,24,40,0.06)}
+  h1{font-size:20px;margin:0 0 12px;color:var(--accent)}
+    .display{background:#f8fafc;padding:16px;border-radius:12px;border:1px solid #eef2f7;display:flex;justify-content:space-between;align-items:center}
+  .display .value{font-size:clamp(30px,10vw,64px);font-weight:800;color:#042f2d}
+    /* emphasized input amount - large and highly readable */
+    .display .value{
+      font-weight:900;
+      color:#042f2d;
+      background:linear-gradient(90deg,#fff7cc,#fff1b8);
+      padding:10px 14px;
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(245,158,11,0.06);
+      transition:transform 160ms ease,box-shadow 160ms ease,opacity 160ms ease;
+      text-align:left;
+      min-width:140px;
+    }
+    .display .value.input-pulse{transform:scale(1.03);box-shadow:0 14px 36px rgba(245,158,11,0.09)}
+  .display .sub{font-size:16px;color:var(--muted);font-weight:700}
+    .pad{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  button.key{padding:18px;border-radius:14px;border:1px solid #eef2f7;background:#f7fafb;color:#042f2d;font-size:28px;cursor:pointer;box-shadow:none;min-height:68px}
+    button.key:active{transform:translateY(1px)}
+    .controls{display:flex;gap:10px;margin-top:12px}
+  .controls button{flex:1;padding:14px;border-radius:14px;border:1px solid #eef2f7;background:#f7fafb;color:#042f2d;font-size:22px;cursor:pointer;min-height:58px}
+    .results{margin-top:18px;background:transparent;padding:12px;border-radius:10px;border-top:1px solid #f1f5f9}
+    .row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+  .label{color:var(--muted);font-size:15px;font-weight:700}
+  .amount{font-weight:900;font-size:20px;color:#052f2f}
+
+    /* Highlighted transfer amount styles */
+    #transferAmount{
+      font-size:clamp(28px,9vw,56px);
+      font-weight:900;
+      color:#042f2d; /* dark text on bright pill */
+      background:linear-gradient(90deg,var(--accent),#06b6d4);
+      padding:10px 14px;
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(6,182,212,0.08);
+      transition:transform 160ms ease,box-shadow 160ms ease,opacity 160ms ease;
+      transform-origin:center;
+      min-width:120px;
+      text-align:right;
+    }
+    /* pulse effect when value changes */
+    #transferAmount.pulse{transform:scale(1.04);box-shadow:0 16px 36px rgba(6,182,212,0.12)}
+
+    /* make sure leftAmount remains readable but secondary */
+  #leftAmount{font-size:18px;color:var(--muted);font-weight:800}
+
+    /* green pill to highlight top-up amount */
+    .pill-green{
+      display:inline-block;
+      padding:8px 14px;
+      background:linear-gradient(90deg,#16a34a,#34d399); /* pleasant green */
+      color:#042617;
+      font-weight:800;
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(16,185,129,0.06);
+      min-width:100px;
+      text-align:right;
+    }
+    .pill-green.highlight{box-shadow:0 14px 36px rgba(16,185,129,0.12);transform:translateY(-2px)}
+
+    /* small pill used for hints (styled like transferAmount but smaller) */
+    .pill-small{
+      display:inline-block;
+      font-size:14px;
+      font-weight:800;
+      color:#042f2d;
+      background:linear-gradient(90deg,var(--accent),#0ea5b0);
+      padding:8px 12px;
+      border-radius:10px;
+      box-shadow:0 6px 18px rgba(6,182,212,0.06);
+      margin-bottom:6px;
+      text-align:right;
+      min-width:120px;
+    }
+
+  .transfer-inline{font-weight:800;color:#042f2d;background:transparent;border-radius:8px;padding:2px 6px}
+
+    @media (max-width:420px){
+      html{font-size:18px}
+      .wrap{padding:14px}
+      .display .value{font-size:clamp(28px,12vw,56px)}
+      #transferAmount{font-size:clamp(24px,10vw,48px);min-width:100px;padding:10px 12px}
+      #leftAmount{font-size:16px}
+      button.key{font-size:26px;min-height:64px;padding:14px}
+      .controls button{font-size:20px;min-height:56px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+  <!-- title removed per user request -->
+
+      <div class="display">
+      <div>
+        <div class="sub">Số tiền nhập</div>
+        <div class="value" id="displayValue">0 ₫</div>
+      </div>
+    </div>
+
+    <div class="pad" id="pad">
+      <!-- keys generated by JS -->
+    </div>
+
+    <div class="controls">
+      <button id="backBtn">⌫</button>
+    </div>
+
+    <div class="results">
+      <div class="row">
+        <div class="label">SỐ TIỀN CÓ THỂ RÚT</div>
+        <div class="amount" id="transferAmount">0 ₫</div>
+      </div>
+      <div class="row">
+        <div class="label">Còn dư</div>
+        <div class="amount" id="leftAmount">0 ₫</div>
+      </div>
+      <div class="row">
+        <div class="label">Nạp thêm</div>
+        <div style="text-align:right">
+          <div class="amount" id="topUpNeeded"><span class="pill-green">0 ₫</span></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label"></div>
+        <div style="text-align:right" id="topUpSentence" class="amount" aria-live="polite">
+          <!-- will be filled by JS: example "[pill] để rút được 150.000 ₫" -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Giá trị lưu trong số nguyên (VND)
+  let value = 0;
+  // previous transfer value to detect changes (for animation)
+  let prevTransfer = 0;
+  // previous input value to animate input when it changes
+  let prevValue = 0;
+
+    const displayValue = document.getElementById('displayValue');
+  const transferAmountEl = document.getElementById('transferAmount');
+  const leftAmountEl = document.getElementById('leftAmount');
+  const topUpNeededEl = document.getElementById('topUpNeeded');
+  const topUpSentenceEl = document.getElementById('topUpSentence');
+  const pad = document.getElementById('pad');
+    const backBtn = document.getElementById('backBtn');
+
+    // Format VND nicely (vi-VN) and append ₫
+    function formatVND(n){
+      try{
+        return n.toLocaleString('vi-VN') + ' ₫';
+      }catch(e){
+        // fallback
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫';
+      }
+    }
+
+    function updateDisplay(){
+  // update displayed input amount
+  displayValue.textContent = formatVND(value);
+
+      // pulse input display when changed
+      if(value !== prevValue){
+        displayValue.classList.add('input-pulse');
+        if(displayValue._pulseTimer) clearTimeout(displayValue._pulseTimer);
+        displayValue._pulseTimer = setTimeout(()=>{ displayValue.classList.remove('input-pulse'); displayValue._pulseTimer = null; }, 220);
+      }
+      prevValue = value;
+
+      updateResults();
+    }
+
+    function updateResults(){
+      const reserve = 50000; // luôn chừa 50k
+      let transfer = 0;
+      if(value > reserve){
+        transfer = Math.floor((value - reserve) / reserve) * reserve;
+        // ensure non-negative
+        if(transfer < 0) transfer = 0;
+      } else {
+        transfer = 0;
+      }
+      const left = value - transfer;
+      // update elements
+      transferAmountEl.textContent = formatVND(transfer);
+      leftAmountEl.textContent = formatVND(left);
+
+      // compute top-up needed to reach the next withdraw level (increase withdrawable by one reserve)
+      const nextTransfer = transfer + reserve;
+      // minimal X >= 0 such that (value + X - reserve) >= nextTransfer
+      const needed = Math.max(0, nextTransfer - Math.max(0, value - reserve));
+      const topUp = needed;
+      // show top-up inside green pill; if topUp equals reserve, display 0 ₫ per preference
+      const displayTopUp = (topUp === reserve) ? 0 : topUp;
+  const pillClass = (value === 0) ? 'pill-green highlight' : 'pill-green';
+  topUpNeededEl.innerHTML = `<span class="${pillClass}">${formatVND(displayTopUp)}</span>`;
+      // update sentence: show pill and the next withdrawable amount
+      if(topUpSentenceEl){
+        // show the sentence only when user has entered a value AND a top-up is required
+        if(value > 0 && topUp > 0){
+          topUpSentenceEl.innerHTML = `<span style="margin-left:8px;color:var(--muted)">để rút được</span> <span class="transfer-inline">${formatVND(nextTransfer)}</span>`;
+        } else {
+          topUpSentenceEl.innerHTML = '';
+        }
+      }
+
+      // if transfer changed, pulse the element briefly to draw attention
+      if(transfer !== prevTransfer){
+        transferAmountEl.classList.add('pulse');
+        // clear any existing timer
+        if(transferAmountEl._pulseTimer) clearTimeout(transferAmountEl._pulseTimer);
+        transferAmountEl._pulseTimer = setTimeout(()=>{ transferAmountEl.classList.remove('pulse'); transferAmountEl._pulseTimer = null; }, 220);
+      }
+      prevTransfer = transfer;
+    }
+
+    // create numeric pad
+    const keys = ['1','2','3','4','5','6','7','8','9','0'];
+    keys.forEach(k=>{
+      const btn = document.createElement('button');
+      btn.className = 'key';
+      btn.textContent = k;
+      btn.addEventListener('click', ()=>{ appendDigit(k); });
+      pad.appendChild(btn);
+    });
+
+    function appendDigit(d){
+      // prevent too many digits (safety)
+      if(value.toString().length >= 15) return;
+      value = value * 10 + Number(d);
+      updateDisplay();
+    }
+
+    backBtn.addEventListener('click', ()=>{ value = Math.floor(value/10); updateDisplay(); });
+  // full-clear removed per user request; only single-digit backspace remains
+
+    // paste functionality removed per user request
+
+    // keyboard support
+    window.addEventListener('keydown', (ev)=>{
+      if(ev.key >= '0' && ev.key <= '9'){
+        appendDigit(ev.key);
+        ev.preventDefault();
+      } else if(ev.key === 'Backspace'){
+        value = Math.floor(value/10); updateDisplay(); ev.preventDefault();
+      }
+    });
+
+    // initialize
+    updateDisplay();
+  </script>
+</body>
+</html>
