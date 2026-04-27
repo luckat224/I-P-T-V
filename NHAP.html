@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tờ Giấy Nháp Vô Hạn Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: #fff;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: fixed;
+        }
+
+        #canvas {
+            display: block;
+            background: white;
+            cursor: crosshair;
+            touch-action: none;
+            image-rendering: pixelated;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            justify-content: flex-start;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tool-btn.active {
+            background: #333;
+            color: white;
+        }
+
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .size-control label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+
+        .size-control input[type="range"] {
+            width: 80px;
+            height: 4px;
+            cursor: pointer;
+        }
+
+        .size-control span {
+            font-size: 12px;
+            color: #666;
+            min-width: 30px;
+        }
+
+        #redPen { background: #FF4444; color: white; }
+        #redPen.active { background: #CC0000; }
+
+        #bluePen { background: #4444FF; color: white; }
+        #bluePen.active { background: #0000CC; }
+
+        #yellowPen { background: #FFD700; color: white; }
+        #yellowPen.active { background: #FFC700; }
+
+        #greenPen { background: #00B050; color: white; }
+        #greenPen.active { background: #008000; }
+
+        #orangePen { background: #FF8C00; color: white; }
+        #orangePen.active { background: #FF6000; }
+
+        #blackPen { background: #000000; color: white; }
+        #blackPen.active { background: #333333; }
+
+        #hand { background: #90EE90; }
+        #hand.active { background: #228B22; }
+
+        #undo { background: #87CEEB; }
+        #undo:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        #redo { background: #87CEEB; }
+        #redo:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        #clear { background: #FFB6C6; }
+
+        .info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 11px;
+            z-index: 999;
+            pointer-events: none;
+            max-width: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+
+        #textInput {
+            position: fixed;
+            display: none;
+            z-index: 1001;
+            padding: 8px 12px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            background: white;
+            min-width: 150px;
+            max-width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            -webkit-user-select: text;
+            user-select: text;
+            -webkit-touch-callout: default;
+        }
+
+        #textInput:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px #667eea;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            .toolbar {
+                height: 65px;
+                gap: 5px;
+                padding: 8px;
+            }
+
+            .tool-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            .info {
+                bottom: 15px;
+                right: 15px;
+                font-size: 10px;
+                padding: 8px 10px;
+            }
+
+            #textInput {
+                font-size: 14px;
+                padding: 6px 10px;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="toolbar">
+        <button id="redPen" class="tool-btn active" title="🔴 Bút đỏ">🔴</button>
+        <button id="bluePen" class="tool-btn" title="🔵 Bút xanh">🔵</button>
+        <button id="yellowPen" class="tool-btn" title="🟡 Bút vàng">🟡</button>
+        <button id="greenPen" class="tool-btn" title="💚 Bút xanh lá">💚</button>
+        <button id="orangePen" class="tool-btn" title="🟠 Bút cam">🟠</button>
+        <button id="blackPen" class="tool-btn" title="⚫ Bút đen">⚫</button>
+        <button id="text" class="tool-btn" title="📝 Chữ">📝</button>
+        <button id="hand" class="tool-btn" title="✋ Di chuyển">✋</button>
+        <button id="undo" class="tool-btn" title="↶ Quay lại">↶</button>
+        <button id="redo" class="tool-btn" title="⤴ Tiếp tục">⤴</button>
+        <button id="clear" class="tool-btn" title="🗑️ Xóa tất cả">🗑️</button>
+        
+        <div class="size-control">
+            <label for="penSize">Nét:</label>
+            <input type="range" id="penSize" min="1" max="10" value="2.5" step="0.5">
+            <span id="penSizeValue">2.5</span>
+        </div>
+    </div>
+
+    <div class="info">
+        <div id="deviceInfo"></div>
+    </div>
+
+    <input type="text" id="textInput" placeholder="Nhập chữ...">
+
+    <script>
+        // ===== VERSION & CONFIG =====
+        const VERSION = '1.0.0 PRO';
+        const BUILD = new Date().toLocaleString('vi-VN');
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isTablet = /iPad|Android/.test(navigator.userAgent);
+        const maxTouchPoints = navigator.maxTouchPoints || 0;
+        const hasStylus = maxTouchPoints > 2;
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { 
+            alpha: false, 
+            antialias: false,
+            willReadFrequently: false,
+            preserveDrawingBuffer: false
+        });
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight - 70;
+        canvas.style.position = 'fixed';
+        canvas.style.top = '70px';
+        canvas.style.left = '0';
+
+        // ===== HIGH-PERFORMANCE CONFIG =====
+        const config = {
+            desktop: {
+                drawWidth: 2.5,
+                eraserWidth: 30,
+                historySize: 100,
+                touchThreshold: 8,
+                renderInterval: 2
+            },
+            mobile: {
+                drawWidth: 2.0,
+                eraserWidth: 35,
+                historySize: 50,
+                touchThreshold: 3,
+                renderInterval: 0
+            },
+            tablet: {
+                drawWidth: 2.2,
+                eraserWidth: 40,
+                historySize: 80,
+                touchThreshold: 4,
+                renderInterval: 1
+            }
+        };
+
+        const deviceType = isTablet ? 'tablet' : (isMobile ? 'mobile' : 'desktop');
+        const currentConfig = config[deviceType];
+        console.log(`Device: ${deviceType}`, currentConfig);
+
+        // ===== VECTOR-BASED INFINITE CANVAS =====
+        class VectorCanvas {
+            constructor() {
+                this.strokes = [];
+                this.texts = [];
+                this.panX = 0;
+                this.panY = 0;
+                this.history = [];
+                this.historyIndex = -1;
+                this.maxHistory = currentConfig.historySize;
+            }
+
+            addStroke(stroke) {
+                this.strokes.push(stroke);
+            }
+
+            addText(text) {
+                this.texts.push(text);
+            }
+
+            saveHistory() {
+                this.history = this.history.slice(0, this.historyIndex + 1);
+                this.history.push({
+                    strokes: JSON.stringify(this.strokes),
+                    texts: JSON.stringify(this.texts)
+                });
+                
+                if (this.history.length > this.maxHistory) {
+                    this.history.shift();
+                } else {
+                    this.historyIndex++;
+                }
+            }
+
+            undo() {
+                if (this.historyIndex > 0) {
+                    this.historyIndex--;
+                    const state = this.history[this.historyIndex];
+                    this.strokes = JSON.parse(state.strokes);
+                    this.texts = state.texts ? JSON.parse(state.texts) : [];
+                    return true;
+                }
+                return false;
+            }
+
+            redo() {
+                if (this.historyIndex < this.history.length - 1) {
+                    this.historyIndex++;
+                    const state = this.history[this.historyIndex];
+                    this.strokes = JSON.parse(state.strokes);
+                    this.texts = state.texts ? JSON.parse(state.texts) : [];
+                    return true;
+                }
+                return false;
+            }
+
+            clear() {
+                this.strokes = [];
+                this.texts = [];
+                this.history = [];
+                this.historyIndex = -1;
+                this.saveHistory();
+            }
+        }
+
+        const canvas2d = new VectorCanvas();
+        canvas2d.saveHistory();
+
+        // ===== STATE MANAGEMENT =====
+        const state = {
+            tool: 'redPen',
+            isDrawing: false,
+            lastX: 0,
+            lastY: 0,
+            currentStroke: null,
+            isDirty: true,
+            touchPressure: 1,
+            frameCount: 0,
+            lastFrameTime: Date.now(),
+            fps: 60,
+            penSize: currentConfig.drawWidth,
+            panDeltaX: 0,
+            panDeltaY: 0,
+            dragTextIndex: -1,
+            dragTextOffsetX: 0,
+            dragTextOffsetY: 0
+        };
+
+        // ===== EVENT BINDING =====
+        document.getElementById('redPen').addEventListener('click', () => selectTool('redPen'));
+        document.getElementById('bluePen').addEventListener('click', () => selectTool('bluePen'));
+        document.getElementById('yellowPen').addEventListener('click', () => selectTool('yellowPen'));
+        document.getElementById('greenPen').addEventListener('click', () => selectTool('greenPen'));
+        document.getElementById('orangePen').addEventListener('click', () => selectTool('orangePen'));
+        document.getElementById('blackPen').addEventListener('click', () => selectTool('blackPen'));
+        document.getElementById('text').addEventListener('click', () => selectTool('text'));
+        document.getElementById('hand').addEventListener('click', () => selectTool('hand'));
+        document.getElementById('undo').addEventListener('click', performUndo);
+        document.getElementById('redo').addEventListener('click', performRedo);
+        document.getElementById('clear').addEventListener('click', performClear);
+
+        // Size controls
+        document.getElementById('penSize').addEventListener('input', (e) => {
+            state.penSize = parseFloat(e.target.value);
+            document.getElementById('penSizeValue').textContent = state.penSize.toFixed(1);
+        });
+
+        // Text input handlers
+        const textInput = document.getElementById('textInput');
+        textInput.addEventListener('blur', () => {
+            if (textInput.dataset.x && textInput.dataset.y && textInput.value) {
+                const worldX = parseInt(textInput.dataset.x) + canvas2d.panX;
+                const worldY = parseInt(textInput.dataset.y) + canvas2d.panY;
+                
+                canvas2d.addText({
+                    text: textInput.value,
+                    x: worldX,
+                    y: worldY,
+                    color: getToolColor(state.tool),
+                    fontSize: Math.max(12, state.penSize * 8)
+                });
+                canvas2d.saveHistory();
+                state.isDirty = true;
+            }
+            textInput.style.display = 'none';
+            textInput.value = '';
+        });
+
+        textInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                textInput.blur();
+            }
+            e.stopPropagation();
+        });
+
+        canvas.addEventListener('mousedown', () => {
+            if (textInput.style.display === 'block' && state.tool !== 'text') {
+                textInput.blur();
+            }
+        });
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', (e) => {
+            if (textInput.style.display === 'block') return;
+            
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault();
+                performUndo();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                e.preventDefault();
+                selectTool('hand');
+            }
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                e.preventDefault();
+                performClear();
+            }
+        });
+
+        // ===== TOUCH HANDLERS =====
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+        canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            if (!e.touches.length) return;
+
+            const touch = e.touches[0];
+            state.touchPressure = touch.force || 1;
+            const pos = getWorldPos(touch.clientX, touch.clientY);
+
+            state.lastX = pos.x;
+            state.lastY = pos.y;
+
+            const textIdx = getTextAtPos(pos.x, pos.y);
+            if (textIdx !== -1 && state.tool !== 'text') {
+                state.dragTextIndex = textIdx;
+                const textObj = canvas2d.texts[textIdx];
+                state.dragTextOffsetX = pos.x - textObj.x;
+                state.dragTextOffsetY = pos.y - textObj.y;
+                state.isDrawing = true;
+                return;
+            }
+
+            if (state.tool === 'text') {
+                textInput.style.display = 'block';
+                textInput.style.left = touch.clientX + 'px';
+                textInput.style.top = touch.clientY + 'px';
+                textInput.value = '';
+                textInput.dataset.x = touch.clientX;
+                textInput.dataset.y = touch.clientY;
+                textInput.focus();
+                state.isDrawing = false;
+            } else if (state.tool !== 'hand') {
+                state.currentStroke = {
+                    tool: state.tool,
+                    color: getToolColor(state.tool),
+                    width: state.penSize,
+                    points: [[pos.x, pos.y]],
+                    pressures: [state.touchPressure]
+                };
+                state.isDrawing = true;
+            } else if (state.tool === 'hand') {
+                state.isDrawing = true;
+            }
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!state.isDrawing) return;
+
+            const touch = e.touches[0];
+            state.touchPressure = touch.force || 1;
+            const pos = getWorldPos(touch.clientX, touch.clientY);
+
+            const dx = pos.x - state.lastX;
+            const dy = pos.y - state.lastY;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < currentConfig.touchThreshold) return;
+
+            if (state.dragTextIndex !== -1) {
+                const textObj = canvas2d.texts[state.dragTextIndex];
+                textObj.x = pos.x - state.dragTextOffsetX;
+                textObj.y = pos.y - state.dragTextOffsetY;
+                state.isDirty = true;
+            } else if (state.tool === 'hand') {
+                state.panDeltaX -= dx;
+                state.panDeltaY -= dy;
+            } else if (state.currentStroke) {
+                state.currentStroke.points.push([pos.x, pos.y]);
+                state.currentStroke.pressures.push(state.touchPressure);
+            }
+
+            state.lastX = pos.x;
+            state.lastY = pos.y;
+            state.isDirty = true;
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+
+            if (state.dragTextIndex !== -1) {
+                canvas2d.saveHistory();
+                state.dragTextIndex = -1;
+                state.isDrawing = false;
+                return;
+            }
+
+            if (state.isDrawing && state.currentStroke && state.tool !== 'hand') {
+                canvas2d.addStroke(state.currentStroke);
+                canvas2d.saveHistory();
+            }
+            state.isDrawing = false;
+            state.currentStroke = null;
+        }
+
+        // ===== MOUSE HANDLERS =====
+        canvas.addEventListener('mousedown', e => {
+            const pos = getWorldPos(e.clientX, e.clientY);
+            state.lastX = pos.x;
+            state.lastY = pos.y;
+
+            const textIdx = getTextAtPos(pos.x, pos.y);
+            if (textIdx !== -1 && state.tool !== 'text') {
+                state.dragTextIndex = textIdx;
+                const textObj = canvas2d.texts[textIdx];
+                state.dragTextOffsetX = pos.x - textObj.x;
+                state.dragTextOffsetY = pos.y - textObj.y;
+                state.isDrawing = true;
+                return;
+            }
+
+            if (state.tool === 'text') {
+                textInput.style.display = 'block';
+                textInput.style.left = e.clientX + 'px';
+                textInput.style.top = e.clientY + 'px';
+                textInput.value = '';
+                textInput.dataset.x = e.clientX;
+                textInput.dataset.y = e.clientY;
+                textInput.focus();
+                state.isDrawing = false;
+                state.currentStroke = null;
+            } else if (state.tool !== 'hand') {
+                state.currentStroke = {
+                    tool: state.tool,
+                    color: getToolColor(state.tool),
+                    width: state.penSize,
+                    points: [[pos.x, pos.y]],
+                    pressures: [1]
+                };
+                state.isDrawing = true;
+            } else if (state.tool === 'hand') {
+                state.isDrawing = true;
+            }
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            if (!state.isDrawing) return;
+            const pos = getWorldPos(e.clientX, e.clientY);
+            const dx = pos.x - state.lastX;
+            const dy = pos.y - state.lastY;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < currentConfig.touchThreshold) return;
+
+            if (state.dragTextIndex !== -1) {
+                const textObj = canvas2d.texts[state.dragTextIndex];
+                textObj.x = pos.x - state.dragTextOffsetX;
+                textObj.y = pos.y - state.dragTextOffsetY;
+                state.isDirty = true;
+            } else if (state.tool === 'hand') {
+                state.panDeltaX -= dx;
+                state.panDeltaY -= dy;
+            } else if (state.currentStroke) {
+                state.currentStroke.points.push([pos.x, pos.y]);
+                state.currentStroke.pressures.push(1);
+            }
+
+            state.lastX = pos.x;
+            state.lastY = pos.y;
+            state.isDirty = true;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            if (state.dragTextIndex !== -1) {
+                canvas2d.saveHistory();
+                state.dragTextIndex = -1;
+                state.isDrawing = false;
+                return;
+            }
+
+            if (state.isDrawing && state.currentStroke && state.tool !== 'hand') {
+                canvas2d.addStroke(state.currentStroke);
+                canvas2d.saveHistory();
+            }
+            state.isDrawing = false;
+            state.currentStroke = null;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            if (state.isDrawing && state.currentStroke && state.tool !== 'hand') {
+                canvas2d.addStroke(state.currentStroke);
+                canvas2d.saveHistory();
+            }
+            state.isDrawing = false;
+        });
+
+        // ===== SCROLL WHEEL =====
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const scrollSpeed = 30;
+            
+            if (e.deltaY !== 0) {
+                canvas2d.panY += e.deltaY > 0 ? scrollSpeed : -scrollSpeed;
+            }
+            if (e.deltaX !== 0) {
+                canvas2d.panX += e.deltaX > 0 ? scrollSpeed : -scrollSpeed;
+            }
+            
+            state.isDirty = true;
+        }, { passive: false });
+
+        // ===== UTILITIES =====
+        function getToolColor(tool) {
+            const colors = {
+                redPen: '#FF4444',
+                bluePen: '#4444FF',
+                yellowPen: '#FFD700',
+                greenPen: '#00B050',
+                orangePen: '#FF8C00',
+                blackPen: '#000000'
+            };
+            return colors[tool] || '#000000';
+        }
+
+        function getWorldPos(screenX, screenY) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: screenX - rect.left + canvas2d.panX,
+                y: screenY - rect.top + canvas2d.panY
+            };
+        }
+
+        function getTextAtPos(worldX, worldY) {
+            for (let i = canvas2d.texts.length - 1; i >= 0; i--) {
+                const textObj = canvas2d.texts[i];
+                const fontSize = textObj.fontSize || 16;
+                const metrics = ctx.measureText(textObj.text);
+                
+                const x1 = textObj.x;
+                const y1 = textObj.y;
+                const x2 = textObj.x + metrics.width;
+                const y2 = textObj.y + fontSize;
+                
+                if (worldX >= x1 && worldX <= x2 && worldY >= y1 && worldY <= y2) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function selectTool(tool) {
+            state.tool = tool;
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tool).classList.add('active');
+
+            const cursors = {
+                redPen: 'crosshair',
+                bluePen: 'crosshair',
+                yellowPen: 'crosshair',
+                greenPen: 'crosshair',
+                orangePen: 'crosshair',
+                blackPen: 'crosshair',
+                text: 'text',
+                hand: 'grab'
+            };
+            canvas.style.cursor = cursors[tool];
+        }
+
+        function performUndo() {
+            if (canvas2d.undo()) {
+                state.isDirty = true;
+                updateUI();
+            }
+        }
+
+        function performRedo() {
+            if (canvas2d.redo()) {
+                state.isDirty = true;
+                updateUI();
+            }
+        }
+
+        function performClear() {
+            if (confirm('Xóa tất cả nội dung?')) {
+                canvas2d.clear();
+                state.isDirty = true;
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            // Bỏ cập nhật UI stats
+        }
+
+        // ===== RENDER LOOP =====
+        let renderCounter = 0;
+        function render() {
+            const dampingFactor = 0.85;
+            canvas2d.panX += state.panDeltaX * dampingFactor;
+            canvas2d.panY += state.panDeltaY * dampingFactor;
+            
+            state.panDeltaX *= (1 - dampingFactor * 0.5);
+            state.panDeltaY *= (1 - dampingFactor * 0.5);
+            
+            if (Math.abs(state.panDeltaX) < 0.1) state.panDeltaX = 0;
+            if (Math.abs(state.panDeltaY) < 0.1) state.panDeltaY = 0;
+            
+            if (!state.isDirty && renderCounter++ % (1 + currentConfig.renderInterval) !== 0) {
+                requestAnimationFrame(render);
+                return;
+            }
+
+            const now = Date.now();
+            if (now - state.lastFrameTime >= 1000) {
+                state.fps = state.frameCount;
+                state.frameCount = 0;
+                state.lastFrameTime = now;
+            }
+            state.frameCount++;
+
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(-canvas2d.panX, -canvas2d.panY);
+
+            // Draw strokes
+            for (const stroke of canvas2d.strokes) {
+                if (stroke.points.length < 2) continue;
+
+                ctx.strokeStyle = stroke.color;
+                ctx.lineWidth = stroke.width;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineJoinMiterLimit = 10;
+                ctx.globalAlpha = 0.95;
+
+                ctx.beginPath();
+                ctx.moveTo(stroke.points[0][0], stroke.points[0][1]);
+                
+                for (let i = 1; i < stroke.points.length; i++) {
+                    const x = stroke.points[i][0];
+                    const y = stroke.points[i][1];
+                    const xPrev = stroke.points[i - 1][0];
+                    const yPrev = stroke.points[i - 1][1];
+                    
+                    const xMid = (xPrev + x) / 2;
+                    const yMid = (yPrev + y) / 2;
+                    
+                    ctx.quadraticCurveTo(xPrev, yPrev, xMid, yMid);
+                }
+                
+                if (stroke.points.length > 1) {
+                    const lastIdx = stroke.points.length - 1;
+                    ctx.lineTo(stroke.points[lastIdx][0], stroke.points[lastIdx][1]);
+                }
+                
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+
+            // Draw current stroke
+            if (state.currentStroke && state.isDrawing && state.currentStroke.points.length > 1) {
+                ctx.strokeStyle = state.currentStroke.color;
+                ctx.lineWidth = state.currentStroke.width;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineJoinMiterLimit = 10;
+                ctx.globalAlpha = 0.95;
+                
+                ctx.beginPath();
+                ctx.moveTo(state.currentStroke.points[0][0], state.currentStroke.points[0][1]);
+                
+                for (let i = 1; i < state.currentStroke.points.length; i++) {
+                    const x = state.currentStroke.points[i][0];
+                    const y = state.currentStroke.points[i][1];
+                    const xPrev = state.currentStroke.points[i - 1][0];
+                    const yPrev = state.currentStroke.points[i - 1][1];
+                    
+                    const xMid = (xPrev + x) / 2;
+                    const yMid = (yPrev + y) / 2;
+                    
+                    ctx.quadraticCurveTo(xPrev, yPrev, xMid, yMid);
+                }
+                
+                if (state.currentStroke.points.length > 1) {
+                    const lastIdx = state.currentStroke.points.length - 1;
+                    ctx.lineTo(state.currentStroke.points[lastIdx][0], state.currentStroke.points[lastIdx][1]);
+                }
+                
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+
+            // Draw texts
+            for (const textObj of canvas2d.texts) {
+                ctx.font = `${textObj.fontSize}px Arial`;
+                ctx.fillStyle = textObj.color;
+                ctx.textBaseline = 'top';
+                ctx.fillText(textObj.text, textObj.x, textObj.y);
+            }
+
+            ctx.restore();
+
+            // Draw page numbers
+            const pageWidth = 1920;
+            const pageNum = Math.max(1, Math.floor(canvas2d.panX / pageWidth) + 1);
+            const pageText = `trang ${pageNum}`;
+            
+            ctx.font = 'bold 24px Arial';
+            ctx.fillStyle = '#FFFF00';
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            
+            ctx.strokeText(pageText, canvas.width - 15, canvas.height - 15);
+            ctx.fillText(pageText, canvas.width - 15, canvas.height - 15);
+
+            state.isDirty = false;
+            requestAnimationFrame(render);
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('gesturestart', e => e.preventDefault());
+
+        document.getElementById('deviceInfo').innerHTML = '';
+        updateUI();
+        render();
+    </script>
+</body>
+</html>
