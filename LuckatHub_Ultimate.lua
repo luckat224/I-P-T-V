@@ -27,8 +27,6 @@ end
 
 -- ==================== CẤU HÌNH TÍNH NĂNG ====================
 local C = {
-    SpeedOn = false, Speed = 45,
-    JumpOn = false, Jump = 100,
     Wallhack = false,
     HUDOn = false,
     FixLag = false
@@ -338,37 +336,29 @@ local function addTitle(parent, text)
 end
 
 -- ==================== XÂY DỰNG TABS ====================
-local T1 = makeTab("move", "Di Chuyển")
-local T2 = makeTab("combat", "Tác Chiến")
-local T3 = makeTab("bypass", "Ultra Bypass")
-local T4 = makeTab("lag", "Tối Ưu FPS")
+local T1 = makeTab("combat", "Tác Chiến")
+local T2 = makeTab("bypass", "Ultra Bypass")
+local T3 = makeTab("lag", "Tối Ưu FPS")
 
--- TAB 1: Di Chuyển
-addTitle(T1, "TỐC ĐỘ & NHẢY")
-addToggle(T1, "Chạy Nhanh (Speed)", C.SpeedOn, function(v) C.SpeedOn = v end)
-addInput(T1, "Tốc Độ Chạy", C.Speed, function(v) C.Speed = v end)
-addToggle(T1, "Nhảy Cao (Jump)", C.JumpOn, function(v) C.JumpOn = v end)
-addInput(T1, "Lực Nhảy", C.Jump, function(v) C.Jump = v end)
-
--- TAB 2: Tác Chiến
-addTitle(T2, "CHIẾN ĐẤU")
-addToggle(T2, "Bật HUD (Teleport & Aimbot)", C.HUDOn, function(v)
+-- TAB 1: Tác Chiến
+addTitle(T1, "CHIẾN ĐẤU")
+addToggle(T1, "Bật HUD (Teleport & Aimbot)", C.HUDOn, function(v)
     C.HUDOn = v
     if _G.LH_HUD then _G.LH_HUD(v) end
 end)
 
--- TAB 3: Ultra Bypass
+-- TAB 2: Ultra Bypass
 local _kickBlock = false
 local _remFilter = false
-addTitle(T3, "CHỐNG KICK/BAN")
-addToggle(T3, "Kick Block (Chống Kick)", _kickBlock, function(v) _kickBlock = v end)
-addToggle(T3, "Remote Blacklist (Bảo Vệ)", _remFilter, function(v) _remFilter = v end)
-addTitle(T3, "CÔNG CỤ BYPASS")
-addButton(T3, "Ngụy Trang Tên Script", function()
+addTitle(T2, "CHỐNG KICK/BAN")
+addToggle(T2, "Kick Block (Chống Kick)", _kickBlock, function(v) _kickBlock = v end)
+addToggle(T2, "Remote Blacklist (Bảo Vệ)", _remFilter, function(v) _remFilter = v end)
+addTitle(T2, "CÔNG CỤ BYPASS")
+addButton(T2, "Ngụy Trang Tên Script", function()
     local names = {"PlayerModule", "CameraModule", "ControlModule", "ChatMain"}
     pcall(function() if script and script.Parent then script.Name = names[math.random(#names)] end end)
 end)
-addButton(T3, "Scan & Đóng Băng AntiCheat", function()
+addButton(T2, "Scan & Đóng Băng AntiCheat", function()
     pcall(function()
         if not getthreads then return end
         local kws = {"speedcheck","positioncheck","anticheat","velocity_check","sanity"}
@@ -383,12 +373,12 @@ addButton(T3, "Scan & Đóng Băng AntiCheat", function()
     end)
 end)
 
--- TAB 4: Fix Lag
-addTitle(T4, "TỐI ƯU HÓA TRỰC TIẾP")
-addButton(T4, "Bật Fix Lag Auto (Triệt Để)", function() if _G.LH_lagOn then _G.LH_lagOn() end end)
-addButton(T4, "Tắt Fix Lag Auto", function() if _G.LH_lagOff then _G.LH_lagOff() end end)
+-- TAB 3: Fix Lag
+addTitle(T3, "TỐI ƯU HÓA TRỰC TIẾP")
+addButton(T3, "Bật Fix Lag Auto (Triệt Để)", function() if _G.LH_lagOn then _G.LH_lagOn() end end)
+addButton(T3, "Tắt Fix Lag Auto", function() if _G.LH_lagOff then _G.LH_lagOff() end end)
 
-switchTab("move")
+switchTab("combat")
 
 -- ==================== VẬN HÀNH TÍNH NĂNG (SUBSYSTEMS) ====================
 local charCache = {}
@@ -400,22 +390,160 @@ end
 getChar()
 lp.CharacterAdded:Connect(function() task.wait(0.3) getChar() end)
 
--- Vòng lặp vật lý chính
-RunService.Heartbeat:Connect(function()
-    local char, hum, hrp = charCache.char, charCache.hum, charCache.hrp
-    if not hum or not hrp or hum.Health <= 0 then return end
+-- ==========================================
+-- ĐỘNG CƠ PHYSICS SIÊU MƯỢT (HEARTBEAT)
+-- ==========================================
+local targetSpeed = 16
+local targetJump = 50
+local playerControls = require(lp.PlayerScripts:WaitForChild("PlayerModule")):GetControls()
 
-    if C.JumpOn then
+RunService.Heartbeat:Connect(function(deltaTime)
+    local hum, hrp = charCache.hum, charCache.hrp
+    if not hrp or not hum or hum.Health <= 0 then return end
+    
+    if targetJump ~= 50 then
         hum.UseJumpPower = true
-        hum.JumpPower = C.Jump
+        hum.JumpPower = targetJump
+    else
+        hum.JumpPower = 50
     end
 
-    if C.SpeedOn then
-        local d = hum.MoveDirection
-        if d.Magnitude > 0.05 then
-            hrp.AssemblyLinearVelocity = Vector3.new(d.X * C.Speed, hrp.AssemblyLinearVelocity.Y, d.Z * C.Speed)
-        end
+    if targetSpeed <= 16 then return end
+    
+    local activeMove = playerControls:GetMoveVector()
+    if activeMove.Magnitude < 0.05 then return end 
+    
+    local camLook = camera.CFrame.LookVector
+    local camRight = camera.CFrame.RightVector
+    local forward = Vector3.new(camLook.X, 0, camLook.Z).Unit
+    local right = Vector3.new(camRight.X, 0, camRight.Z).Unit
+    
+    local worldMoveDir = (forward * -activeMove.Z) + (right * activeMove.X)
+    if worldMoveDir.Magnitude > 0 then
+        worldMoveDir = worldMoveDir.Unit
     end
+    
+    if hrp.Anchored then hrp.Anchored = false end
+    hum.AutoRotate = true 
+    
+    local currentVel = hrp.AssemblyLinearVelocity
+    local currentHorizSpeed = Vector3.new(currentVel.X, 0, currentVel.Z).Magnitude
+    
+    if currentHorizSpeed > targetSpeed + 15 then
+        return
+    end
+    
+    hrp.AssemblyLinearVelocity = Vector3.new(
+        worldMoveDir.X * targetSpeed,
+        currentVel.Y,
+        worldMoveDir.Z * targetSpeed
+    )
+    
+    if hum.MoveDirection.Magnitude < 0.05 then
+        local targetLook = hrp.Position + worldMoveDir
+        hrp.CFrame = hrp.CFrame:Lerp(CFrame.lookAt(hrp.Position, targetLook), 0.15)
+    end
+end)
+
+-- ==========================================
+-- GIAO DIỆN CHỈNH TỐC ĐỘ + NHẢY CAO
+-- ==========================================
+local speedGui = Instance.new("ScreenGui")
+speedGui.Name = "SpeedJumpUltra"
+speedGui.ResetOnSpawn = false
+speedGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+speedGui.Parent = safeParent
+
+local sf = Instance.new("Frame")
+sf.Size = UDim2.new(0, 160, 0, 75)
+sf.Position = UDim2.new(0.5, -80, 0.01, 0)
+sf.BackgroundTransparency = 0.4
+sf.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+sf.BorderSizePixel = 0
+sf.Active = true
+sf.ClipsDescendants = true
+sf.Parent = speedGui
+Instance.new("UICorner", sf).CornerRadius = UDim.new(0, 8)
+
+local speedBox = Instance.new("TextBox")
+speedBox.Size = UDim2.new(1, -40, 0, 30)
+speedBox.Position = UDim2.new(0, 10, 0, 5)
+speedBox.BackgroundTransparency = 1
+speedBox.TextColor3 = Color3.fromRGB(0, 255, 150)
+speedBox.Text = "🏃 " .. tostring(targetSpeed)
+speedBox.TextSize = 16
+speedBox.Font = Enum.Font.GothamBold
+speedBox.TextXAlignment = Enum.TextXAlignment.Left
+speedBox.ClearTextOnFocus = true
+speedBox.Parent = sf
+
+local jumpBox = Instance.new("TextBox")
+jumpBox.Size = UDim2.new(1, -40, 0, 30)
+jumpBox.Position = UDim2.new(0, 10, 0, 40)
+jumpBox.BackgroundTransparency = 1
+jumpBox.TextColor3 = Color3.fromRGB(255, 150, 0)
+jumpBox.Text = "🚀 " .. tostring(targetJump)
+jumpBox.TextSize = 16
+jumpBox.Font = Enum.Font.GothamBold
+jumpBox.TextXAlignment = Enum.TextXAlignment.Left
+jumpBox.ClearTextOnFocus = true
+jumpBox.Parent = sf
+
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 30, 0, 30)
+minBtn.Position = UDim2.new(1, -35, 0, 5)
+minBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+minBtn.Text = "➖"
+minBtn.TextColor3 = Color3.new(1, 1, 1)
+minBtn.TextSize = 12
+minBtn.Parent = sf
+Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 6)
+
+local isMinimized = false
+minBtn.Activated:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        sf.Size = UDim2.new(0, 45, 0, 40)
+        speedBox.Visible = false
+        jumpBox.Visible = false
+        minBtn.Position = UDim2.new(0, 7, 0, 5)
+        minBtn.Text = "➕"
+    else
+        sf.Size = UDim2.new(0, 160, 0, 75)
+        speedBox.Visible = true
+        jumpBox.Visible = true
+        minBtn.Position = UDim2.new(1, -35, 0, 5)
+        minBtn.Text = "➖"
+    end
+end)
+
+local draggingS, dragStartS, startPosS
+sf.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        draggingS = true dragStartS = input.Position startPosS = sf.Position
+    end
+end)
+sf.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then draggingS = false end
+end)
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if draggingS and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
+        local delta = input.Position - dragStartS
+        sf.Position = UDim2.new(startPosS.X.Scale, startPosS.X.Offset + delta.X, startPosS.Y.Scale, startPosS.Y.Offset + delta.Y)
+    end
+end)
+
+speedBox.FocusLost:Connect(function()
+    local text = speedBox.Text:gsub("[^%d]", "")
+    local v = tonumber(text)
+    if v then targetSpeed = math.clamp(v, 16, 200) end
+    speedBox.Text = "🏃 " .. tostring(targetSpeed)
+end)
+jumpBox.FocusLost:Connect(function()
+    local text = jumpBox.Text:gsub("[^%d]", "")
+    local v = tonumber(text)
+    if v then targetJump = math.clamp(v, 50, 500) end
+    jumpBox.Text = "🚀 " .. tostring(targetJump)
 end)
 
 -- Hook Bypass Engine
