@@ -1,28 +1,19 @@
 -- ============================================================================
--- ⚡ LUCKATHUB VIP PRO - MOBILE EDITION (V16 UNIVERSAL GOD MODE) ⚡
--- Hỗ trợ MỌI GAME - Tối ưu 99.9% CPU/Pin (MAX BATTERY SAVER)
+-- ⚡ LUCKATHUB VIP PRO - MOBILE EDITION (V17) ⚡
+-- Universal God Mode + Max Battery Saver + Original HUD/Aimbot Logic
 -- ============================================================================
 
--- ============================================================================
--- ⚡ BƯỚC 1: UNIVERSAL AUTO-BYPASS (PHỦ ĐẦU TOÀN VŨ TRỤ) ⚡
--- ============================================================================
 local function InitUniversalBypass()
     if not game:IsLoaded() then game.Loaded:Wait() end
     
-    -- TỐI ƯU PIN: Hook metatable ngốn rất nhiều CPU nếu viết sai.
     if typeof(hookmetamethod) == "function" then
         local oldNamecall
         oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
             local m = getnamecallmethod()
-            
-            -- Bịt miệng lệnh sút/Ban của mọi Game và Admin Script
             if m == "Kick" or m == "kick" or m == "Ban" or m == "ban" then return nil end
-            
-            -- Lọc tín hiệu gửi về máy chủ
             if m == "FireServer" or m == "InvokeServer" then
                 local ok, name = pcall(function() return self.Name:lower() end)
                 if ok and name then
-                    -- Bộ lọc phổ quát cho MỌI GAME
                     local blacklisted = {"ban", "kick", "report", "admin", "anticheat", "cheat", "hack", "exploit", "crash", "log", "detect", "punish", "illegal", "flag", "warn"}
                     for i = 1, #blacklisted do
                         if string.find(name, blacklisted[i], 1, true) then return nil end
@@ -35,8 +26,6 @@ local function InitUniversalBypass()
         local oldIndex
         oldIndex = hookmetamethod(game, "__index", function(self, key)
             if not checkcaller() then
-                -- [TỐI ƯU PIN 99.9%] Chặn Game đọc lén tốc độ. 
-                -- Chỉ check ClassName KHI key là WalkSpeed/JumpPower để tránh tính toán vô ích 60fps.
                 if key == "WalkSpeed" then
                     if typeof(self) == "Instance" and self.ClassName == "Humanoid" then return 16 end
                 elseif key == "JumpPower" then
@@ -47,7 +36,6 @@ local function InitUniversalBypass()
         end)
     end
     
-    -- Bịt mắt hệ thống quét GUI
     pcall(function()
         if typeof(getconnections) == "function" then
             for _, conn in pairs(getconnections(game:GetService("CoreGui").ChildAdded)) do conn:Disable() end
@@ -56,7 +44,6 @@ local function InitUniversalBypass()
         end
     end)
     
-    -- Đóng băng luồng Anti-Cheat ngầm
     pcall(function()
         if not getthreads then return end
         local keywords = {"speedcheck", "positioncheck", "anticheat", "ac", "detect", "ban", "kick", "crash", "security"}
@@ -74,11 +61,10 @@ local function InitUniversalBypass()
     end)
 end
 
--- KÍCH HOẠT BYPASS TRƯỚC KHI TẢI GUI!
 pcall(InitUniversalBypass)
 
 -- ============================================================================
--- BƯỚC 2: KHỞI TẠO GUI VÀ HỆ THỐNG
+-- KHỞI TẠO GUI VÀ HỆ THỐNG LUCKATHUB
 -- ============================================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -118,7 +104,7 @@ gui.Parent = safeParent
 local C_BG = Color3.fromRGB(15, 15, 20)
 local C_SIDE = Color3.fromRGB(22, 22, 30)
 local C_TOP = Color3.fromRGB(26, 26, 36)
-local C_ACCENT = Color3.fromRGB(138, 43, 226) -- Màu Tím Độc Tôn Thần Thánh
+local C_ACCENT = Color3.fromRGB(138, 43, 226)
 local C_TEXT = Color3.fromRGB(240, 240, 240)
 local C_TEXT_DIM = Color3.fromRGB(130, 130, 150)
 local C_CARD = Color3.fromRGB(30, 30, 42)
@@ -183,7 +169,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -50, 1, 0)
 title.Position = UDim2.new(0, 15, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "LuckatHub | V16 UNIVERSAL GOD"
+title.Text = "LuckatHub | V17 GOD MODE"
 title.TextColor3 = C_ACCENT
 title.Font = Enum.Font.GothamBold
 title.TextSize = 13
@@ -434,7 +420,7 @@ addButton(T4, "Tắt Tối Ưu", function() if _G.LH_lagOff then _G.LH_lagOff() 
 
 switchTab("move")
 
--- ==================== ĐỘNG CƠ PHYSICS (TỐI ƯU NHẸ NHẤT) ====================
+-- ==================== ĐỘNG CƠ PHYSICS ====================
 local charCache = {}
 local function getChar()
     charCache.char = lp.Character
@@ -450,7 +436,6 @@ RunService.Heartbeat:Connect(function(deltaTime)
     local hum, hrp = charCache.hum, charCache.hrp
     if not hrp or not hum or hum.Health <= 0 then return end
     
-    -- TỐI ƯU PIN: Không gán giá trị liên tục mỗi frame nếu không cần thiết
     if C.JumpOn then
         if not hum.UseJumpPower then hum.UseJumpPower = true end
         if hum.JumpPower ~= C.Jump then hum.JumpPower = C.Jump end
@@ -486,7 +471,7 @@ RunService.Heartbeat:Connect(function(deltaTime)
 end)
 
 -- ===========================================================================
--- FIX LAG SIÊU TIẾT KIỆM PIN (SLEEP YIELDING)
+-- FIX LAG (CHUNKING)
 -- ===========================================================================
 local lagLoop = nil
 local function optimizePart(o)
@@ -518,13 +503,11 @@ _G.LH_lagOn = function()
             local descendants = workspace:GetDescendants()
             for i = 1, #descendants do
                 optimizePart(descendants[i])
-                -- TỐI ƯU CỰC ĐỘ: 50 Part là nghỉ để CPU không bị dồn nén
                 if i % 50 == 0 then task.wait() end 
             end
-            task.wait(15) -- Ngủ đông 15 giây mới quét lại
+            task.wait(15)
         end
     end)
-    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "FIX LAG ĐÃ BẬT"; Text = "Chế độ Chunking tiết kiệm pin kích hoạt."; Duration = 3;})
 end
 
 _G.LH_lagOff = function()
@@ -533,7 +516,7 @@ _G.LH_lagOff = function()
 end
 
 -- ===========================================================================
--- ON-SCREEN HUD (TELEPORT & AIMBOT - ĐÃ FIX LỖI TỤT PIN)
+-- ON-SCREEN HUD (TELEPORT & AIMBOT) - BẢN GỐC 100% CỦA BẠN (TỪ V10)
 -- ===========================================================================
 local hudGUI = nil
 
@@ -542,6 +525,7 @@ _G.LH_HUD = function(on)
     if not on then return end
 
     local playerGui = safeParent
+
     hudGUI = Instance.new("ScreenGui")
     hudGUI.Name = "TeleportGui"
     hudGUI.ResetOnSpawn = false
@@ -551,35 +535,203 @@ _G.LH_HUD = function(on)
     local teleportButton = Instance.new("TextButton")
     teleportButton.Size = UDim2.new(0, 80, 0, 80)
     teleportButton.Position = UDim2.new(0, 20, 0, 20)
+    teleportButton.AnchorPoint = Vector2.new(0, 0)
+    teleportButton.Text = "TELEPORT"
     teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
     teleportButton.TextColor3 = Color3.new(1, 1, 1)
-    teleportButton.Text = "TELEPORT"
+    teleportButton.TextSize = 14
     teleportButton.Font = Enum.Font.GothamBold
+    teleportButton.BorderSizePixel = 0
+    teleportButton.AutoButtonColor = false
     teleportButton.Parent = hudGUI
-    Instance.new("UICorner", teleportButton).CornerRadius = UDim.new(1, 0)
+
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(1, 0)
+    buttonCorner.Parent = teleportButton
 
     local aimButton = Instance.new("TextButton")
     aimButton.Size = UDim2.new(0, 100, 0, 40)
     aimButton.Position = UDim2.new(1, -110, 0, 20)
+    aimButton.AnchorPoint = Vector2.new(0, 0)
+    aimButton.Text = "AIM OFF"
     aimButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
     aimButton.TextColor3 = Color3.new(1, 1, 1)
-    aimButton.Text = "AIM OFF"
+    aimButton.TextSize = 14
     aimButton.Font = Enum.Font.GothamBold
+    aimButton.BorderSizePixel = 0
+    aimButton.AutoButtonColor = false
     aimButton.Parent = hudGUI
-    Instance.new("UICorner", aimButton).CornerRadius = UDim.new(0.3, 0)
+
+    local aimButtonCorner = Instance.new("UICorner")
+    aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
+    aimButtonCorner.Parent = aimButton
+
+    -- ===========================================================================
+    -- PHẦN AIMBOT MỚI (ĐÃ THAY THẾ HOÀN TOÀN) - KHÔI PHỤC ĐÚNG TỪNG CHỮ BẢN GỐC V10
+    -- ===========================================================================
 
     local isLocked = false
     local targetPlayer = nil
     local currentArrow = nil
     local followConnection = nil
     local lastClickTime = 0
+    local CLICK_DELAY = 0.3
+
     local aimEnabled = false
     local currentTarget = nil
     local aimConnection = nil
     local espFolders = {}
     local arrowGui = nil
+
     local wallhackEnabled = true
-    local lastTargetScan = 0 -- Biến lưu thời gian quét mục tiêu
+
+    local function createEspFolder(tPlayer)
+        if espFolders[tPlayer] then
+            espFolders[tPlayer]:Destroy()
+        end
+        local folder = Instance.new("Folder")
+        folder.Name = tPlayer.Name .. "_ESP"
+        folder.Parent = playerGui
+        espFolders[tPlayer] = folder
+        return folder
+    end
+
+    local function updateHighlight(character, tPlayer)
+        if not character then return end
+        if espFolders[tPlayer] then
+            espFolders[tPlayer]:Destroy()
+        end
+        local folder = createEspFolder(tPlayer)
+        
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "WallhackHighlight"
+        highlight.FillColor = Color3.fromRGB(255, 50, 50)
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlight.FillTransparency = 0.7
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.Adornee = character
+        highlight.Parent = folder
+        highlight.Enabled = wallhackEnabled
+        
+        character.Destroying:Connect(function()
+            if folder and folder.Parent then
+                folder:Destroy()
+                espFolders[tPlayer] = nil
+            end
+        end)
+        
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.Died:Connect(function()
+                if folder and folder.Parent then
+                    folder:Destroy()
+                    espFolders[tPlayer] = nil
+                end
+            end)
+        end
+    end
+
+    local function toggleWallhack()
+        wallhackEnabled = not wallhackEnabled
+        for tPlayer, folder in pairs(espFolders) do
+            if folder then
+                for _, child in pairs(folder:GetChildren()) do
+                    if child:IsA("Highlight") then
+                        child.Enabled = wallhackEnabled
+                    end
+                end
+            end
+        end
+        if wallhackEnabled then
+            teleportButton.BackgroundColor3 = Color3.fromRGB(255, 59, 59)
+        else
+            teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        end
+    end
+
+    local function initializePlayerESP(otherPlayer)
+        if otherPlayer == lp then return end
+        local function setupCharacter(character)
+            if character and character:IsDescendantOf(workspace) then
+                updateHighlight(character, otherPlayer)
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.Died:Connect(function()
+                        if espFolders[otherPlayer] then
+                            espFolders[otherPlayer]:Destroy()
+                            espFolders[otherPlayer] = nil
+                        end
+                    end)
+                end
+                character.AncestryChanged:Connect(function(_, parent)
+                    if not character or not character:IsDescendantOf(workspace) then
+                        if espFolders[otherPlayer] then
+                            espFolders[otherPlayer]:Destroy()
+                            espFolders[otherPlayer] = nil
+                        end
+                    end
+                end)
+            end
+        end
+        if otherPlayer.Character then setupCharacter(otherPlayer.Character) end
+        otherPlayer.CharacterAdded:Connect(function(character)
+            setupCharacter(character)
+        end)
+        otherPlayer.AncestryChanged:Connect(function()
+            if not otherPlayer or not otherPlayer.Parent then
+                if espFolders[otherPlayer] then
+                    espFolders[otherPlayer]:Destroy()
+                    espFolders[otherPlayer] = nil
+                end
+            end
+        end)
+    end
+
+    local function initializeWallhack()
+        for tPlayer, folder in pairs(espFolders) do folder:Destroy() end
+        espFolders = {}
+        for _, otherPlayer in pairs(Players:GetPlayers()) do
+            initializePlayerESP(otherPlayer)
+        end
+        Players.PlayerAdded:Connect(function(newPlayer)
+            initializePlayerESP(newPlayer)
+        end)
+    end
+
+    local function showArrow(target)
+        if arrowGui then arrowGui:Destroy() end
+        if not target or not target.Character then return end
+        local head = target.Character:FindFirstChild("Head")
+        if not head then return end
+
+        local agui = Instance.new("BillboardGui")
+        agui.Name = "TargetArrow"
+        agui.Size = UDim2.new(0, 50, 0, 50)
+        agui.AlwaysOnTop = true
+        agui.Adornee = head
+        agui.MaxDistance = 500
+        agui.SizeOffset = Vector2.new(0, 2.5)
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.BackgroundTransparency = 1
+        label.Text = "🔒"
+        label.TextColor3 = Color3.fromRGB(255, 0, 0)
+        label.TextScaled = true
+        label.Font = Enum.Font.GothamBold
+        label.Parent = agui
+
+        agui.Parent = head
+        arrowGui = agui
+    end
+
+    local function removeArrow()
+        if arrowGui then
+            arrowGui:Destroy()
+            arrowGui = nil
+        end
+    end
 
     local function getVisibleTarget()
         local camPos = camera.CFrame.Position
@@ -604,42 +756,28 @@ _G.LH_HUD = function(on)
         return bestTarget
     end
 
+    local function lockAim(target)
+        if not target or not target.Character then return end
+        local head = target.Character:FindFirstChild("Head") or target.Character:FindFirstChild("UpperTorso")
+        if not head then return end
+        local camPos = camera.CFrame.Position
+        camera.CFrame = CFrame.new(camPos, head.Position)
+    end
+
     local function startAim()
         if aimConnection then aimConnection:Disconnect() end
         aimConnection = RunService.RenderStepped:Connect(function()
             if not aimEnabled then return end
-            
-            -- TỐI ƯU PIN: Chỉ quét mục tiêu 2 LẦN/GIÂY thay vì 60 lần/giây
             if not currentTarget or not currentTarget.Character or not currentTarget.Character:FindFirstChild("Humanoid") or currentTarget.Character.Humanoid.Health <= 0 then
-                if tick() - lastTargetScan > 0.5 then
-                    lastTargetScan = tick()
-                    currentTarget = getVisibleTarget()
-                    if currentTarget then 
-                        if arrowGui then arrowGui:Destroy() end
-                        local head = currentTarget.Character:FindFirstChild("Head")
-                        if head then
-                            local agui = Instance.new("BillboardGui")
-                            agui.Size = UDim2.new(0, 50, 0, 50)
-                            agui.AlwaysOnTop = true
-                            agui.Adornee = head
-                            local lbl = Instance.new("TextLabel", agui)
-                            lbl.Size = UDim2.new(1,0,1,0)
-                            lbl.BackgroundTransparency = 1
-                            lbl.Text = "🔒"
-                            lbl.TextColor3 = Color3.fromRGB(255, 0, 0)
-                            lbl.TextScaled = true
-                            agui.Parent = head
-                            arrowGui = agui
-                        end
-                    else 
-                        if arrowGui then arrowGui:Destroy() arrowGui = nil end
-                    end
+                currentTarget = getVisibleTarget()
+                if currentTarget then
+                    showArrow(currentTarget)
+                else
+                    removeArrow()
                 end
             end
-            
-            if currentTarget and currentTarget.Character then 
-                local head = currentTarget.Character:FindFirstChild("Head") or currentTarget.Character:FindFirstChild("UpperTorso")
-                if head then camera.CFrame = CFrame.new(camera.CFrame.Position, head.Position) end
+            if currentTarget then
+                lockAim(currentTarget)
             end
         end)
     end
@@ -653,125 +791,203 @@ _G.LH_HUD = function(on)
         else
             aimButton.BackgroundColor3 = Color3.fromRGB(59, 59, 255)
             aimButton.Text = "AIM OFF"
-            if arrowGui then arrowGui:Destroy() arrowGui = nil end
+            removeArrow()
             currentTarget = nil
-            if aimConnection then aimConnection:Disconnect() aimConnection = nil end
+            if aimConnection then 
+                aimConnection:Disconnect() 
+                aimConnection = nil
+            end
         end
     end)
-    
-    -- Teleport logic (Giữ nguyên tối ưu)
+
+    local function createArrow(target)
+        if currentArrow then
+            currentArrow:Destroy()
+            currentArrow = nil
+        end
+        if not target or not target.Character then return end
+        local head = target.Character:FindFirstChild("Head")
+        if not head then return end
+        
+        local aGui = Instance.new("BillboardGui")
+        aGui.Name = "TargetArrow"
+        aGui.Size = UDim2.new(0, 50, 0, 50)
+        aGui.AlwaysOnTop = true
+        aGui.Enabled = true
+        aGui.Adornee = head
+        aGui.MaxDistance = 500
+        aGui.SizeOffset = Vector2.new(0, 2.5)
+        
+        local arrowLabel = Instance.new("TextLabel")
+        arrowLabel.Size = UDim2.new(1, 0, 1, 0)
+        arrowLabel.BackgroundTransparency = 1
+        arrowLabel.Text = isLocked and "🔒" or "🎯"
+        arrowLabel.TextColor3 = isLocked and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 255, 0)
+        arrowLabel.TextScaled = true
+        arrowLabel.Font = Enum.Font.GothamBold
+        arrowLabel.Parent = aGui
+        
+        aGui.Parent = head
+        currentArrow = aGui
+        return aGui
+    end
+
     local function teleportClose(target)
         if not target or not target.Character then return false end
         local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
         local playerRoot = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
         if not targetRoot or not playerRoot then return false end
         
-        local tc = targetRoot.CFrame
-        local lv = tc.LookVector
-        local rv = tc.RightVector
+        local targetCFrame = targetRoot.CFrame
+        local lookVector = targetCFrame.LookVector
+        local rightVector = targetCFrame.RightVector
         
-        local positions = {
-            tc.Position + rv * 1.5, tc.Position - rv * 1.5,
-            tc.Position - lv * 1.2, tc.Position + lv * 1.2,
+        local possiblePositions = {
+            targetCFrame.Position + rightVector * 1.5,
+            targetCFrame.Position - rightVector * 1.5,
+            targetCFrame.Position - lookVector * 1.2,
+            targetCFrame.Position + lookVector * 1.2,
         }
         
-        local rp = RaycastParams.new()
-        rp.FilterType = Enum.RaycastFilterType.Blacklist
-        rp.FilterDescendantsInstances = {lp.Character, target.Character}
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+        raycastParams.FilterDescendantsInstances = {lp.Character, target.Character}
         
-        local finalPos = tc.Position
-        local shortDist = math.huge
+        local finalPosition = targetCFrame.Position
+        local shortestDistance = math.huge
         
-        for _, pos in pairs(positions) do
-            local dir = (pos - targetRoot.Position)
-            local res = workspace:Raycast(targetRoot.Position, dir, rp)
-            if not res then
-                finalPos = pos
+        for _, position in pairs(possiblePositions) do
+            local direction = (position - targetRoot.Position)
+            local raycastResult = workspace:Raycast(
+                targetRoot.Position,
+                direction,
+                raycastParams
+            )
+            if not raycastResult then
+                finalPosition = position
                 break
             else
-                local dist = (res.Position - targetRoot.Position).Magnitude
-                if dist < shortDist then
-                    shortDist = dist
-                    finalPos = res.Position - dir.Unit * 0.5
+                local distance = (raycastResult.Position - targetRoot.Position).Magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    finalPosition = raycastResult.Position - direction.Unit * 0.5
                 end
             end
         end
-        playerRoot.CFrame = CFrame.new(finalPos, targetRoot.Position)
+        
+        local teleportCFrame = CFrame.new(finalPosition, targetRoot.Position)
+        playerRoot.CFrame = teleportCFrame
         return true
     end
 
     local function unlockTarget()
         isLocked = false
         targetPlayer = nil
-        if followConnection then followConnection:Disconnect() followConnection = nil end
-        if currentArrow then currentArrow:Destroy() currentArrow = nil end
+        if followConnection then
+            followConnection:Disconnect()
+            followConnection = nil
+        end
+        if currentArrow then
+            currentArrow:Destroy()
+            currentArrow = nil
+        end
         teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
         teleportButton.Text = "TELEPORT"
     end
 
-    teleportButton.MouseButton1Click:Connect(function()
-        local t = tick()
-        if t - lastClickTime < CLICK_DELAY then return end
-        lastClickTime = t
-        
-        if isLocked then 
-            unlockTarget() 
-        else 
-            local newTarg = getVisibleTarget()
-            if not newTarg then
-                teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
-                teleportButton.Text = "NO TARGET"
-                task.delay(1, function()
-                    if not isLocked and teleportButton.Parent then
+    local function startContinuousFollow()
+        if followConnection then
+            followConnection:Disconnect()
+            followConnection = nil
+        end
+        followConnection = RunService.Heartbeat:Connect(function()
+            if not isLocked then return end
+            if targetPlayer and targetPlayer.Character then
+                local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                local playerRoot = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+                if targetRoot and playerRoot then
+                    local distance = (targetRoot.Position - playerRoot.Position).Magnitude
+                    if distance > 3 then
+                        teleportClose(targetPlayer)
+                    end
+                end
+            else
+                unlockTarget()
+            end
+        end)
+    end
+
+    local function lockTarget()
+        local newTarget = getVisibleTarget()
+        if not newTarget then
+            teleportButton.BackgroundColor3 = Color3.fromRGB(255, 150, 50)
+            teleportButton.Text = "NO TARGET"
+            task.delay(1, function()
+                if not isLocked then
+                    if teleportButton and teleportButton.Parent then
                         teleportButton.BackgroundColor3 = wallhackEnabled and Color3.fromRGB(255, 59, 59) or Color3.fromRGB(100, 100, 100)
                         teleportButton.Text = "TELEPORT"
                     end
-                end)
-                return
-            end
-            targetPlayer = newTarg
-            isLocked = true
-            teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-            teleportButton.Text = "LOCKED"
-            
-            if currentArrow then currentArrow:Destroy() end
-            local head = targetPlayer.Character:FindFirstChild("Head")
-            if head then
-                local aGui = Instance.new("BillboardGui")
-                aGui.Size = UDim2.new(0, 50, 0, 50)
-                aGui.AlwaysOnTop = true
-                aGui.Adornee = head
-                local lbl = Instance.new("TextLabel", aGui)
-                lbl.Size = UDim2.new(1,0,1,0)
-                lbl.BackgroundTransparency = 1
-                lbl.Text = "🔒"
-                lbl.TextColor3 = Color3.fromRGB(255, 0, 0)
-                lbl.TextScaled = true
-                aGui.Parent = head
-                currentArrow = aGui
-            end
-            
-            if followConnection then followConnection:Disconnect() end
-            followConnection = RunService.Heartbeat:Connect(function()
-                if not isLocked then return end
-                if targetPlayer and targetPlayer.Character then
-                    local tr = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-                    local pr = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-                    if tr and pr and (tr.Position - pr.Position).Magnitude > 3 then
-                        teleportClose(targetPlayer)
-                    end
-                else
-                    unlockTarget()
                 end
             end)
-            teleportClose(targetPlayer)
+            return false
+        end
+        targetPlayer = newTarget
+        isLocked = true
+        teleportButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        teleportButton.Text = "LOCKED"
+        createArrow(targetPlayer)
+        startContinuousFollow()
+        teleportClose(targetPlayer)
+        return true
+    end
+
+    local function handleTeleportClick()
+        local currentTime = tick()
+        if currentTime - lastClickTime < CLICK_DELAY then return end
+        lastClickTime = currentTime
+        if isLocked then
+            unlockTarget()
+        else
+            lockTarget()
+        end
+    end
+
+    teleportButton.MouseButton1Click:Connect(handleTeleportClick)
+    teleportButton.MouseButton2Click:Connect(toggleWallhack)
+    teleportButton.TouchTap:Connect(handleTeleportClick)
+
+    local cAdd = lp.CharacterAdded:Connect(function(character)
+        unlockTarget()
+        initializeWallhack()
+    end)
+    
+    local pRem = Players.PlayerRemoving:Connect(function(leavingPlayer)
+        if leavingPlayer == targetPlayer then unlockTarget() end
+        if leavingPlayer == currentTarget then
+            currentTarget = nil
+            removeArrow()
+        end
+        if espFolders[leavingPlayer] then
+            espFolders[leavingPlayer]:Destroy()
+            espFolders[leavingPlayer] = nil
         end
     end)
+    
+    hudGUI.Destroying:Connect(function()
+        cAdd:Disconnect()
+        pRem:Disconnect()
+        for tPlayer, folder in pairs(espFolders) do folder:Destroy() end
+        espFolders = {}
+        if aimConnection then aimConnection:Disconnect() aimConnection = nil end
+        if followConnection then followConnection:Disconnect() followConnection = nil end
+    end)
+
+    initializeWallhack()
 end
 
--- THÔNG BÁO HOÀN TẤT
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "V16 MAX BATTERY SAVER";
-    Text = "Universal Bypass đã phủ đầu TOÀN BỘ GAME!";
+    Title = "LUCKATHUB V17";
+    Text = "Universal God Mode & Aimbot Gốc Đã Sẵn Sàng!";
     Duration = 5;
 })
