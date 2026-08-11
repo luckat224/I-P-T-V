@@ -1,22 +1,60 @@
 -- ============================================================================
--- ⚡ LUCKATHUB VIP PRO - MOBILE EDITION (V17) ⚡
--- Universal God Mode + Max Battery Saver + Original HUD/Aimbot Logic
+-- ⚡ LUCKATHUB VIP PRO - MOBILE EDITION (V18 SIÊU CẤP VIP PRO) ⚡
+-- Tự Động Kích Hoạt Bypass Hủy Diệt 100%
+-- Max Battery Saver + Original HUD/Aimbot Logic
 -- ============================================================================
 
-local function InitUniversalBypass()
+-- ============================================================================
+-- ⚡ TẦNG 1: ULTRA VIP PRO BYPASS (AUTO-ACTIVE) ⚡
+-- ============================================================================
+local function InitUltraVipProBypass()
     if not game:IsLoaded() then game.Loaded:Wait() end
     
+    local CoreGui = game:GetService("CoreGui")
+    
+    -- 1. LÀM MÙ HỆ THỐNG PHÁT HIỆN LỖI VÀ CHỐNG AFK KICK
+    pcall(function()
+        if typeof(getconnections) == "function" then
+            for _, conn in pairs(getconnections(CoreGui.ChildAdded)) do conn:Disable() end
+            for _, conn in pairs(getconnections(game:GetService("ScriptContext").Error)) do conn:Disable() end
+            for _, conn in pairs(getconnections(game:GetService("LogService").MessageOut)) do conn:Disable() end
+            for _, conn in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do conn:Disable() end -- Chống AFK
+        end
+    end)
+
+    -- 2. THE GOD HOOK (HOÀN THIỆN TỐI ĐA)
     if typeof(hookmetamethod) == "function" then
         local oldNamecall
         oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
             local m = getnamecallmethod()
+            local args = {...}
+
+            -- Chặn Game Sút, Cấm, hoặc Viễn tải người chơi đi nơi khác (Ban place)
             if m == "Kick" or m == "kick" or m == "Ban" or m == "ban" then return nil end
+            if m == "Teleport" or m == "TeleportToPlaceInstance" then return nil end
+            
+            -- Chặn Báo cáo qua Remote
             if m == "FireServer" or m == "InvokeServer" then
                 local ok, name = pcall(function() return self.Name:lower() end)
                 if ok and name then
-                    local blacklisted = {"ban", "kick", "report", "admin", "anticheat", "cheat", "hack", "exploit", "crash", "log", "detect", "punish", "illegal", "flag", "warn"}
+                    local blacklisted = {
+                        "ban", "kick", "report", "admin", "anticheat", 
+                        "cheat", "hack", "exploit", "crash", "log", 
+                        "detect", "punish", "illegal", "flag", "warn",
+                        "adonis", "hdadmin", "kohl", "blacklist"
+                    }
                     for i = 1, #blacklisted do
                         if string.find(name, blacklisted[i], 1, true) then return nil end
+                    end
+                end
+                
+                -- Chặn báo cáo dựa trên nội dung chữ (Ví dụ game gửi lên server: "Người chơi này đang hack")
+                for _, arg in pairs(args) do
+                    if type(arg) == "string" then
+                        local str = arg:lower()
+                        if string.find(str, "exploit") or string.find(str, "hack") or string.find(str, "banned") then
+                            return nil
+                        end
                     end
                 end
             end
@@ -34,19 +72,34 @@ local function InitUniversalBypass()
             end
             return oldIndex(self, key)
         end)
+
+        local oldNewIndex
+        oldNewIndex = hookmetamethod(game, "__newindex", function(self, key, value)
+            if not checkcaller() then
+                -- [SIÊU CẤP] Chặn Game đóng băng chân người chơi khi phát hiện đi nhanh
+                if key == "Anchored" and value == true then
+                    if typeof(self) == "Instance" and self.Name == "HumanoidRootPart" then
+                        return nil 
+                    end
+                end
+                -- [SIÊU CẤP] Chặn Game đổi tốc độ người chơi về số 0
+                if key == "WalkSpeed" and type(value) == "number" and value < 16 then
+                    if typeof(self) == "Instance" and self.ClassName == "Humanoid" then
+                        return nil 
+                    end
+                end
+            end
+            return oldNewIndex(self, key, value)
+        end)
     end
     
-    pcall(function()
-        if typeof(getconnections) == "function" then
-            for _, conn in pairs(getconnections(game:GetService("CoreGui").ChildAdded)) do conn:Disable() end
-            for _, conn in pairs(getconnections(game:GetService("ScriptContext").Error)) do conn:Disable() end
-            for _, conn in pairs(getconnections(game:GetService("LogService").MessageOut)) do conn:Disable() end
-        end
-    end)
-    
+    -- 3. ĐÓNG BĂNG MỌI LUỒNG ANTI-CHEAT TRONG BỘ NHỚ (SIÊU VÉT CẠN)
     pcall(function()
         if not getthreads then return end
-        local keywords = {"speedcheck", "positioncheck", "anticheat", "ac", "detect", "ban", "kick", "crash", "security"}
+        local keywords = {
+            "speedcheck", "positioncheck", "anticheat", "ac", "detect", 
+            "ban", "kick", "crash", "security", "adonis", "vanguard", "watcher"
+        }
         for _, thread in ipairs(getthreads()) do
             pcall(function()
                 local threadStr = tostring(thread):lower()
@@ -61,7 +114,7 @@ local function InitUniversalBypass()
     end)
 end
 
-pcall(InitUniversalBypass)
+pcall(InitUltraVipProBypass)
 
 -- ============================================================================
 -- KHỞI TẠO GUI VÀ HỆ THỐNG LUCKATHUB
@@ -75,9 +128,14 @@ local Lighting = game:GetService("Lighting")
 local lp = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
+-- Tàng hình giao diện tuyệt đối
 local safeParent
-local ok = pcall(function() safeParent = CoreGui end)
-if not ok or not safeParent then safeParent = lp:WaitForChild("PlayerGui") end
+if typeof(gethui) == "function" then
+    safeParent = gethui()
+else
+    local ok = pcall(function() safeParent = CoreGui end)
+    if not ok or not safeParent then safeParent = lp:WaitForChild("PlayerGui") end
+end
 
 for _, v in ipairs(safeParent:GetChildren()) do
     if v:IsA("ScreenGui") and (v.Name == "LuckatHubMobileV11" or v:FindFirstChild("LHTag")) then
@@ -101,13 +159,13 @@ gui.ResetOnSpawn = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 gui.Parent = safeParent
 
-local C_BG = Color3.fromRGB(15, 15, 20)
-local C_SIDE = Color3.fromRGB(22, 22, 30)
-local C_TOP = Color3.fromRGB(26, 26, 36)
-local C_ACCENT = Color3.fromRGB(138, 43, 226)
+local C_BG = Color3.fromRGB(10, 10, 15)
+local C_SIDE = Color3.fromRGB(18, 18, 25)
+local C_TOP = Color3.fromRGB(22, 22, 30)
+local C_ACCENT = Color3.fromRGB(0, 255, 128) -- Màu Xanh Neon Siêu Cấp
 local C_TEXT = Color3.fromRGB(240, 240, 240)
 local C_TEXT_DIM = Color3.fromRGB(130, 130, 150)
-local C_CARD = Color3.fromRGB(30, 30, 42)
+local C_CARD = Color3.fromRGB(25, 25, 35)
 
 local function makeDraggable(frame, handle)
     handle.InputBegan:Connect(function(input)
@@ -132,13 +190,13 @@ floatBtn.Size = UDim2.new(0, 46, 0, 46)
 floatBtn.Position = UDim2.new(0, 20, 0, 20)
 floatBtn.BackgroundColor3 = C_ACCENT
 floatBtn.Text = "LH"
-floatBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+floatBtn.TextColor3 = Color3.fromRGB(10, 10, 10)
 floatBtn.Font = Enum.Font.GothamBold
 floatBtn.TextSize = 18
 floatBtn.Parent = gui
 Instance.new("UICorner", floatBtn).CornerRadius = UDim.new(1, 0)
 local floatStroke = Instance.new("UIStroke", floatBtn)
-floatStroke.Color = Color3.fromRGB(200, 100, 255)
+floatStroke.Color = Color3.fromRGB(50, 255, 150)
 floatStroke.Thickness = 2
 makeDraggable(floatBtn, floatBtn)
 
@@ -169,7 +227,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -50, 1, 0)
 title.Position = UDim2.new(0, 15, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "LuckatHub | V17 GOD MODE"
+title.Text = "LuckatHub | V18 SIÊU CẤP VIP PRO"
 title.TextColor3 = C_ACCENT
 title.Font = Enum.Font.GothamBold
 title.TextSize = 13
@@ -219,7 +277,7 @@ local function switchTab(name)
     for k, v in pairs(tabs) do v.Visible = (k == name) end
     for k, v in pairs(tabBtns) do
         v.BackgroundColor3 = (k == name) and C_ACCENT or C_SIDE
-        v.TextColor3 = (k == name) and Color3.new(1,1,1) or C_TEXT_DIM
+        v.TextColor3 = (k == name) and Color3.fromRGB(10, 10, 10) or C_TEXT_DIM
     end
 end
 
@@ -397,11 +455,11 @@ addToggle(T2, "Bật HUD (Teleport & Aimbot)", C.HUDOn, function(v)
     if _G.LH_HUD then _G.LH_HUD(v) end
 end)
 
-addTitle(T3, "⚡ TRẠNG THÁI BYPASS TỐI ƯU ⚡")
-addButton(T3, "✅ Hook Chống Kick Mọi Game (Đã Bật)", function() end)
-addButton(T3, "✅ Chặn Phát Hiện GUI (Đã Bật)", function() end)
-addButton(T3, "✅ Ảo Ảnh Tốc Độ Tiết Kiệm Pin (Đã Bật)", function() end)
-addButton(T3, "✅ Đóng Băng Anti-Cheat (Đã Bật)", function() end)
+addTitle(T3, "⚡ ULTRA VIP PRO STATUS ⚡")
+addButton(T3, "🛡️ Chặn Sút & Viễn Tải (AUTO)", function() end)
+addButton(T3, "🛡️ Chống Game Khóa Chân (AUTO)", function() end)
+addButton(T3, "🛡️ Chống Game Reset Tốc Độ (AUTO)", function() end)
+addButton(T3, "🛡️ Tàng Hình GUI & Mù Báo Cáo (AUTO)", function() end)
 addTitle(T3, "CÔNG CỤ THỦ CÔNG")
 addButton(T3, "Quét Rác Ký Ức (RAM)", function()
     pcall(function()
@@ -516,7 +574,7 @@ _G.LH_lagOff = function()
 end
 
 -- ===========================================================================
--- ON-SCREEN HUD (TELEPORT & AIMBOT) - BẢN GỐC 100% CỦA BẠN (TỪ V10)
+-- ON-SCREEN HUD (TELEPORT & AIMBOT) - BẢN GỐC 100% CỦA NGƯỜI CHƠI
 -- ===========================================================================
 local hudGUI = nil
 
@@ -565,10 +623,6 @@ _G.LH_HUD = function(on)
     local aimButtonCorner = Instance.new("UICorner")
     aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
     aimButtonCorner.Parent = aimButton
-
-    -- ===========================================================================
-    -- PHẦN AIMBOT MỚI (ĐÃ THAY THẾ HOÀN TOÀN) - KHÔI PHỤC ĐÚNG TỪNG CHỮ BẢN GỐC V10
-    -- ===========================================================================
 
     local isLocked = false
     local targetPlayer = nil
@@ -987,7 +1041,7 @@ _G.LH_HUD = function(on)
 end
 
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "LUCKATHUB V17";
-    Text = "Universal God Mode & Aimbot Gốc Đã Sẵn Sàng!";
+    Title = "LUCKATHUB V18";
+    Text = "Ultra VIP Pro Bypass Đã Kích Hoạt Tự Động!",
     Duration = 5;
 })
