@@ -465,30 +465,13 @@ end)
 
 -- TAB 3: Fix Lag Siêu Cấp VIP Pro
 addTitle(T3, "HỆ THỐNG FIX LAG TRỆT ĐỂ")
-local updateFixLagToggle = addToggle(T3, "Fix Lag Triệt Để (SmoothPlastic)", C.FixLag, function(v)
-    if v then applyFullFixLag() end
-end)
-
-addTitle(T3, "TÙY CHỈNH NÂNG CAO")
-addToggle(T3, "Tắt Ánh Sáng & Bóng Râm", false, function(v)
-    lagSettings.OptimizeLighting = v
-    if v then optimizeLightingAndTerrain() end
-end)
-addToggle(T3, "Tắt Particle & Hiệu Ứng", false, function(v)
-    lagSettings.DisableEffects = v
-    if v then
-        for _, o in ipairs(workspace:GetDescendants()) do optimizePart(o) end
-    end
-end)
-addToggle(T3, "Tối Ưu Nước & Cỏ (Terrain)", false, function(v)
-    lagSettings.OptimizeTerrain = v
-    if v then optimizeLightingAndTerrain() end
-end)
-
-addTitle(T3, "THAO TÁC NHANH")
-addButton(T3, "KÍCH HOẠT FIX LAG TỔNG LỰC", function()
+addButton(T3, "🚀 KÍCH HOẠT FIX LAG VIP PRO", function()
     applyFullFixLag()
-    if updateFixLagToggle then updateFixLagToggle(true) end
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "LuckatHub VIP Pro";
+        Text = "Đã kích hoạt Fix Lag Triệt Để!";
+        Duration = 3;
+    })
 end)
 
 switchTab("move")
