@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CỔNG HỌC TOÁN 7 - SGK KẾT NỐI TRI THỨC</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+    <!-- TOP NAVBAR -->
+    <header class="navbar">
+        <div class="brand">
+            <button id="sidebar-toggle" class="btn-ctrl" title="Đóng/Mở Danh Sách" style="margin-right: 10px; padding: 5px 10px;">☰</button>
+            <span>📚</span>
+            <span>TOÁN 7</span>
+        </div>
+
+        <div class="nav-controls">
+            <!-- Search Bar -->
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Tìm công thức, bài tập (VD: 1.11, tam giác cân)...">
+            </div>
+
+            <!-- Font Size Controls -->
+            <button id="presbyopia-mode" class="btn-ctrl btn-presbyopia" title="Cỡ chữ 26px">👓</button>
+            <button id="font-plus" class="btn-ctrl" title="Tăng cỡ chữ">+</button>
+            <button id="font-minus" class="btn-ctrl" title="Giảm cỡ chữ">-</button>
+            
+            <!-- Dark / Light Theme Toggle -->
+            <button id="theme-toggle" class="btn-ctrl" title="Đổi Chế Độ Tối / Sáng">🌙</button>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <div class="app-container">
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <div class="sidebar-title">📑 DANH SÁCH 19 BÀI HỌC SGK</div>
+            <ul id="lesson-list" class="lesson-list">
+                <!-- Lessons populated dynamically by app.js -->
+            </ul>
+        </aside>
+
+        <!-- MAIN LESSON READER PANEL -->
+        <main class="content-area">
+            <article id="content-body" class="lesson-card">
+                <!-- Active lesson content loaded dynamically -->
+            </article>
+        </main>
+    </div>
+</body>
+</html>
