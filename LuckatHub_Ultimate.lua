@@ -1,8 +1,9 @@
 -- ============================================================================
--- LUCKATHUB VIP PRO - MOBILE EDITION (V10)
+-- LUCKATHUB VIP PRO - MOBILE EDITION (V11)
 -- 100% Tối ưu cho Mobile (Delta / Fluxus / CodeX)
 -- Khởi động dạng icon thu nhỏ (chống kẹt joystick)
 -- Giao diện siêu mượt, không lỗi kéo thả, không lỗi đơ màn hình
+-- Tối ưu hóa Fix Lag Siêu Cấp VIP Pro Triệt Để
 -- ============================================================================
 
 local Players = game:GetService("Players")
@@ -75,7 +76,6 @@ local function makeDraggable(frame, handle)
 end
 
 -- ==================== NÚT THU NHỎ (MỞ ĐẦU TIÊN) ====================
--- Bắt đầu bằng nút thu nhỏ để KHÔNG BAO GIỜ đè lên joystick
 local floatBtn = Instance.new("TextButton")
 floatBtn.Size = UDim2.new(0, 46, 0, 46)
 floatBtn.Position = UDim2.new(0, 20, 0, 20)
@@ -93,11 +93,11 @@ makeDraggable(floatBtn, floatBtn)
 
 -- ==================== MENU CHÍNH ====================
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 400, 0, 260) -- Kích thước gọn gàng cho mobile
+main.Size = UDim2.new(0, 400, 0, 260)
 main.Position = UDim2.new(0.5, -200, 0.5, -130)
 main.BackgroundColor3 = C_BG
 main.BorderSizePixel = 0
-main.Visible = false -- BẮT ĐẦU ẨN
+main.Visible = false
 main.Parent = gui
 Instance.new("UICorner", main).CornerRadius = UDim.new(0, 8)
 
@@ -120,7 +120,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -50, 1, 0)
 title.Position = UDim2.new(0, 15, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "LuckatHub | Mobile VIP"
+title.Text = "LuckatHub | Mobile VIP Pro"
 title.TextColor3 = C_TEXT
 title.Font = Enum.Font.GothamBold
 title.TextSize = 13
@@ -237,7 +237,7 @@ local function addToggle(parent, title, default, callback)
     lbl.Text = title
     lbl.TextColor3 = C_TEXT
     lbl.Font = Enum.Font.GothamMedium
-    lbl.TextSize = 12
+    lbl.TextSize = 11
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.Parent = frame
 
@@ -264,6 +264,11 @@ local function addToggle(parent, title, default, callback)
         knob.Position = state and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
         pcall(callback, state)
     end)
+    return function(newState)
+        state = newState
+        btn.BackgroundColor3 = state and C_ACCENT or Color3.fromRGB(50, 50, 65)
+        knob.Position = state and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+    end
 end
 
 local function addInput(parent, title, default, callback)
@@ -339,11 +344,110 @@ local function addTitle(parent, text)
     lbl.Parent = parent
 end
 
+-- ==================== HỆ THỐNG FIX LAG SIÊU CẤP VIP PRO ====================
+local lagSettings = {
+    FixLagMaster = false,
+    SmoothPlastic = false,
+    DisableEffects = false,
+    OptimizeLighting = false,
+    OptimizeTerrain = false
+}
+
+local function optimizePart(o)
+    if not o or not o.Parent then return end
+    if o:IsA("BasePart") then
+        if lagSettings.SmoothPlastic or lagSettings.FixLagMaster then
+            pcall(function()
+                o.Material = Enum.Material.SmoothPlastic
+            end)
+        end
+        if lagSettings.FixLagMaster or lagSettings.SmoothPlastic or lagSettings.OptimizeLighting then
+            pcall(function()
+                o.CastShadow = false
+            end)
+        end
+    elseif o:IsA("PostEffect") or o:IsA("ParticleEmitter") or o:IsA("Decal") or o:IsA("Texture") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("Smoke") or o:IsA("Fire") or o:IsA("Sparkles") then
+        if lagSettings.DisableEffects or lagSettings.FixLagMaster then
+            pcall(function()
+                if o:IsA("PostEffect") or o:IsA("ParticleEmitter") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("Smoke") or o:IsA("Fire") or o:IsA("Sparkles") then
+                    o.Enabled = false
+                elseif o:IsA("Decal") or o:IsA("Texture") then
+                    o.Transparency = 1
+                end
+            end)
+        end
+    elseif o:IsA("Light") then
+        if lagSettings.DisableEffects or lagSettings.FixLagMaster then
+            pcall(function()
+                o.Enabled = false
+            end)
+        end
+    end
+end
+
+local function optimizeLightingAndTerrain()
+    if lagSettings.OptimizeLighting or lagSettings.FixLagMaster then
+        pcall(function()
+            Lighting.GlobalShadows = false
+            Lighting.FogEnd = 9e9
+            Lighting.Brightness = 1
+            for _, v in ipairs(Lighting:GetChildren()) do
+                if v:IsA("PostEffect") or v:IsA("Atmosphere") or v:IsA("Sky") then
+                    pcall(function() v.Enabled = false end)
+                end
+            end
+        end)
+    end
+    
+    if lagSettings.OptimizeTerrain or lagSettings.FixLagMaster then
+        pcall(function()
+            if workspace.Terrain then
+                workspace.Terrain.WaterWaveSize = 0
+                workspace.Terrain.WaterWaveSpeed = 0
+                workspace.Terrain.WaterReflectance = 0
+                workspace.Terrain.WaterTransparency = 1
+                if sethiddenproperty then
+                    pcall(function() sethiddenproperty(workspace.Terrain, "Decoration", false) end)
+                end
+            end
+        end)
+    end
+end
+
+local lagAddedConn = nil
+
+local function applyFullFixLag()
+    lagSettings.FixLagMaster = true
+    lagSettings.SmoothPlastic = true
+    lagSettings.DisableEffects = true
+    lagSettings.OptimizeLighting = true
+    lagSettings.OptimizeTerrain = true
+    C.FixLag = true
+
+    optimizeLightingAndTerrain()
+    
+    -- Quét toàn bộ workspace (KHÔNG tốn tài nguyên chạy lặp frame)
+    for _, o in ipairs(workspace:GetDescendants()) do
+        optimizePart(o)
+    end
+
+    -- Lắng nghe vật thể mới sinh ra (dùng task.defer để không làm giật game)
+    if not lagAddedConn then
+        lagAddedConn = workspace.DescendantAdded:Connect(function(o)
+            if C.FixLag then
+                task.defer(optimizePart, o)
+            end
+        end)
+    end
+end
+
+_G.LH_lagOn = function() applyFullFixLag() end
+_G.LH_lagOff = function() end
+
 -- ==================== XÂY DỰNG TABS ====================
 local T1 = makeTab("move", "Di Chuyển")
 local T2 = makeTab("combat", "Tác Chiến")
-local T3 = makeTab("bypass", "Ultra Bypass")
-local T4 = makeTab("lag", "Tối Ưu FPS")
+local T3 = makeTab("lag", "Tối Ưu FPS VIP Pro")
 
 -- TAB 1: Di Chuyển
 addTitle(T1, "TỐC ĐỘ & NHẢY")
@@ -359,42 +463,33 @@ addToggle(T2, "Bật HUD (Teleport & Aimbot)", C.HUDOn, function(v)
     if _G.LH_HUD then _G.LH_HUD(v) end
 end)
 
--- TAB 3: Ultra Bypass
-local _kickBlock = false
-local _remFilter = false
-addTitle(T3, "CHỐNG KICK/BAN")
-addToggle(T3, "Kick Block (Chống Kick)", _kickBlock, function(v) 
-    _kickBlock = v 
-    if v and _G.initBypassHook then _G.initBypassHook() end 
-end)
-addToggle(T3, "Remote Blacklist (Bảo Vệ)", _remFilter, function(v) 
-    _remFilter = v 
-    if v and _G.initBypassHook then _G.initBypassHook() end
-end)
-addTitle(T3, "CÔNG CỤ BYPASS")
-addButton(T3, "Ngụy Trang Tên Script", function()
-    local names = {"PlayerModule", "CameraModule", "ControlModule", "ChatMain"}
-    pcall(function() if script and script.Parent then script.Name = names[math.random(#names)] end end)
-end)
-addButton(T3, "Scan & Đóng Băng AntiCheat", function()
-    pcall(function()
-        if not getthreads then return end
-        local kws = {"speedcheck","positioncheck","anticheat","velocity_check","sanity"}
-        for _, th in ipairs(getthreads()) do
-            pcall(function()
-                local s = tostring(th):lower()
-                for _, kw in ipairs(kws) do
-                    if s:find(kw, 1, true) then task.defer(function() coroutine.yield(th) end) break end
-                end
-            end)
-        end
-    end)
+-- TAB 3: Fix Lag Siêu Cấp VIP Pro
+addTitle(T3, "HỆ THỐNG FIX LAG TRỆT ĐỂ")
+local updateFixLagToggle = addToggle(T3, "Fix Lag Triệt Để (SmoothPlastic)", C.FixLag, function(v)
+    if v then applyFullFixLag() end
 end)
 
--- TAB 4: Fix Lag
-addTitle(T4, "TỐI ƯU HÓA TRỰC TIẾP")
-addButton(T4, "Bật Fix Lag Auto (Triệt Để)", function() if _G.LH_lagOn then _G.LH_lagOn() end end)
-addButton(T4, "Tắt Fix Lag Auto", function() if _G.LH_lagOff then _G.LH_lagOff() end end)
+addTitle(T3, "TÙY CHỈNH NÂNG CAO")
+addToggle(T3, "Tắt Ánh Sáng & Bóng Râm", false, function(v)
+    lagSettings.OptimizeLighting = v
+    if v then optimizeLightingAndTerrain() end
+end)
+addToggle(T3, "Tắt Particle & Hiệu Ứng", false, function(v)
+    lagSettings.DisableEffects = v
+    if v then
+        for _, o in ipairs(workspace:GetDescendants()) do optimizePart(o) end
+    end
+end)
+addToggle(T3, "Tối Ưu Nước & Cỏ (Terrain)", false, function(v)
+    lagSettings.OptimizeTerrain = v
+    if v then optimizeLightingAndTerrain() end
+end)
+
+addTitle(T3, "THAO TÁC NHANH")
+addButton(T3, "KÍCH HOẠT FIX LAG TỔNG LỰC", function()
+    applyFullFixLag()
+    if updateFixLagToggle then updateFixLagToggle(true) end
+end)
 
 switchTab("move")
 
@@ -459,82 +554,6 @@ RunService.Heartbeat:Connect(function(deltaTime)
     end
 end)
 
--- Hook Bypass Engine
-local bypassHooked = false
-_G.initBypassHook = function()
-    if bypassHooked then return end
-    bypassHooked = true
-    task.spawn(function()
-        pcall(function()
-            if typeof(hookmetamethod) ~= "function" or typeof(getnamecallmethod) ~= "function" then return end
-            local old
-            old = hookmetamethod(game, "__namecall", function(self, ...)
-                local m = getnamecallmethod()
-                if _kickBlock and (m == "Kick" or m == "Ban") then return nil end
-                if _remFilter and (m == "FireServer" or m == "InvokeServer") then
-                    local ok, n = pcall(function() return self.Name:lower() end)
-                    if ok and n then
-                        for _, kw in ipairs({"report", "cheat", "hack", "detect", "ban", "kick", "anticheat", "sanity", "exploit"}) do
-                            if n:find(kw, 1, true) then return nil end
-                        end
-                    end
-                end
-                return old(self, ...)
-            end)
-        end)
-    end)
-end
-
--- Fix Lag Auto System
-local lagConn = nil
-local lagLoop = nil
-local function doLagFix()
-    Lighting.GlobalShadows = false
-    Lighting.FogEnd = 9e9
-    Lighting.Brightness = 1
-    for _, o in ipairs(workspace:GetDescendants()) do
-        if o:IsA("BasePart") then
-            o.Material = Enum.Material.SmoothPlastic
-            o.CastShadow = false
-        elseif o:IsA("PostEffect") or o:IsA("ParticleEmitter") or o:IsA("Decal") or o:IsA("Texture") or o:IsA("Trail") then
-            pcall(function() o.Enabled = false end)
-            pcall(function() o.Transparency = 1 end)
-        end
-    end
-end
-
-_G.LH_lagOn = function()
-    C.FixLag = true
-    doLagFix()
-    if not lagLoop then
-        lagLoop = RunService.Heartbeat:Connect(function()
-            if workspace.Terrain then
-                workspace.Terrain.WaterWaveSize = 0
-                workspace.Terrain.WaterWaveSpeed = 0
-                workspace.Terrain.WaterReflectance = 0
-                workspace.Terrain.WaterTransparency = 1
-            end
-        end)
-    end
-    if not lagConn then
-        lagConn = workspace.DescendantAdded:Connect(function(o)
-            task.defer(function()
-                if o:IsA("BasePart") then
-                    o.Material = Enum.Material.SmoothPlastic
-                    o.CastShadow = false
-                elseif o:IsA("PostEffect") or o:IsA("ParticleEmitter") or o:IsA("Decal") or o:IsA("Texture") or o:IsA("Trail") then
-                    pcall(function() o.Enabled = false end)
-                end
-            end)
-        end)
-    end
-end
-_G.LH_lagOff = function()
-    C.FixLag = false
-    if lagLoop then lagLoop:Disconnect() lagLoop = nil end
-    if lagConn then lagConn:Disconnect() lagConn = nil end
-end
-
 -- On-Screen HUD System (Tích hợp Code Gốc)
 local hudGUI = nil
 
@@ -584,10 +603,7 @@ _G.LH_HUD = function(on)
     aimButtonCorner.CornerRadius = UDim.new(0.3, 0)
     aimButtonCorner.Parent = aimButton
 
-    -- ===========================================================================
-    -- PHẦN AIMBOT MỚI (ĐÃ THAY THẾ HOÀN TOÀN)
-    -- ===========================================================================
-
+    -- AIMBOT ENGINE
     local isLocked = false
     local targetPlayer = nil
     local currentArrow = nil
@@ -1007,6 +1023,6 @@ end
 -- Thông báo
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "LuckatHub Mobile V11";
-    Text = "Đã khởi động thành công!";
+    Text = "Đã khởi động Fix Lag VIP Pro!";
     Duration = 5;
 })
