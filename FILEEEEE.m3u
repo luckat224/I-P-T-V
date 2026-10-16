@@ -1,46 +1,60 @@
-#EXTM3U 
+#EXTM3U
+
+# ==================== DANH SÁCH GỐC (ĐÃ KIỂM TRA & THAY THẾ LINK SỐNG) ====================
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 1
-https://vips-livecdn.fptplay.net/live/media/vinhlong1/live247-hls-avc/vinhlong1-avc1_3800000=10000-mp4a_131600=20000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=25
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 2
-https://vips-livecdn.fptplay.net/live/media/vinhlong2/live247-hls-avc/vinhlong2-avc1_3800000=10000-mp4a_131600=20000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=26
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 3
-https://vips-livecdn.fptplay.net/live/media/vinhlong3/live247-hls-avc/vinhlong3-avc1_5600000=10000-mp4a_131600=20000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=219
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 4
 https://freem3u.xyz/api/live/play.m3u8?vid=220
 #EXTINF:-1 tvg-id="" tvg-name="." tvg-logo="",Vĩnh long 5
 https://freem3u.xyz/api/live/play.m3u8?vid=91
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 1
-https://live.fptplay53.net/epzhd1/htv1_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 2
-https://live.fptplay53.net/epzhd1/htv2hd_vhls.smil/chunklist_b5000000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=190
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HTV 2
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 2
+# https://live.fptplay53.net/epzhd1/htv2hd_vhls.smil/chunklist_b5000000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 3
-https://live.fptplay53.net/epzhd1/htv3_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 4
-https://live.fptplay53.net/epzsd1/bariavungtau_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=192
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HTV 4
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 4
+# https://live.fptplay53.net/epzsd1/bariavungtau_hls.smil/chunklist_b2500000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 7
-https://live.fptplay53.net/epzch2/htv7hd_abr.smil/chunklist_b4200000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=193
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTV 9
-https://live.fptplay53.net/epzhd1/htv9hd_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC GIA ĐÌNH
-https://live.fptplay53.net/epzhd1/htvcgiadinh_vhls.smil/chunklist.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC PHỤ NỮ
-https://live.fptplay53.net/epzhd1/htvcphunu_vhls.smil/chunklist.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=194
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HTVC GIA ĐÌNH
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC GIA ĐÌNH
+# https://live.fptplay53.net/epzhd1/htvcgiadinh_vhls.smil/chunklist.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HTVC PHỤ NỮ
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC PHỤ NỮ
+# https://live.fptplay53.net/epzhd1/htvcphunu_vhls.smil/chunklist.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC THUẦN VIỆT
-https://live.fptplay53.net/epzhd1/htvcthuanviethd_vhls.smil/chunklist.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=13
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC CA NHẠC
-https://live.fptplay53.net/epzhd1/htvcmusic_vhls.smil/chunklist.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=11
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HTVC CHANNEL B
-https://live.fptplay53.net/epzhd1/htvcplus_vhls.smil/chunklist.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=151
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",Quảng trị (QTV3)
 https://live.baoquangninh.vn/qtvlive/tv3live.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HÀ NỘI 1
-https://live.fptplay53.net/fnxhd2/hanoitv1_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BTV 9
-https://live.fptplay53.net/fnxsd1/btv9_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=33
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] BTV 9
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BTV 9
+# https://live.fptplay53.net/fnxsd1/btv9_hls.smil/chunklist_b2500000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BÌNH THUẬN
 https://freem3u.xyz/api/live/play.m3u8?vid=45
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CÀ MAU
-https://live.fptplay53.net/epzhd2/camauhd_vhls.smil/chunklist_b5000000.m3u8
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] CÀ MAU
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CÀ MAU
+# https://live.fptplay53.net/epzhd2/camauhd_vhls.smil/chunklist_b5000000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CẦN THƠ 1
 https://live.canthotv.vn/live/tv/chunklist_w693005420.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CẦN THƠ 2
@@ -48,27 +62,43 @@ https://freem3u.xyz/api/live/play.m3u8?vid=61
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",CẦN THƠ 3
 https://freem3u.xyz/api/live/play.m3u8?vid=84
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 1
-https://live.fptplay53.net/fnxch2/vtv1hd_abr.smil/chunklist_b4200000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 2
-https://live.fptplay53.net/fnxch2/vtv2hd_abr.smil/chunklist_b4200000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 3
-https://live.fptplay53.net/fnxch2/vtv3hd_abr.smil/chunklist_b4200000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 4
-https://live.fptplay53.net/fnxch2/vtv4hd_abr.smil/chunklist_b4200000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=2
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] VTV 2
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 2
+# https://live.fptplay53.net/fnxch2/vtv2hd_abr.smil/chunklist_b4200000.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] VTV 3
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 3
+# https://live.fptplay53.net/fnxch2/vtv3hd_abr.smil/chunklist_b4200000.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] VTV 4
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 4
+# https://live.fptplay53.net/fnxch2/vtv4hd_abr.smil/chunklist_b4200000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 5
-https://live.fptplay53.net/epzch2/vtv5hd_abr.smil/chunklist_b4200000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV CẦN THƠ
-https://live-a.fptplay53.net/live/media/VTV_can_tho/live_hls_avc/index.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 7
-https://live.fptplay53.net/fnxhd1/vtv7hd_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 8
-https://live.fptplay53.net/epzhd1/vtv8hd_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 9
-https://live.fptplay53.net/epzch2/vtv9hd_abr.smil/chunklist.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=110
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] VTV CẦN THƠ
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV CẦN THƠ
+# https://live-a.fptplay53.net/live/media/VTV_can_tho/live_hls_avc/index.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] VTV 7
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 7
+# https://live.fptplay53.net/fnxhd1/vtv7hd_vhls.smil/chunklist_b5000000.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] VTV 8
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 8
+# https://live.fptplay53.net/epzhd1/vtv8hd_vhls.smil/chunklist_b5000000.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] VTV 9
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",VTV 9
+# https://live.fptplay53.net/epzch2/vtv9hd_abr.smil/chunklist.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Giải Trí
 https://freem3u.xyz/api/live/play.m3u8?vid=180
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Phim Việt
-https://freem3u.xyz/api/live/play.m3u8?vid=175
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] On Phim Việt
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Phim Việt
+# https://freem3u.xyz/api/live/play.m3u8?vid=175
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Movies
 https://freem3u.xyz/api/live/play.m3u8?vid=181
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On E - Channel
@@ -90,145 +120,130 @@ https://freem3u.xyz/api/live/play.m3u8?vid=186
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",On Dramas
 https://freem3u.xyz/api/live/play.m3u8?vid=177
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐÀ NẴNG
-https://live.fptplay53.net/epzsd1/danang2_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐẮC NÔNG
-https://freem3u.xyz/api/live/play.m3u8?vid=50
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="", SCTV1
-https://liveh12.vtvprime.vn/hls/SCTV1/03.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=51
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] ĐẮC NÔNG
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐẮC NÔNG
+# https://freem3u.xyz/api/live/play.m3u8?vid=50
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] SCTV1
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="", SCTV1
+# https://liveh12.vtvprime.vn/hls/SCTV1/03.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐỒNG THÁP
-https://live.fptplay53.net/epzsd1/dongthap_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HÀ GIANG
-https://live.fptplay53.net/epzsd1/dongthap_vhls.smil/chunklist_b5000000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=54
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HÀ GIANG
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HÀ GIANG
+# https://live.fptplay53.net/epzsd1/dongthap_vhls.smil/chunklist_b5000000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="", SCVT2
 https://freem3u.xyz/api/live/play.m3u8?vid=201
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HẢI PHÒNG
-https://live.fptplay53.net/fnxsd1/haiphong_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HUẾ
-https://live.fptplay53.net/epzsd1/hue_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HƯNG YÊN
-https://live.fptplay53.net/fnxsd1/hungyen_hls.smil/chunklist_b2500000.m3u8
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HẢI PHÒNG
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HẢI PHÒNG
+# https://live.fptplay53.net/fnxsd1/haiphong_hls.smil/chunklist_b2500000.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HUẾ
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HUẾ
+# https://live.fptplay53.net/epzsd1/hue_hls.smil/chunklist_b2500000.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] HƯNG YÊN
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",HƯNG YÊN
+# https://live.fptplay53.net/fnxsd1/hungyen_hls.smil/chunklist_b2500000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",KIÊN GIANG
 https://tv.angiangtv.vn/live/kgtv/kgtv.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",LÂM ĐỒNG
-https://live.fptplay53.net/epzsd1/lamdong_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=68
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",LÀO CAI
-https://live.fptplay53.net/fnxsd1/laocai_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=71
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",LONG AN
 https://freem3u.xyz/api/live/play.m3u8?vid=72
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",NGHỆ AN
-https://live.fptplay53.net/fnxsd1/nghean_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=74
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",NINH BÌNH
-https://live.fptplay53.net/fnxsd1/ninhbinh_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SCTV22
-https://liveh34.vtvprime.vn/hls/SCTV22/04.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",PHÚ THỌ
-https://live.fptplay53.net/fnxsd1/phutho_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=75
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] SCTV22
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SCTV22
+# https://liveh34.vtvprime.vn/hls/SCTV22/04.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] PHÚ THỌ
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",PHÚ THỌ
+# https://live.fptplay53.net/fnxsd1/phutho_hls.smil/chunklist_b2500000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ON VFamily
 https://freem3u.xyz/api/live/play.m3u8?vid=187
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SCTV6
-https://live.fptplay53.net/epzhd2/film360_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SƠN LA
-https://live.fptplay53.net/fnxsd1/sonla_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=232
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] SƠN LA
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",SƠN LA
+# https://live.fptplay53.net/fnxsd1/sonla_hls.smil/chunklist_b2500000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TÂY NINH
 https://freem3u.xyz/api/live/play.m3u8?vid=72
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",QPVN
-https://live.fptplay53.net/fnxhd2/quocphongvnhd_vhls.smil/chunklist_b5000000.m3u8
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] QPVN
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",QPVN
+# https://live.fptplay53.net/fnxhd2/quocphongvnhd_vhls.smil/chunklist_b5000000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",THÁI NGUYÊN
-https://live.fptplay53.net/fnxsd1/thainguyen_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TIỀN GIANG
-https://live.fptplay53.net/epzsd1/dongthaphd_vhls.smil/chunklist_b5000000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TUYÊN QUANG
-https://live.fptplay53.net/fnxsd1/tuyenquang_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=88
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] TIỀN GIANG
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TIỀN GIANG
+# https://live.fptplay53.net/epzsd1/dongthaphd_vhls.smil/chunklist_b5000000.m3u8
+
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] TUYÊN QUANG
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",TUYÊN QUANG
+# https://live.fptplay53.net/fnxsd1/tuyenquang_hls.smil/chunklist_b2500000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ON Kids
 https://freem3u.xyz/api/live/play.m3u8?vid=179
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ASIAN FOOD 
-https://live.fptplay53.net/fnxhd2/afchd_vhls.smil/chunklist_b5000000.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ASIAN FOOD
+https://freem3u.xyz/api/live/play.m3u8?vid=215
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",ĐỒNG NAI
-https://live.fptplay53.net/epzsd1/dongnai1_hls.smil/chunklist_b2500000.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BÌNH DƯƠNG
-https://live.fptplay53.net/epzhd1/htv1_hls.smil/chunklist_b2500000.m3u8
+https://freem3u.xyz/api/live/play.m3u8?vid=49
+# [DEAD - LỖI NGUỒN CHƯA CÓ LINK THAY THẾ] BÌNH DƯƠNG
+# #EXTINF:-1 tvg-id="" tvg-name="1" tvg-logo="",BÌNH DƯƠNG
+# https://live.fptplay53.net/epzhd1/htv1_hls.smil/chunklist_b2500000.m3u8
+
 #EXTINF:-1 tvg-id="" tvg-name="1" tvg-name="1" tvg-logo="",ON Life
 https://freem3u.xyz/api/live/play.m3u8?vid=188
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ==================== CÁC KÊNH BỔ SUNG CÒN THIẾU (HOẠT ĐỘNG TỐT) ====================
+#EXTINF:-1 tvg-id="" tvg-name="15" tvg-logo="",HTV CINEMA
+https://freem3u.xyz/api/live/play.m3u8?vid=15
+#EXTINF:-1 tvg-id="" tvg-name="47" tvg-logo="",CAN THO 1 TIN TUC MEKONG
+https://freem3u.xyz/api/live/play.m3u8?vid=47
+#EXTINF:-1 tvg-id="" tvg-name="52" tvg-logo="",Đài Phát thanh & Truyền hình (DTV)
+https://freem3u.xyz/api/live/play.m3u8?vid=52
+#EXTINF:-1 tvg-id="" tvg-name="58" tvg-logo="",BHT TV HATINHTV
+https://freem3u.xyz/api/live/play.m3u8?vid=58
+#EXTINF:-1 tvg-id="" tvg-name="66" tvg-logo="",ATV 1
+https://freem3u.xyz/api/live/play.m3u8?vid=66
+#EXTINF:-1 tvg-id="" tvg-name="69" tvg-logo="",LTV 1
+https://freem3u.xyz/api/live/play.m3u8?vid=69
+#EXTINF:-1 tvg-id="" tvg-name="80" tvg-logo="",D NRT 2
+https://freem3u.xyz/api/live/play.m3u8?vid=80
+#EXTINF:-1 tvg-id="" tvg-name="81" tvg-logo="",QTV 2 HD
+https://freem3u.xyz/api/live/play.m3u8?vid=81
+#EXTINF:-1 tvg-id="" tvg-name="82" tvg-logo="",QTV 1 HD
+https://freem3u.xyz/api/live/play.m3u8?vid=82
+#EXTINF:-1 tvg-id="" tvg-name="83" tvg-logo="",QTTV
+https://freem3u.xyz/api/live/play.m3u8?vid=83
+#EXTINF:-1 tvg-id="" tvg-name="85" tvg-logo="",STV HD
+https://freem3u.xyz/api/live/play.m3u8?vid=85
+#EXTINF:-1 tvg-id="" tvg-name="89" tvg-logo="",TTV BAOTHANHHOA
+https://freem3u.xyz/api/live/play.m3u8?vid=89
+#EXTINF:-1 tvg-id="" tvg-name="90" tvg-logo="",THDT
+https://freem3u.xyz/api/live/play.m3u8?vid=90
+#EXTINF:-1 tvg-id="" tvg-name="96" tvg-logo="",FRANCE 24 ENG
+https://freem3u.xyz/api/live/play.m3u8?vid=96
+#EXTINF:-1 tvg-id="" tvg-name="106" tvg-logo="",NHK TV JAPAN
+https://freem3u.xyz/api/live/play.m3u8?vid=106
+#EXTINF:-1 tvg-id="" tvg-name="109" tvg-logo="",DEUTSCHE WELLE
+https://freem3u.xyz/api/live/play.m3u8?vid=109
+#EXTINF:-1 tvg-id="" tvg-name="133" tvg-logo="",DU LICH & CUOC SONG
+https://freem3u.xyz/api/live/play.m3u8?vid=133
+#EXTINF:-1 tvg-id="" tvg-name="134" tvg-logo="",QTV 3 HD
+https://freem3u.xyz/api/live/play.m3u8?vid=134
+#EXTINF:-1 tvg-id="" tvg-name="213" tvg-logo="",KBS WORLD
+https://freem3u.xyz/api/live/play.m3u8?vid=213
+#EXTINF:-1 tvg-id="" tvg-name="216" tvg-logo="",OUTDOOR
+https://freem3u.xyz/api/live/play.m3u8?vid=216
